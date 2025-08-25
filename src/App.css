@@ -19,45 +19,78 @@ body {
   line-height: 1.6;
 }
 
-/* Variables CSS para la paleta de colores */
+/* Variables CSS para diseño profesional */
 :root {
-  /* Colores principales */
-  --color-primario: #2C3E50;
-  --color-secundario: #34495E;
-  --color-acento: #1ABC9C;
-  --color-peligro: #E74C3C;
-  --color-exito: #27AE60;
-  --color-advertencia: #F39C12;
+  /* Paleta de colores sofisticada */
+  --color-primario: #1a1a2e;
+  --color-secundario: #16213e;
+  --color-terciario: #0f3460;
+  --color-acento: #00d4aa;
+  --color-acento-hover: #00b894;
+  --color-peligro: #ff6b6b;
+  --color-exito: #51cf66;
+  --color-advertencia: #ffd43b;
   
-  /* Colores de texto */
-  --texto-principal: #ECF0F1;
-  --texto-secundario: #BDC3C7;
-  --texto-silenciado: #95A5A6;
-  --texto-oscuro: #7F8C8D;
+  /* Glassmorphism y efectos */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg-hover: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  --glass-backdrop: blur(8px);
   
-  /* Espaciado */
-  --espaciado-xs: 0.25rem;
-  --espaciado-sm: 0.5rem;
-  --espaciado-md: 1rem;
-  --espaciado-lg: 1.5rem;
-  --espaciado-xl: 2rem;
-  --espaciado-xxl: 3rem;
+  /* Colores de texto mejorados */
+  --texto-principal: #ffffff;
+  --texto-secundario: #e8eaed;
+  --texto-terciario: #bdc1c6;
+  --texto-silenciado: #9aa0a6;
+  --texto-deshabilitado: #5f6368;
   
-  /* Bordes */
-  --radio-borde-sm: 4px;
-  --radio-borde-md: 8px;
-  --radio-borde-lg: 12px;
-  --radio-borde-xl: 20px;
+  /* Espaciado con sistema de 8px */
+  --espaciado-xs: 0.25rem;   /* 4px */
+  --espaciado-sm: 0.5rem;    /* 8px */
+  --espaciado-md: 1rem;      /* 16px */
+  --espaciado-lg: 1.5rem;    /* 24px */
+  --espaciado-xl: 2rem;      /* 32px */
+  --espaciado-xxl: 3rem;     /* 48px */
+  --espaciado-xxxl: 4rem;    /* 64px */
   
-  /* Sombras */
-  --sombra-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --sombra-md: 0 4px 15px rgba(0, 0, 0, 0.2);
-  --sombra-lg: 0 6px 20px rgba(0, 0, 0, 0.3);
+  /* Bordes con mayor variedad */
+  --radio-borde-xs: 4px;
+  --radio-borde-sm: 8px;
+  --radio-borde-md: 12px;
+  --radio-borde-lg: 16px;
+  --radio-borde-xl: 24px;
+  --radio-borde-xxl: 32px;
+  --radio-borde-pill: 9999px;
   
-  /* Transiciones */
-  --transicion-rapida: 0.2s ease;
-  --transicion-normal: 0.3s ease;
-  --transicion-lenta: 0.5s ease;
+  /* Sombras mejoradas */
+  --sombra-subtle: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --sombra-small: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  --sombra-medium: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  --sombra-large: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  --sombra-xl: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+  
+  /* Sombras de color para elementos especiales */
+  --sombra-acento: 0 8px 16px rgba(0, 212, 170, 0.3);
+  --sombra-peligro: 0 8px 16px rgba(255, 107, 107, 0.3);
+  --sombra-exito: 0 8px 16px rgba(81, 207, 102, 0.3);
+  
+  /* Transiciones con curvas suaves */
+  --transicion-rapida: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transicion-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transicion-lenta: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --transicion-bounce: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Fuentes tipográficas */
+  --fuente-principal: 'Inter', system-ui, -apple-system, sans-serif;
+  --fuente-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --fuente-elegante: 'Playfair Display', Georgia, serif;
+  
+  /* Z-index consistente */
+  --z-dropdown: 1000;
+  --z-modal: 1050;
+  --z-tooltip: 1100;
+  --z-fixed: 1200;
 }
 
 /* Aplicación principal */

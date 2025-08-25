@@ -1,0 +1,147 @@
+/* Estilos para Loading Spinner - cineTrack */
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaciado-xxxl);
+  gap: var(--espaciado-lg);
+}
+
+.loading-spinner {
+  position: relative;
+  display: inline-block;
+}
+
+.loading-spinner.small {
+  width: 40px;
+  height: 40px;
+}
+
+.loading-spinner.medium {
+  width: 60px;
+  height: 60px;
+}
+
+.loading-spinner.large {
+  width: 80px;
+  height: 80px;
+}
+
+.spinner-ring {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.spinner-ring div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  animation: girar-spinner 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.spinner-ring div:nth-child(1) {
+  border-top-color: var(--color-acento);
+  animation-delay: -0.45s;
+}
+
+.spinner-ring div:nth-child(2) {
+  border-top-color: var(--color-peligro);
+  animation-delay: -0.3s;
+}
+
+.spinner-ring div:nth-child(3) {
+  border-top-color: var(--color-exito);
+  animation-delay: -0.15s;
+}
+
+.spinner-ring div:nth-child(4) {
+  border-top-color: var(--color-advertencia);
+  animation-delay: 0s;
+}
+
+@keyframes girar-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-mensaje {
+  color: var(--texto-terciario);
+  font-family: var(--fuente-principal);
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.02em;
+  opacity: 0.8;
+  animation: pulso-mensaje 2s ease-in-out infinite;
+}
+
+@keyframes pulso-mensaje {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Overlay de carga completa */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+}
+
+/* Estados de carga para elementos específicos */
+.loading-tarjeta {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radio-borde-xl);
+  height: 300px;
+  margin-bottom: var(--espaciado-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-tarjeta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}

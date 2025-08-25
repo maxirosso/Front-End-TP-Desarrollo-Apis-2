@@ -1,68 +1,131 @@
 /* Estilos para la Barra de Navegación - cineTrack */
 .barra-navegacion {
-  background-color: #2C3E50;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  border-bottom: 1px solid var(--glass-border);
   padding: 0;
   position: sticky;
   top: 0;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: var(--z-fixed);
+  box-shadow: var(--glass-shadow);
+  transition: all var(--transicion-normal);
+}
+
+.barra-navegacion::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 170, 0.1) 0%, 
+    rgba(255, 107, 107, 0.05) 50%,
+    rgba(0, 212, 170, 0.1) 100%);
+  pointer-events: none;
+  opacity: 0.6;
 }
 
 .contenedor-navegacion {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 2rem;
-  gap: 2rem;
+  padding: var(--espaciado-lg) var(--espaciado-xl);
+  gap: var(--espaciado-xl);
+  position: relative;
+  z-index: 1;
 }
 
-/* Logo y nombre */
+/* Logo y nombre - Diseño profesional */
 .logo-contenedor {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--espaciado-md);
   text-decoration: none;
-  transition: transform 0.3s ease;
+  transition: all var(--transicion-normal);
+  position: relative;
+  padding: var(--espaciado-sm);
+  border-radius: var(--radio-borde-lg);
+}
+
+.logo-contenedor::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--glass-bg);
+  border-radius: var(--radio-borde-lg);
+  opacity: 0;
+  transition: all var(--transicion-normal);
+}
+
+.logo-contenedor:hover::before {
+  opacity: 1;
 }
 
 .logo-contenedor:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-medium);
 }
 
-/* Logo con triángulos */
+/* Logo con triángulos como en la imagen */
 .logo-triangulos {
   display: flex;
   align-items: center;
-  gap: 0.2rem;
-  margin-right: 0.5rem;
+  gap: 4px;
+  margin-right: var(--espaciado-sm);
+  position: relative;
+  z-index: 1;
 }
 
 .triangulo {
   width: 0;
   height: 0;
   border-style: solid;
+  transition: all var(--transicion-normal);
+  position: relative;
+  outline: none;
+  box-shadow: none;
 }
 
 .triangulo-rojo {
-  border-left: 16px solid #E74C3C;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
+  border-right: 20px solid #FF6B9D;
+  border-left: 0;
+  border-top: 16px solid transparent;
+  border-bottom: 16px solid transparent;
 }
 
 .triangulo-cyan {
-  border-right: 16px solid #1ABC9C;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
+  border-left: 20px solid #00D4AA;
+  border-right: 0;
+  border-top: 16px solid transparent;
+  border-bottom: 16px solid transparent;
+}
+
+.logo-contenedor:hover .triangulo-rojo {
+  border-right-color: #FF8BB5;
+  transform: scale(1.02);
+}
+
+.logo-contenedor:hover .triangulo-cyan {
+  border-left-color: #1ADEBC;
+  transform: scale(1.02);
 }
 
 .nombre-aplicacion {
-  color: #ECF0F1;
-  font-size: 1.8rem;
-  font-weight: bold;
+  color: white;
+  font-family: var(--fuente-display);
+  font-size: 1.75rem;
+  font-weight: 700;
   margin: 0;
-  letter-spacing: 1px;
+  letter-spacing: -0.02em;
+  position: relative;
+  z-index: 1;
 }
 
 /* Menú de navegación */

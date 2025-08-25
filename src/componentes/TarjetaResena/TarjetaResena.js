@@ -73,7 +73,10 @@ const TarjetaResena = ({
           {/* Encabezado */}
           <header className="encabezado-resena">
             <div className="info-usuario">
-              <span className="nombre-usuario">Reseña de {usuario}</span>
+              <span className="nombre-usuario">
+                Reseña de {usuario}
+                {esPropioDueño && <span className="indicador-propietario">TU RESEÑA</span>}
+              </span>
               <div className="fechas-resena">
                 <span className="fecha-visionado">Visto el {fechaVisionado}</span>
               </div>
@@ -163,34 +166,53 @@ const TarjetaResena = ({
                 <div className="menu-acciones-dueno">
                   <button 
                     className="boton-menu-acciones"
-                    onClick={() => setMostrarAcciones(!mostrarAcciones)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMostrarAcciones(!mostrarAcciones);
+                    }}
                   >
                     ⋮
                   </button>
                   
                   {mostrarAcciones && (
-                    <div className="opciones-acciones">
-                      <button 
-                        className="opcion-editar"
-                        onClick={() => {
-                          onEditar && onEditar(pelicula);
+                    <>
+                      {/* Overlay para cerrar menú de acciones */}
+                      <div 
+                        className="overlay-acciones"
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setMostrarAcciones(false);
                         }}
-                      >
-                        ✏️ Editar
-                      </button>
-                      <button 
-                        className="opcion-eliminar"
-                        onClick={() => {
-                          if (window.confirm('¿Estás seguro de que quieres eliminar esta reseña?')) {
-                            onEliminar && onEliminar(id);
-                          }
-                          setMostrarAcciones(false);
-                        }}
-                      >
-                        🗑️ Eliminar
-                      </button>
-                    </div>
+                      />
+                      <div className="opciones-acciones">
+                        <button 
+                          className="opcion-editar"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('Editar clicked!', pelicula);
+                            onEditar && onEditar(pelicula);
+                            setMostrarAcciones(false);
+                          }}
+                        >
+                          ✏️ Editar
+                        </button>
+                        <button 
+                          className="opcion-eliminar"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('Eliminar clicked!', id);
+                            if (window.confirm('¿Estás seguro de que quieres eliminar esta reseña?')) {
+                              onEliminar && onEliminar(id);
+                            }
+                            setMostrarAcciones(false);
+                          }}
+                        >
+                          🗑️ Eliminar
+                        </button>
+                      </div>
+                    </>
                   )}
                 </div>
               )}
@@ -198,14 +220,6 @@ const TarjetaResena = ({
           </footer>
         </div>
       </div>
-
-      {/* Overlay para cerrar menú de acciones */}
-      {mostrarAcciones && (
-        <div 
-          className="overlay-acciones"
-          onClick={() => setMostrarAcciones(false)}
-        />
-      )}
     </article>
   );
 };

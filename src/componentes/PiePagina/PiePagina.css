@@ -1,39 +1,79 @@
 /* Estilos para Pie de Página - cineTrack */
 .pie-pagina {
-  background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
-  color: #BDC3C7;
-  margin-top: 4rem;
-  padding: 2rem 0;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  border-top: 1px solid var(--glass-border);
+  color: var(--texto-terciario);
+  margin-top: var(--espaciado-xl);
+  padding: var(--espaciado-lg) 0;
+  position: relative;
+}
+
+.pie-pagina::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 170, 0.02) 0%, 
+    rgba(255, 107, 107, 0.01) 50%,
+    rgba(0, 212, 170, 0.02) 100%);
+  pointer-events: none;
 }
 
 .contenedor-pie {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 var(--espaciado-xl);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: var(--espaciado-md);
+  position: relative;
+  z-index: 1;
 }
 
 /* Sección de enlaces */
 .seccion-enlaces {
   display: flex;
-  gap: 3rem;
+  gap: var(--espaciado-xl);
   align-items: center;
 }
 
 .enlace-pie {
-  color: #BDC3C7;
+  color: var(--texto-terciario);
   text-decoration: none;
+  font-family: var(--fuente-principal);
   font-size: 0.9rem;
-  transition: color 0.3s ease;
+  font-weight: 500;
+  transition: all var(--transicion-normal);
   white-space: nowrap;
+  position: relative;
+  padding: var(--espaciado-sm) 0;
+}
+
+.enlace-pie::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-acento), var(--color-peligro));
+  transition: width var(--transicion-normal);
 }
 
 .enlace-pie:hover {
-  color: #1ABC9C;
+  color: var(--texto-principal);
+  transform: translateY(-2px);
+}
+
+.enlace-pie:hover::after {
+  width: 100%;
 }
 
 /* Sección de copyright */
@@ -43,8 +83,11 @@
 
 .seccion-copyright p {
   margin: 0;
-  color: #95A5A6;
+  color: var(--texto-silenciado);
+  font-family: var(--fuente-principal);
   font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
 /* Responsivo */

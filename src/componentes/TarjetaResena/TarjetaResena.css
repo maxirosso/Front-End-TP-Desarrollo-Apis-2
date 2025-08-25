@@ -1,35 +1,90 @@
 /* Estilos para Tarjeta de Reseña - cineTrack */
 .tarjeta-resena {
-  background-color: #34495E;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radio-borde-xl);
+  margin-bottom: var(--espaciado-xl);
+  overflow: visible;
+  box-shadow: var(--sombra-medium);
+  transition: all var(--transicion-normal);
+  position: relative;
+}
+
+.tarjeta-resena::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 170, 0.03) 0%, 
+    rgba(255, 107, 107, 0.02) 50%,
+    rgba(0, 212, 170, 0.03) 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transicion-normal);
+}
+
+.tarjeta-resena:hover::before {
+  opacity: 1;
 }
 
 .tarjeta-resena:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: var(--sombra-xl);
+  border-color: rgba(0, 212, 170, 0.3);
 }
 
 .contenido-resena {
   display: flex;
-  gap: 1.5rem;
-  padding: 1.5rem;
+  gap: var(--espaciado-lg);
+  padding: var(--espaciado-xl);
+  position: relative;
+  z-index: 1;
 }
 
 /* Imagen de la película */
 .contenedor-imagen-pelicula {
   flex-shrink: 0;
+  position: relative;
+}
+
+.contenedor-imagen-pelicula::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--color-acento), var(--color-peligro));
+  border-radius: var(--radio-borde-lg);
+  opacity: 0;
+  transition: opacity var(--transicion-normal);
+  z-index: -1;
+  filter: blur(20px);
+}
+
+.tarjeta-resena:hover .contenedor-imagen-pelicula::after {
+  opacity: 0.2;
 }
 
 .imagen-pelicula {
-  width: 120px;
-  height: 180px;
+  width: 130px;
+  height: 195px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid #2C3E50;
+  border-radius: var(--radio-borde-lg);
+  border: 2px solid var(--glass-border);
+  box-shadow: var(--sombra-medium);
+  transition: all var(--transicion-normal);
+}
+
+.tarjeta-resena:hover .imagen-pelicula {
+  transform: scale(1.02);
+  box-shadow: var(--sombra-large);
+  border-color: var(--color-acento);
 }
 
 /* Información de la reseña */
@@ -53,9 +108,55 @@
 }
 
 .nombre-usuario {
-  color: #ECF0F1;
+  color: var(--texto-principal);
   font-weight: bold;
   font-size: 1rem;
+  position: relative;
+}
+
+.indicador-propietario {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--color-acento) 0%, var(--color-peligro) 100%);
+  color: var(--texto-principal);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radio-borde-pill);
+  margin-left: var(--espaciado-sm);
+  letter-spacing: 0.5px;
+  box-shadow: var(--sombra-small);
+  animation: pulso-propietario 2s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.indicador-propietario::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: brillo-propietario 3s ease-in-out infinite;
+}
+
+@keyframes pulso-propietario {
+  0%, 100% {
+    box-shadow: var(--sombra-small);
+  }
+  50% {
+    box-shadow: var(--sombra-acento);
+  }
+}
+
+@keyframes brillo-propietario {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 .fechas-resena {
@@ -275,39 +376,83 @@
 }
 
 .boton-menu-acciones {
-  background: transparent;
-  border: 1px solid #7F8C8D;
-  color: #BDC3C7;
-  padding: 0.4rem 0.6rem;
-  border-radius: 50%;
-  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  color: var(--texto-principal);
+  padding: var(--espaciado-sm);
+  border-radius: var(--radio-borde-md);
+  font-size: 1.2rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  width: 32px;
-  height: 32px;
+  transition: all var(--transicion-normal);
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 700;
+  position: relative;
+  box-shadow: var(--sombra-small);
+}
+
+.boton-menu-acciones::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--color-acento), var(--color-peligro));
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity var(--transicion-normal);
+  z-index: -1;
+}
+
+.boton-menu-acciones:hover::before {
+  opacity: 0.1;
 }
 
 .boton-menu-acciones:hover {
-  background-color: #95A5A6;
-  border-color: #95A5A6;
-  color: white;
+  color: var(--color-acento);
+  border-color: var(--color-acento);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--sombra-medium);
 }
 
 .opciones-acciones {
   position: absolute;
-  top: calc(100% + 8px);
+  bottom: calc(100% + 8px);
   right: 0;
-  background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
-  border: 1px solid #1ABC9C;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  z-index: 100;
+  background: rgba(26, 26, 46, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  border-radius: var(--radio-borde-lg);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(0, 212, 170, 0.2);
+  z-index: 1002;
   overflow: hidden;
-  min-width: 120px;
-  animation: aparecer-menu 0.2s ease-out;
+  min-width: 140px;
+  animation: aparecer-menu 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+  pointer-events: auto !important;
+  cursor: default;
+}
+
+.opciones-acciones::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 170, 0.08) 0%, 
+    rgba(255, 107, 107, 0.08) 100%);
+  pointer-events: none;
 }
 
 @keyframes aparecer-menu {
@@ -325,16 +470,25 @@
 .opcion-eliminar {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--espaciado-sm);
   width: 100%;
-  padding: 0.6rem 1rem;
+  padding: var(--espaciado-md) var(--espaciado-lg);
   background: none;
   border: none;
-  color: #ECF0F1;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  border-bottom: 1px solid rgba(127, 140, 141, 0.2);
+  color: var(--texto-principal);
+  font-family: var(--fuente-principal);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer !important;
+  transition: all var(--transicion-normal);
+  border-bottom: 1px solid var(--glass-border);
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  outline: none;
+  text-decoration: none;
 }
 
 .opcion-editar:last-child,
@@ -342,14 +496,43 @@
   border-bottom: none;
 }
 
+.opcion-editar::before,
+.opcion-eliminar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: opacity var(--transicion-normal);
+  z-index: -1;
+}
+
+.opcion-editar::before {
+  background: linear-gradient(90deg, var(--color-acento), transparent);
+}
+
+.opcion-eliminar::before {
+  background: linear-gradient(90deg, var(--color-peligro), transparent);
+}
+
+.opcion-editar:hover::before {
+  opacity: 0.15;
+}
+
+.opcion-eliminar:hover::before {
+  opacity: 0.15;
+}
+
 .opcion-editar:hover {
-  background-color: rgba(52, 152, 219, 0.2);
-  color: #3498DB;
+  color: var(--color-acento);
+  transform: translateX(4px);
 }
 
 .opcion-eliminar:hover {
-  background-color: rgba(231, 76, 60, 0.2);
-  color: #E74C3C;
+  color: var(--color-peligro);
+  transform: translateX(4px);
 }
 
 .overlay-acciones {
@@ -358,7 +541,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 50;
+  z-index: 1001;
+  background: transparent;
 }
 
 /* Responsivo */

@@ -9,18 +9,38 @@
 
 /* Encabezado de la película */
 .encabezado-pelicula {
-  background: linear-gradient(135deg, #34495E 0%, #2C3E50 100%);
-  border-radius: 20px;
-  padding: 3rem;
-  margin-bottom: 3rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  border: 2px solid #1ABC9C;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radio-borde-xxl);
+  padding: var(--espaciado-xxxl);
+  margin-bottom: var(--espaciado-xxxl);
+  box-shadow: var(--sombra-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.encabezado-pelicula::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 170, 0.05) 0%, 
+    rgba(255, 107, 107, 0.03) 50%,
+    rgba(0, 212, 170, 0.05) 100%);
+  pointer-events: none;
 }
 
 .info-pelicula {
   display: flex;
-  gap: 3rem;
+  gap: var(--espaciado-xxxl);
   align-items: flex-start;
+  position: relative;
+  z-index: 1;
 }
 
 /* Imagen de la película */
@@ -32,9 +52,17 @@
   width: 200px;
   height: 300px;
   object-fit: cover;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-  border: 3px solid #1ABC9C;
+  border-radius: var(--radio-borde-xl);
+  box-shadow: var(--sombra-large);
+  border: 2px solid var(--glass-border);
+  transition: all var(--transicion-normal);
+  position: relative;
+}
+
+.poster-pelicula:hover {
+  transform: scale(1.02);
+  box-shadow: var(--sombra-xl), 0 0 30px rgba(0, 212, 170, 0.3);
+  border-color: var(--color-acento);
 }
 
 /* Detalles de la película */
@@ -73,12 +101,21 @@
 
 /* Título y metadatos */
 .titulo-pelicula {
-  color: #ECF0F1;
-  font-size: 3rem;
-  font-weight: bold;
+  color: var(--texto-principal);
+  font-family: var(--fuente-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
   margin: 0;
-  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
   line-height: 1.1;
+  background: linear-gradient(135deg, 
+    var(--texto-principal) 0%, 
+    var(--color-acento) 50%, 
+    var(--texto-principal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  z-index: 1;
 }
 
 .metadatos-pelicula {
@@ -89,67 +126,119 @@
 }
 
 .año-pelicula {
-  color: #1ABC9C;
+  color: var(--color-acento);
+  font-family: var(--fuente-display);
   font-weight: 600;
 }
 
 .separador-metadatos {
-  color: #95A5A6;
+  color: var(--texto-silenciado);
 }
 
 .genero-pelicula {
-  color: #BDC3C7;
-  background-color: rgba(26, 188, 156, 0.1);
-  padding: 0.25rem 0.75rem;
-  border-radius: 15px;
-  border: 1px solid #1ABC9C;
-  font-size: 0.9rem;
+  color: var(--texto-principal);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  padding: var(--espaciado-xs) var(--espaciado-md);
+  border-radius: var(--radio-borde-pill);
+  border: 1px solid var(--color-acento);
+  font-family: var(--fuente-principal);
+  font-size: 0.85rem;
+  font-weight: 500;
   text-transform: capitalize;
+  transition: all var(--transicion-normal);
 }
 
-/* Estadísticas */
+.genero-pelicula:hover {
+  background: rgba(0, 212, 170, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Estadísticas compactas y aesthetic */
 .estadisticas-pelicula {
   display: flex;
-  gap: 3rem;
-  padding: 2rem 0;
-  border-top: 1px solid #34495E;
-  border-bottom: 1px solid #34495E;
+  gap: var(--espaciado-lg);
+  margin: var(--espaciado-xl) 0;
 }
 
 .estadistica {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radio-borde-lg);
+  padding: var(--espaciado-lg);
+  text-align: center;
+  min-width: 90px;
+  transition: all var(--transicion-normal);
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+}
+
+.estadistica::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 170, 0.03) 0%, 
+    rgba(255, 107, 107, 0.02) 100%);
+  opacity: 0;
+  transition: opacity var(--transicion-normal);
+}
+
+.estadistica:hover::before {
+  opacity: 1;
+}
+
+.estadistica:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-medium);
+  border-color: var(--color-acento);
 }
 
 .valor-estadistica {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #1ABC9C;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-family: var(--fuente-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-acento);
+  margin-bottom: var(--espaciado-xs);
+  position: relative;
+  z-index: 1;
+  display: block;
 }
 
 .estrellas-promedio {
   display: flex;
-  gap: 0.2rem;
+  gap: 2px;
+  justify-content: center;
+  margin-bottom: var(--espaciado-xs);
 }
 
 .estrella-promedio {
-  font-size: 1.2rem;
-  color: #7F8C8D;
+  font-size: 0.9rem;
+  color: var(--texto-silenciado);
+  transition: color var(--transicion-normal);
 }
 
 .estrella-promedio.activa {
-  color: #F39C12;
+  color: var(--color-advertencia);
+  filter: drop-shadow(0 0 4px rgba(255, 212, 59, 0.6));
 }
 
 .etiqueta-estadistica {
-  color: #95A5A6;
-  font-size: 0.9rem;
+  color: var(--texto-silenciado);
+  font-family: var(--fuente-principal);
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   font-weight: 500;
+  position: relative;
+  z-index: 1;
 }
 
 /* Acciones */
@@ -159,22 +248,42 @@
 }
 
 .boton-escribir-resena {
-  background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 25px;
+  background: linear-gradient(135deg, var(--color-peligro) 0%, var(--color-acento) 100%);
+  color: var(--texto-principal);
+  padding: var(--espaciado-lg) var(--espaciado-xl);
+  border-radius: var(--radio-borde-pill);
   text-decoration: none;
-  font-weight: bold;
+  font-family: var(--fuente-display);
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+  gap: var(--espaciado-sm);
+  transition: all var(--transicion-normal);
+  box-shadow: var(--sombra-peligro);
+  position: relative;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+}
+
+.boton-escribir-resena::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left var(--transicion-lenta);
+}
+
+.boton-escribir-resena:hover::before {
+  left: 100%;
 }
 
 .boton-escribir-resena:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--sombra-xl), var(--sombra-peligro);
 }
 
 /* Sección de reseñas */

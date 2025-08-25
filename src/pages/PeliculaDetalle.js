@@ -175,6 +175,7 @@ const PeliculaDetalle = () => {
               onEditar={manejarEditarResena}
               onToggleLike={manejarToggleLike}
               onAbrirComentarios={manejarAbrirComentarios}
+              usuarioActual="usuario_actual"
             />
           ))}
         </div>

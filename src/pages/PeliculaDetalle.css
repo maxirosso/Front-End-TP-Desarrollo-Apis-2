@@ -1,0 +1,385 @@
+/* Estilos para Página Detalle de Película - cineTrack */
+
+.pagina-pelicula-detalle {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Encabezado de la película */
+.encabezado-pelicula {
+  background: linear-gradient(135deg, #34495E 0%, #2C3E50 100%);
+  border-radius: 20px;
+  padding: 3rem;
+  margin-bottom: 3rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border: 2px solid #1ABC9C;
+}
+
+.info-pelicula {
+  display: flex;
+  gap: 3rem;
+  align-items: flex-start;
+}
+
+/* Imagen de la película */
+.imagen-pelicula-grande {
+  flex-shrink: 0;
+}
+
+.poster-pelicula {
+  width: 200px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  border: 3px solid #1ABC9C;
+}
+
+/* Detalles de la película */
+.detalles-pelicula {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Breadcrumb navigation */
+.navegacion-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.enlace-breadcrumb {
+  color: #1ABC9C;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.enlace-breadcrumb:hover {
+  color: #16A085;
+}
+
+.separador-breadcrumb {
+  color: #95A5A6;
+}
+
+.pagina-actual {
+  color: #BDC3C7;
+}
+
+/* Título y metadatos */
+.titulo-pelicula {
+  color: #ECF0F1;
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+  line-height: 1.1;
+}
+
+.metadatos-pelicula {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+}
+
+.año-pelicula {
+  color: #1ABC9C;
+  font-weight: 600;
+}
+
+.separador-metadatos {
+  color: #95A5A6;
+}
+
+.genero-pelicula {
+  color: #BDC3C7;
+  background-color: rgba(26, 188, 156, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  border: 1px solid #1ABC9C;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+/* Estadísticas */
+.estadisticas-pelicula {
+  display: flex;
+  gap: 3rem;
+  padding: 2rem 0;
+  border-top: 1px solid #34495E;
+  border-bottom: 1px solid #34495E;
+}
+
+.estadistica {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.valor-estadistica {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #1ABC9C;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.estrellas-promedio {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.estrella-promedio {
+  font-size: 1.2rem;
+  color: #7F8C8D;
+}
+
+.estrella-promedio.activa {
+  color: #F39C12;
+}
+
+.etiqueta-estadistica {
+  color: #95A5A6;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+/* Acciones */
+.acciones-pelicula {
+  display: flex;
+  gap: 1rem;
+}
+
+.boton-escribir-resena {
+  background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.boton-escribir-resena:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+/* Sección de reseñas */
+.seccion-resenas-pelicula {
+  margin-bottom: 3rem;
+}
+
+.titulo-seccion-resenas {
+  color: #ECF0F1;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.lista-resenas-pelicula {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Estado sin reseñas */
+.estado-sin-resenas {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #34495E 0%, #2C3E50 100%);
+  border-radius: 20px;
+  border: 2px dashed #1ABC9C;
+  margin: 2rem 0;
+}
+
+.icono-pelicula {
+  font-size: 5rem;
+  margin-bottom: 2rem;
+  opacity: 0.7;
+}
+
+.estado-sin-resenas h2 {
+  color: #ECF0F1;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.estado-sin-resenas p {
+  color: #95A5A6;
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.boton-primera-resena,
+.boton-volver {
+  display: inline-block;
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.boton-primera-resena {
+  background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.boton-primera-resena:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+.boton-volver {
+  background: transparent;
+  color: #1ABC9C;
+  border: 2px solid #1ABC9C;
+}
+
+.boton-volver:hover {
+  background-color: #1ABC9C;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Spinner de carga */
+.contenedor-cargando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: #ECF0F1;
+  min-height: 60vh;
+}
+
+.spinner-carga {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.punto-carga {
+  width: 12px;
+  height: 12px;
+  background-color: #1ABC9C;
+  border-radius: 50%;
+  animation: latido-carga 1.4s ease-in-out infinite both;
+}
+
+.punto-carga:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.punto-carga:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes latido-carga {
+  0%, 80%, 100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .pagina-pelicula-detalle {
+    padding: 1rem 0.5rem;
+  }
+  
+  .encabezado-pelicula {
+    padding: 2rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .info-pelicula {
+    flex-direction: column;
+    gap: 2rem;
+    text-align: center;
+  }
+  
+  .poster-pelicula {
+    width: 150px;
+    height: 225px;
+    margin: 0 auto;
+  }
+  
+  .titulo-pelicula {
+    font-size: 2.2rem;
+  }
+  
+  .estadisticas-pelicula {
+    gap: 2rem;
+    justify-content: center;
+  }
+  
+  .valor-estadistica {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .encabezado-pelicula {
+    padding: 1.5rem 1rem;
+  }
+  
+  .titulo-pelicula {
+    font-size: 1.8rem;
+  }
+  
+  .estadisticas-pelicula {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .navegacion-breadcrumb {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .estado-sin-resenas {
+    padding: 3rem 1rem;
+  }
+  
+  .icono-pelicula {
+    font-size: 4rem;
+  }
+}

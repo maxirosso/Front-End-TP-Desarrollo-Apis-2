@@ -1,0 +1,292 @@
+/* Estilos para Barra de Ordenamiento - cineTrack */
+
+.barra-ordenamiento {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #34495E 0%, #2C3E50 100%);
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  border: 1px solid #1ABC9C;
+}
+
+/* Información de resultados */
+.info-resultados {
+  display: flex;
+  align-items: center;
+}
+
+.contador-resultados {
+  color: #ECF0F1;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(26, 188, 156, 0.1);
+  border-radius: 20px;
+  border: 1px solid #1ABC9C;
+}
+
+/* Controles de ordenamiento */
+.controles-ordenamiento {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.etiqueta-ordenar {
+  color: #BDC3C7;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Selector de ordenamiento */
+.selector-ordenamiento {
+  position: relative;
+  z-index: 100;
+}
+
+.boton-ordenamiento {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #2C3E50;
+  border: 1px solid #7F8C8D;
+  color: #ECF0F1;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+  justify-content: space-between;
+}
+
+.boton-ordenamiento:hover {
+  border-color: #1ABC9C;
+  background-color: #34495E;
+}
+
+.icono-ordenamiento {
+  font-size: 1rem;
+}
+
+.texto-ordenamiento {
+  flex: 1;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.flecha-dropdown {
+  color: #95A5A6;
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.flecha-dropdown.rotada {
+  transform: rotate(180deg);
+}
+
+/* Menú de ordenamiento */
+.menu-ordenamiento {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+  border: 1px solid #1ABC9C;
+  border-radius: 8px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  overflow: hidden;
+  animation: desplegar-menu 0.3s ease-out;
+}
+
+@keyframes desplegar-menu {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.opcion-ordenamiento {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: #ECF0F1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  border-bottom: 1px solid rgba(127, 140, 141, 0.2);
+}
+
+.opcion-ordenamiento:last-child {
+  border-bottom: none;
+}
+
+.opcion-ordenamiento:hover {
+  background-color: rgba(26, 188, 156, 0.1);
+  color: #1ABC9C;
+}
+
+.opcion-ordenamiento.activa {
+  background-color: #1ABC9C;
+  color: white;
+}
+
+.opcion-ordenamiento.activa:hover {
+  background-color: #16A085;
+}
+
+.icono-opcion {
+  font-size: 1rem;
+  min-width: 20px;
+}
+
+.texto-opcion {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: left;
+}
+
+.etiqueta-opcion {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.descripcion-opcion {
+  font-size: 0.75rem;
+  color: #95A5A6;
+  line-height: 1.3;
+}
+
+.opcion-ordenamiento.activa .descripcion-opcion {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.marca-seleccionada {
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* Overlay del menú */
+.overlay-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+}
+
+/* Vista móvil */
+.ordenamiento-movil {
+  display: none;
+}
+
+.select-ordenamiento-movil {
+  background-color: #2C3E50;
+  border: 1px solid #7F8C8D;
+  color: #ECF0F1;
+  padding: 0.6rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+  max-width: 250px;
+}
+
+.select-ordenamiento-movil:focus {
+  outline: none;
+  border-color: #1ABC9C;
+}
+
+/* Estados especiales */
+.barra-ordenamiento.sin-resultados {
+  opacity: 0.6;
+}
+
+.barra-ordenamiento.sin-resultados .controles-ordenamiento {
+  pointer-events: none;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .barra-ordenamiento {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .info-resultados {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .controles-ordenamiento {
+    display: none;
+  }
+  
+  .ordenamiento-movil {
+    display: block;
+    width: 100%;
+  }
+  
+  .contador-resultados {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .barra-ordenamiento {
+    padding: 0.75rem;
+  }
+  
+  .contador-resultados {
+    font-size: 0.8rem;
+  }
+  
+  .select-ordenamiento-movil {
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+}
+
+/* Animaciones adicionales */
+.barra-ordenamiento {
+  animation: aparecer-barra 0.5s ease-out;
+}
+
+@keyframes aparecer-barra {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Efectos de hover mejorados */
+.boton-ordenamiento:focus {
+  outline: 2px solid #1ABC9C;
+  outline-offset: 2px;
+}
+
+.opcion-ordenamiento:focus {
+  outline: 2px solid #1ABC9C;
+  outline-offset: -2px;
+}

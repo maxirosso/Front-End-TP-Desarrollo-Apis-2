@@ -1,39 +1,291 @@
-.App {
-  text-align: center;
+/* Estilos Globales - cineTrack */
+
+/* Reset y configuración base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+html {
+  scroll-behavior: smooth;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #2C3E50 100%);
+  color: #ECF0F1;
+  min-height: 100vh;
+  line-height: 1.6;
 }
 
-.App-header {
-  background-color: #282c34;
+/* Variables CSS para la paleta de colores */
+:root {
+  /* Colores principales */
+  --color-primario: #2C3E50;
+  --color-secundario: #34495E;
+  --color-acento: #1ABC9C;
+  --color-peligro: #E74C3C;
+  --color-exito: #27AE60;
+  --color-advertencia: #F39C12;
+  
+  /* Colores de texto */
+  --texto-principal: #ECF0F1;
+  --texto-secundario: #BDC3C7;
+  --texto-silenciado: #95A5A6;
+  --texto-oscuro: #7F8C8D;
+  
+  /* Espaciado */
+  --espaciado-xs: 0.25rem;
+  --espaciado-sm: 0.5rem;
+  --espaciado-md: 1rem;
+  --espaciado-lg: 1.5rem;
+  --espaciado-xl: 2rem;
+  --espaciado-xxl: 3rem;
+  
+  /* Bordes */
+  --radio-borde-sm: 4px;
+  --radio-borde-md: 8px;
+  --radio-borde-lg: 12px;
+  --radio-borde-xl: 20px;
+  
+  /* Sombras */
+  --sombra-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --sombra-md: 0 4px 15px rgba(0, 0, 0, 0.2);
+  --sombra-lg: 0 6px 20px rgba(0, 0, 0, 0.3);
+  
+  /* Transiciones */
+  --transicion-rapida: 0.2s ease;
+  --transicion-normal: 0.3s ease;
+  --transicion-lenta: 0.5s ease;
+}
+
+/* Aplicación principal */
+.aplicacion-principal {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.contenido-principal {
+  flex: 1;
+  padding: var(--espaciado-xl) 0;
+}
+
+.contenedor-resenas {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--espaciado-lg);
+}
+
+.titulo-seccion {
+  color: var(--color-acento);
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: var(--espaciado-xxl);
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Utilidades de texto */
+.texto-centrado {
+  text-align: center;
+}
+
+.texto-izquierda {
+  text-align: left;
+}
+
+.texto-derecha {
+  text-align: right;
+}
+
+.texto-principal {
+  color: var(--texto-principal);
+}
+
+.texto-secundario {
+  color: var(--texto-secundario);
+}
+
+.texto-silenciado {
+  color: var(--texto-silenciado);
+}
+
+/* Utilidades de espaciado */
+.margen-superior-sm { margin-top: var(--espaciado-sm); }
+.margen-superior-md { margin-top: var(--espaciado-md); }
+.margen-superior-lg { margin-top: var(--espaciado-lg); }
+.margen-superior-xl { margin-top: var(--espaciado-xl); }
+
+.margen-inferior-sm { margin-bottom: var(--espaciado-sm); }
+.margen-inferior-md { margin-bottom: var(--espaciado-md); }
+.margen-inferior-lg { margin-bottom: var(--espaciado-lg); }
+.margen-inferior-xl { margin-bottom: var(--espaciado-xl); }
+
+.padding-sm { padding: var(--espaciado-sm); }
+.padding-md { padding: var(--espaciado-md); }
+.padding-lg { padding: var(--espaciado-lg); }
+.padding-xl { padding: var(--espaciado-xl); }
+
+/* Utilidades de flexbox */
+.flex {
+  display: flex;
+}
+
+.flex-columna {
+  flex-direction: column;
+}
+
+.flex-centro {
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+.flex-espacio-entre {
+  justify-content: space-between;
+}
+
+.flex-espacio-alrededor {
+  justify-content: space-around;
+}
+
+/* Botones base */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaciado-sm);
+  padding: var(--espaciado-sm) var(--espaciado-lg);
+  border: none;
+  border-radius: var(--radio-borde-xl);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transicion-normal);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.boton-primario {
+  background-color: var(--color-acento);
+  color: white;
+  box-shadow: var(--sombra-sm);
+}
+
+.boton-primario:hover {
+  background-color: #16A085;
+  transform: translateY(-1px);
+  box-shadow: var(--sombra-md);
+}
+
+.boton-secundario {
+  background-color: var(--color-secundario);
+  color: var(--texto-principal);
+  border: 1px solid var(--texto-oscuro);
+}
+
+.boton-secundario:hover {
+  background-color: var(--color-primario);
+  border-color: var(--color-acento);
+}
+
+.boton-peligro {
+  background-color: var(--color-peligro);
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.boton-peligro:hover {
+  background-color: #C0392B;
 }
 
-@keyframes App-logo-spin {
+/* Animaciones personalizadas */
+@keyframes aparicion-suave {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(20px);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animacion-aparicion {
+  animation: aparicion-suave 0.6s ease-out;
+}
+
+/* Estados de carga */
+@keyframes pulso {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.cargando {
+  animation: pulso 1.5s ease-in-out infinite;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-primario);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-acento);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #16A085;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .contenido-principal {
+    padding: var(--espaciado-lg) 0;
+  }
+  
+  .contenedor-resenas {
+    padding: 0 var(--espaciado-md);
+  }
+  
+  .titulo-seccion {
+    font-size: 2rem;
+    margin-bottom: var(--espaciado-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .contenedor-resenas {
+    padding: 0 var(--espaciado-sm);
+  }
+  
+  .titulo-seccion {
+    font-size: 1.8rem;
+  }
+}
+
+/* Focus states para accesibilidad */
+button:focus,
+input:focus,
+a:focus {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+/* Estados de hover mejorados */
+@media (hover: hover) {
+  .enlace-hover:hover {
+    color: var(--color-acento);
+    transition: color var(--transicion-normal);
   }
 }

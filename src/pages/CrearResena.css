@@ -1,0 +1,444 @@
+/* Estilos para Página Crear Reseña - cineTrack */
+
+.pagina-crear-resena {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.contenedor-crear-resena {
+  background: linear-gradient(135deg, #34495E 0%, #2C3E50 100%);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border: 2px solid #1ABC9C;
+}
+
+/* Encabezado */
+.encabezado-crear-resena {
+  background: linear-gradient(135deg, #1ABC9C 0%, #16A085 100%);
+  padding: 3rem 2rem;
+  text-align: center;
+  color: white;
+}
+
+.titulo-crear-resena {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0 0 1rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.subtitulo-crear-resena {
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.9;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* Formulario */
+.formulario-crear-resena {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* Secciones del formulario */
+.seccion-pelicula,
+.seccion-calificacion,
+.seccion-fecha,
+.seccion-resena,
+.seccion-tags,
+.seccion-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.subtitulo-seccion {
+  color: #1ABC9C;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  border-bottom: 2px solid #1ABC9C;
+  padding-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.subtitulo-seccion::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(135deg, #1ABC9C 0%, #16A085 100%);
+  border-radius: 2px;
+}
+
+/* Grupos de campos */
+.grupo-campos {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+/* Campos del formulario */
+.campo-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.etiqueta-campo {
+  color: #ECF0F1;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.entrada-texto,
+.entrada-numero,
+.entrada-select,
+.entrada-fecha,
+.entrada-textarea {
+  background-color: #2C3E50;
+  border: 2px solid #7F8C8D;
+  color: #ECF0F1;
+  padding: 1rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.entrada-texto:focus,
+.entrada-numero:focus,
+.entrada-select:focus,
+.entrada-fecha:focus,
+.entrada-textarea:focus {
+  outline: none;
+  border-color: #1ABC9C;
+  box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.2);
+  transform: translateY(-1px);
+}
+
+.entrada-texto.error,
+.entrada-numero.error,
+.entrada-select.error,
+.entrada-fecha.error,
+.entrada-textarea.error {
+  border-color: #E74C3C;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+  animation: shake 0.5s ease-in-out;
+}
+
+.entrada-textarea {
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.6;
+}
+
+/* Información del textarea */
+.info-textarea {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.contador-caracteres {
+  color: #95A5A6;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.contador-caracteres.cerca-limite {
+  color: #F39C12;
+  font-weight: bold;
+  animation: pulso 1s ease-in-out infinite;
+}
+
+/* Mensajes de error */
+.mensaje-error {
+  color: #E74C3C;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mensaje-error::before {
+  content: '⚠️';
+  font-size: 0.8rem;
+}
+
+/* Calificación con estrellas */
+.contenedor-estrellas {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem;
+  background-color: rgba(26, 188, 156, 0.1);
+  border-radius: 10px;
+  border: 1px solid #1ABC9C;
+}
+
+.estrella-seleccionable {
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  color: #7F8C8D;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0.25rem;
+  border-radius: 50%;
+}
+
+.estrella-seleccionable:hover,
+.estrella-seleccionable.activa {
+  color: #F39C12;
+  transform: scale(1.2);
+  text-shadow: 0 2px 8px rgba(243, 156, 18, 0.5);
+}
+
+.texto-calificacion {
+  color: #ECF0F1;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Tags */
+.contenedor-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tag-boton {
+  background-color: #2C3E50;
+  border: 2px solid #7F8C8D;
+  color: #BDC3C7;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.tag-boton:hover {
+  border-color: #1ABC9C;
+  color: #ECF0F1;
+  transform: translateY(-2px);
+}
+
+.tag-boton.activo {
+  background: linear-gradient(135deg, #1ABC9C 0%, #16A085 100%);
+  border-color: #1ABC9C;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(26, 188, 156, 0.3);
+}
+
+/* Checkboxes personalizados */
+.campo-checkbox {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: rgba(52, 73, 94, 0.5);
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.campo-checkbox:hover {
+  background-color: rgba(52, 73, 94, 0.7);
+}
+
+.etiqueta-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  color: #ECF0F1;
+  font-size: 1rem;
+  font-weight: 500;
+  width: 100%;
+}
+
+.etiqueta-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-personalizado {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #7F8C8D;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.etiqueta-checkbox input[type="checkbox"]:checked + .checkbox-personalizado {
+  background: linear-gradient(135deg, #1ABC9C 0%, #16A085 100%);
+  border-color: #1ABC9C;
+  transform: scale(1.1);
+}
+
+.etiqueta-checkbox input[type="checkbox"]:checked + .checkbox-personalizado::after {
+  content: '✓';
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+/* Botones de acción */
+.botones-crear-resena {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: flex-end;
+  padding-top: 2rem;
+  border-top: 2px solid #34495E;
+  margin-top: 1rem;
+}
+
+.boton-cancelar,
+.boton-publicar {
+  padding: 1rem 2.5rem;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  letter-spacing: 0.5px;
+  min-width: 150px;
+}
+
+.boton-cancelar {
+  background-color: #7F8C8D;
+  color: white;
+}
+
+.boton-cancelar:hover:not(:disabled) {
+  background-color: #95A5A6;
+  transform: translateY(-2px);
+}
+
+.boton-publicar {
+  background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
+.boton-publicar:hover:not(:disabled) {
+  background: linear-gradient(135deg, #C0392B 0%, #E74C3C 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5);
+}
+
+.boton-publicar:disabled,
+.boton-cancelar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes pulso {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .pagina-crear-resena {
+    padding: 1rem 0.5rem;
+  }
+  
+  .encabezado-crear-resena {
+    padding: 2rem 1.5rem;
+  }
+  
+  .titulo-crear-resena {
+    font-size: 2rem;
+  }
+  
+  .subtitulo-crear-resena {
+    font-size: 1rem;
+  }
+  
+  .formulario-crear-resena {
+    padding: 2rem 1.5rem;
+    gap: 2rem;
+  }
+  
+  .grupo-campos {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .contenedor-estrellas {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .botones-crear-resena {
+    flex-direction: column;
+  }
+  
+  .boton-cancelar,
+  .boton-publicar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .formulario-crear-resena {
+    padding: 1.5rem 1rem;
+  }
+  
+  .encabezado-crear-resena {
+    padding: 1.5rem 1rem;
+  }
+  
+  .titulo-crear-resena {
+    font-size: 1.8rem;
+  }
+  
+  .estrella-seleccionable {
+    font-size: 2rem;
+  }
+  
+  .contenedor-tags {
+    justify-content: center;
+  }
+}

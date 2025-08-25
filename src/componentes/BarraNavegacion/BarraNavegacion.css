@@ -1,0 +1,172 @@
+/* Estilos para la Barra de Navegación - cineTrack */
+.barra-navegacion {
+  background-color: #2C3E50;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.contenedor-navegacion {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  gap: 2rem;
+}
+
+/* Logo y nombre */
+.logo-contenedor {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.logo-contenedor:hover {
+  transform: scale(1.05);
+}
+
+/* Logo con triángulos */
+.logo-triangulos {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-right: 0.5rem;
+}
+
+.triangulo {
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.triangulo-rojo {
+  border-left: 16px solid #E74C3C;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+}
+
+.triangulo-cyan {
+  border-right: 16px solid #1ABC9C;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+}
+
+.nombre-aplicacion {
+  color: #ECF0F1;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+/* Menú de navegación */
+.menu-navegacion {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2rem;
+}
+
+.enlace-navegacion {
+  color: #BDC3C7;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+  padding: 0.5rem 0;
+}
+
+.enlace-navegacion:hover {
+  color: #1ABC9C;
+}
+
+/* Formulario de búsqueda */
+.formulario-busqueda {
+  display: flex;
+  align-items: center;
+  background-color: #34495E;
+  border-radius: 25px;
+  padding: 0.3rem;
+  flex: 1;
+  max-width: 400px;
+}
+
+.entrada-busqueda {
+  background: transparent;
+  border: none;
+  color: #ECF0F1;
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+  flex: 1;
+  outline: none;
+}
+
+.entrada-busqueda::placeholder {
+  color: #95A5A6;
+}
+
+.boton-busqueda {
+  background: transparent;
+  border: none;
+  color: #95A5A6;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: color 0.3s ease;
+}
+
+.boton-busqueda:hover {
+  color: #1ABC9C;
+}
+
+/* Botón de crear reseña */
+.boton-crear-resena-nav {
+  background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+}
+
+.boton-crear-resena-nav:hover {
+  background: linear-gradient(135deg, #C0392B 0%, #E74C3C 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .contenedor-navegacion {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .menu-navegacion {
+    order: 3;
+    gap: 1rem;
+  }
+  
+  .formulario-busqueda {
+    order: 2;
+    max-width: 100%;
+  }
+}

@@ -12,22 +12,23 @@ html {
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #2C3E50 100%);
-  color: #ECF0F1;
+  font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #121C2E 0%, #19293F 25%, #27496D 50%, #19293F 75%, #121C2E 100%);
+  color: #FFFFFF;
   min-height: 100vh;
   line-height: 1.6;
 }
 
 /* Variables CSS para diseño profesional */
 :root {
-  /* Paleta de colores sofisticada */
-  --color-primario: #1a1a2e;
-  --color-secundario: #16213e;
-  --color-terciario: #0f3460;
-  --color-acento: #00d4aa;
-  --color-acento-hover: #00b894;
-  --color-peligro: #ff6b6b;
+  /* Paleta de colores oficial de cineTrack */
+  --color-primario: #121C2E;
+  --color-secundario: #19293F;
+  --color-terciario: #27496D;
+  --color-cuaternario: #9CB4CC;
+  --color-acento: #16E0D4;
+  --color-acento-hover: #12B3A8;
+  --color-peligro: #FF0035;
   --color-exito: #51cf66;
   --color-advertencia: #ffd43b;
   
@@ -38,11 +39,11 @@ body {
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
   --glass-backdrop: blur(8px);
   
-  /* Colores de texto mejorados */
-  --texto-principal: #ffffff;
-  --texto-secundario: #e8eaed;
-  --texto-terciario: #bdc1c6;
-  --texto-silenciado: #9aa0a6;
+  /* Colores de texto ajustados */
+  --texto-principal: #FFFFFF;
+  --texto-secundario: #9CB4CC;
+  --texto-terciario: #9CB4CC;
+  --texto-silenciado: #9CB4CC;
   --texto-deshabilitado: #5f6368;
   
   /* Espaciado con sistema de 8px */
@@ -71,8 +72,8 @@ body {
   --sombra-xl: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
   
   /* Sombras de color para elementos especiales */
-  --sombra-acento: 0 8px 16px rgba(0, 212, 170, 0.3);
-  --sombra-peligro: 0 8px 16px rgba(255, 107, 107, 0.3);
+  --sombra-acento: 0 8px 16px rgba(22, 224, 212, 0.3);
+  --sombra-peligro: 0 8px 16px rgba(255, 0, 53, 0.3);
   --sombra-exito: 0 8px 16px rgba(81, 207, 102, 0.3);
   
   /* Transiciones con curvas suaves */
@@ -81,10 +82,10 @@ body {
   --transicion-lenta: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   --transicion-bounce: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   
-  /* Fuentes tipográficas */
-  --fuente-principal: 'Inter', system-ui, -apple-system, sans-serif;
-  --fuente-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-  --fuente-elegante: 'Playfair Display', Georgia, serif;
+  /* Fuentes tipográficas oficiales de cineTrack */
+  --fuente-principal: 'Montserrat', system-ui, -apple-system, sans-serif;
+  --fuente-titulos: 'Oswald', system-ui, -apple-system, sans-serif;
+  --fuente-especial: 'Libre Baskerville', Georgia, serif;
   
   /* Z-index consistente */
   --z-dropdown: 1000;
@@ -208,9 +209,9 @@ body {
 }
 
 .boton-primario:hover {
-  background-color: #16A085;
+  background-color: var(--color-acento-hover);
   transform: translateY(-1px);
-  box-shadow: var(--sombra-md);
+  box-shadow: var(--sombra-medium);
 }
 
 .boton-secundario {
@@ -278,7 +279,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #16A085;
+  background: var(--color-acento-hover);
 }
 
 /* Responsivo */

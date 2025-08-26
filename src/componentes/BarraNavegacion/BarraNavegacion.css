@@ -94,26 +94,26 @@
 }
 
 .triangulo-rojo {
-  border-right: 20px solid #FF6B9D;
+  border-right: 20px solid #FF0035;
   border-left: 0;
   border-top: 16px solid transparent;
   border-bottom: 16px solid transparent;
 }
 
 .triangulo-cyan {
-  border-left: 20px solid #00D4AA;
+  border-left: 20px solid #16E0D4;
   border-right: 0;
   border-top: 16px solid transparent;
   border-bottom: 16px solid transparent;
 }
 
 .logo-contenedor:hover .triangulo-rojo {
-  border-right-color: #FF8BB5;
+  border-right-color: #FF2550;
   transform: scale(1.02);
 }
 
 .logo-contenedor:hover .triangulo-cyan {
-  border-left-color: #1ADEBC;
+  border-left-color: #20E8DC;
   transform: scale(1.02);
 }
 

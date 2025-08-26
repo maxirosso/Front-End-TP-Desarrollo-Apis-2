@@ -97,7 +97,7 @@
 
 /* Encabezado de la reseña */
 .encabezado-resena {
-  border-bottom: 1px solid #2C3E50;
+  border-bottom: 1px solid var(--color-terciario);
   padding-bottom: 0.5rem;
 }
 
@@ -165,8 +165,10 @@
 }
 
 .fecha-visionado {
-  color: #95A5A6;
+  color: var(--texto-secundario);
+  font-family: var(--fuente-especial);
   font-size: 0.85rem;
+  font-style: italic;
 }
 
 /* Título de la película */
@@ -186,20 +188,22 @@
 }
 
 .titulo-pelicula {
-  color: #1ABC9C;
+  color: var(--color-acento);
+  font-family: var(--fuente-titulos);
   font-size: 1.4rem;
   font-weight: bold;
   margin: 0;
   text-decoration: none;
   transition: color 0.3s ease;
+  letter-spacing: 0.02em;
 }
 
 .enlace-titulo-pelicula:hover .titulo-pelicula {
-  color: #16A085;
+  color: var(--color-acento-hover);
 }
 
 .año-pelicula {
-  color: #95A5A6;
+  color: var(--texto-secundario);
   font-size: 1rem;
   font-weight: normal;
 }
@@ -230,7 +234,7 @@
 }
 
 .estrella.vacia {
-  color: #7F8C8D;
+  color: var(--texto-silenciado);
 }
 
 .icono-megusta {
@@ -258,7 +262,7 @@
 .boton-ver-mas {
   background: none;
   border: none;
-  color: #1ABC9C;
+  color: var(--color-acento);
   font-size: 0.85rem;
   cursor: pointer;
   padding: 0.25rem 0;
@@ -267,7 +271,7 @@
 }
 
 .boton-ver-mas:hover {
-  color: #16A085;
+  color: var(--color-acento-hover);
 }
 
 /* Tags de la reseña */
@@ -279,7 +283,7 @@
 }
 
 .tag-resena {
-  background-color: #1ABC9C;
+  background-color: var(--color-acento);
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -289,9 +293,9 @@
 
 /* Advertencia de spoilers */
 .advertencia-spoilers {
-  background-color: rgba(231, 76, 60, 0.1);
-  border: 1px solid #E74C3C;
-  color: #E74C3C;
+  background-color: rgba(255, 0, 53, 0.1);
+  border: 1px solid var(--color-peligro);
+  color: var(--color-peligro);
   padding: 0.5rem;
   border-radius: 6px;
   font-size: 0.8rem;
@@ -305,13 +309,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #2C3E50;
+  border-top: 1px solid var(--color-terciario);
   padding-top: 1rem;
 }
 
 .fecha-publicacion {
-  color: #95A5A6;
+  color: var(--texto-secundario);
+  font-family: var(--fuente-especial);
   font-size: 0.8rem;
+  font-style: italic;
 }
 
 .acciones-resena {
@@ -324,8 +330,8 @@
 .boton-like,
 .boton-comentar {
   background: transparent;
-  border: 1px solid #7F8C8D;
-  color: #BDC3C7;
+  border: 1px solid var(--texto-silenciado);
+  color: var(--texto-secundario);
   padding: 0.4rem 0.8rem;
   border-radius: 20px;
   font-size: 0.8rem;

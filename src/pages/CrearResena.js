@@ -1,11 +1,42 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { redirect, useNavigate } from 'react-router-dom';
 import { useResenas } from '../contextos/ContextoResenas';
 import './CrearResena.css';
+import { useSubmit } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
+import { getReview } from '../apis/reviews';
+
+export const loader = async ({ params }) => {
+  const { id } = params;
+  if(!id) return { reviewData : null };
+  const reviewData = await getReview(id);
+  return { reviewData };
+}
+
+export const action = async ({ request }) => {
+  const formData = await request.formData();
+  const nuevaResena = {
+    titulo: formData.get('titulo'),
+    año: formData.get('año'),
+    calificacion: formData.get('calificacion'),
+    fechaVisionado: formData.get('fechaVisionado'),
+    textoResena: formData.get('textoResena'),
+    megusta: formData.get('megusta') === 'true',
+    contieneEspoilers: formData.get('contieneEspoilers') === 'true',
+    esSpoilerFree: formData.get('esSpoilerFree') === 'true',
+    genero: formData.get('genero'),
+    tags: formData.getAll('tags')
+  };
+
+  // Aquí puedes realizar la lógica para guardar la nueva reseña
+  console.log(nuevaResena);
+  return redirect('/');
+}
 
 const CrearResena = () => {
+  const { reviewData } = useLoaderData();
   const navigate = useNavigate();
-  const { agregarResena } = useResenas();
+  const submit = useSubmit();
 
   const [datosFormulario, setDatosFormulario] = useState({
     titulo: '',
@@ -25,7 +56,7 @@ const CrearResena = () => {
   const [enviando, setEnviando] = useState(false);
 
   const tagsDisponibles = [
-    'Spoiler Free', 'Acción', 'Drama', 'Comedia', 'Terror', 'Romance', 
+    'Spoiler Free', 'Acción', 'Drama', 'Comedia', 'Terror', 'Romance',
     'Ciencia Ficción', 'Thriller', 'Familiar', 'Animación', 'Documental',
     'Obra Maestra', 'Decepcionante', 'Sobrevalorada', 'Infravalorada'
   ];
@@ -35,7 +66,7 @@ const CrearResena = () => {
       ...prev,
       [campo]: valor
     }));
-    
+
     // Limpiar error específico cuando el usuario empiece a corregir
     if (errores[campo]) {
       setErrores(prev => ({ ...prev, [campo]: null }));
@@ -45,7 +76,7 @@ const CrearResena = () => {
   const manejarCambioTag = (tag) => {
     setDatosFormulario(prev => ({
       ...prev,
-      tags: prev.tags.includes(tag) 
+      tags: prev.tags.includes(tag)
         ? prev.tags.filter(t => t !== tag)
         : [...prev.tags, tag]
     }));
@@ -84,56 +115,23 @@ const CrearResena = () => {
 
   const manejarEnvio = async (evento) => {
     evento.preventDefault();
-    
+
     if (!validarFormulario()) {
       return;
     }
 
-    setEnviando(true);
-
-    try {
-      const nuevaResena = {
-        id: Date.now(),
-        titulo: datosFormulario.titulo,
-        año: parseInt(datosFormulario.año),
-        imagenUrl: `https://via.placeholder.com/120x180/2C3E50/ECF0F1?text=${encodeURIComponent(datosFormulario.titulo)}`,
-        calificacion: datosFormulario.calificacion,
-        usuario: 'usuario_actual',
-        fechaResena: new Date().toLocaleDateString('es-ES', { 
-          day: 'numeric', 
-          month: 'long', 
-          year: 'numeric' 
-        }),
-        fechaVisionado: new Date(datosFormulario.fechaVisionado).toLocaleDateString('es-ES', { 
-          day: 'numeric', 
-          month: 'long', 
-          year: 'numeric' 
-        }),
-        textoResena: datosFormulario.textoResena,
-        megusta: datosFormulario.megusta,
-        genero: datosFormulario.genero,
-        tags: datosFormulario.tags,
-        contieneEspoilers: datosFormulario.contieneEspoilers,
-        likes: 0,
-        yaLeDiLike: false,
-        comentarios: []
-      };
-
-      // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      agregarResena(nuevaResena);
-      
-      // Mostrar mensaje de éxito y navegar
-      alert('¡Reseña creada exitosamente!');
-      navigate('/');
-      
-    } catch (error) {
-      console.error('Error al crear reseña:', error);
-      alert('Hubo un error al crear la reseña. Inténtalo de nuevo.');
-    } finally {
-      setEnviando(false);
-    }
+    const formData = new FormData();
+    formData.append('titulo', datosFormulario.titulo);
+    formData.append('año', datosFormulario.año);
+    formData.append('calificacion', datosFormulario.calificacion);
+    formData.append('fechaVisionado', datosFormulario.fechaVisionado);
+    formData.append('textoResena', datosFormulario.textoResena);
+    formData.append('megusta', datosFormulario.megusta);
+    formData.append('contieneEspoilers', datosFormulario.contieneEspoilers);
+    formData.append('esSpoilerFree', datosFormulario.esSpoilerFree);
+    formData.append('genero', datosFormulario.genero);
+    datosFormulario.tags.forEach(tag => formData.append('tags', tag));
+    submit(formData, { method: 'post' });
   };
 
   const generarEstrellas = () => {
@@ -143,9 +141,8 @@ const CrearResena = () => {
         <button
           key={i}
           type="button"
-          className={`estrella-seleccionable ${
-            i <= (calificacionHover || datosFormulario.calificacion) ? 'activa' : ''
-          }`}
+          className={`estrella-seleccionable ${i <= (calificacionHover || datosFormulario.calificacion) ? 'activa' : ''
+            }`}
           onClick={() => manejarCambioEntrada('calificacion', i)}
           onMouseEnter={() => setCalificacionHover(i)}
           onMouseLeave={() => setCalificacionHover(0)}
@@ -171,7 +168,7 @@ const CrearResena = () => {
           {/* Información de la película */}
           <section className="seccion-pelicula">
             <h3 className="subtitulo-seccion">Información de la Película</h3>
-            
+
             <div className="grupo-campos">
               <div className="campo-formulario">
                 <label className="etiqueta-campo">Título de la Película *</label>
@@ -328,16 +325,16 @@ const CrearResena = () => {
 
           {/* Botones de acción */}
           <div className="botones-crear-resena">
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="boton-cancelar"
               onClick={() => navigate('/')}
               disabled={enviando}
             >
               Cancelar
             </button>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="boton-publicar"
               disabled={enviando}
             >

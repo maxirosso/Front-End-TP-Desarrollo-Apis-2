@@ -1,13 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useLoaderData } from 'react-router-dom';
 import { useResenas } from '../contextos/ContextoResenas';
 import TarjetaResena from '../componentes/TarjetaResena/TarjetaResena';
 import FiltrosResenas from '../componentes/FiltrosResenas/FiltrosResenas';
 import BarraOrdenamiento from '../componentes/BarraOrdenamiento/BarraOrdenamiento';
 import ModalComentarios from '../componentes/ModalComentarios/ModalComentarios';
 import './Inicio.css';
+import { getReviews } from '../apis/reviews';
+
+export const loader = async ({request}) => {
+  const url = new URL(request.url);
+  const searchParams = url.searchParams;
+  // Ejemplo: obtener el filtro 'genero'
+  const genero = searchParams.get('genero');
+  const fechaPublicacion = searchParams.get('fechaPublicacion');
+  const calificacion = searchParams.get('calificacion');
+  const tags = searchParams.getAll('tags');
+  const usuario = searchParams.get('usuario');
+  const pelicula = searchParams.get('pelicula');
+  const contieneEspoilers = searchParams.get('contieneEspoilers') === 'true';
+  const soloMeGusta = searchParams.get('soloMeGusta') === 'true';
+
+  const reviewsData = await getReviews(/* Pasamos los filtros despues */);
+  return { reviewsData }
+}
 
 const Inicio = () => {
+  const { reviewsData } = useLoaderData();
   const {
     resenas,
     cargando,
@@ -22,16 +41,8 @@ const Inicio = () => {
     aplicarOrdenamiento
   } = useResenas();
 
-  const [resenasFiltradas, setResenasFiltradas] = useState([]);
   const [mostrarComentarios, setMostrarComentarios] = useState(false);
   const [resenaSeleccionada, setResenaSeleccionada] = useState(null);
-
-  // Aplicar filtros y ordenamiento
-  useEffect(() => {
-    let resenasProcesadas = aplicarFiltros(resenas, filtrosActivos);
-    resenasProcesadas = aplicarOrdenamiento(resenasProcesadas, ordenamientoActual);
-    setResenasFiltradas(resenasProcesadas);
-  }, [resenas, filtrosActivos, ordenamientoActual, aplicarFiltros, aplicarOrdenamiento]);
 
   // Funciones de manejo de eventos
   const manejarEliminarResena = (id) => {
@@ -131,25 +142,21 @@ const Inicio = () => {
       {/* Controles principales */}
       <div className="controles-principales">
         <h2 className="titulo-seccion">Reseñas Recientes</h2>
-        
+
         {/* Filtros */}
-        <FiltrosResenas
-          onAplicarFiltros={manejarAplicarFiltros}
-          filtrosActivos={filtrosActivos}
-          onLimpiarFiltros={manejarLimpiarFiltros}
-        />
+        <FiltrosResenas/>
 
         {/* Barra de ordenamiento */}
         <BarraOrdenamiento
           onCambiarOrdenamiento={manejarCambiarOrdenamiento}
           ordenamientoActual={ordenamientoActual}
-          totalResenas={resenasFiltradas.length}
+          totalResenas={reviewsData.length}
         />
       </div>
 
       {/* Lista de reseñas */}
       <div className="contenedor-resenas">
-        {resenasFiltradas.length === 0 ? (
+        {reviewsData.length === 0 ? (
           <div className="estado-vacio">
             <div className="icono-vacio">🎬</div>
             <h3>No se encontraron reseñas</h3>
@@ -160,9 +167,9 @@ const Inicio = () => {
           </div>
         ) : (
           <div className="lista-resenas">
-            {resenasFiltradas.map(resena => (
-              <TarjetaResena 
-                key={resena.id} 
+            {reviewsData.map(resena => (
+              <TarjetaResena
+                key={resena.id}
                 pelicula={resena}
                 onEliminar={manejarEliminarResena}
                 onEditar={manejarEditarResena}

@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import './FiltrosResenas.css';
+import { useNavigate } from 'react-router-dom';
 
-const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) => {
+const FiltrosResenas = () => {
+  const navigate = useNavigate();
+  // Obtener filtros desde los parámetros de búsqueda de la URL si existen
+  const searchParams = new URLSearchParams(window.location.search);
+
   const [filtrosLocales, setFiltrosLocales] = useState({
-    calificacion: filtrosActivos.calificacion || '',
-    fechaPublicacion: filtrosActivos.fechaPublicacion || '',
-    genero: filtrosActivos.genero || '',
-    tags: filtrosActivos.tags || [],
-    usuario: filtrosActivos.usuario || '',
-    pelicula: filtrosActivos.pelicula || '',
-    contieneEspoilers: filtrosActivos.contieneEspoilers || false,
-    soloMeGusta: filtrosActivos.soloMeGusta || false
+    calificacion: searchParams.get('calificacion') || '',
+    fechaPublicacion: searchParams.get('fechaPublicacion') || '',
+    genero: searchParams.get('genero') || '',
+    tags: searchParams.getAll('tags').length > 0 ? searchParams.getAll('tags') : [],
+    usuario: searchParams.get('usuario') || '',
+    pelicula: searchParams.get('pelicula') || '',
+    contieneEspoilers: searchParams.get('contieneEspoilers') === 'true' || false,
+    soloMeGusta: searchParams.get('soloMeGusta') === 'true' || false
   });
 
   const [mostrarFiltrosAvanzados, setMostrarFiltrosAvanzados] = useState(false);
@@ -67,7 +72,15 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
   };
 
   const aplicarFiltros = () => {
-    onAplicarFiltros(filtrosLocales);
+    const params = new URLSearchParams();
+    Object.entries(filtrosLocales).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(v => v && params.append(key, v));
+      } else if (value !== '' && value !== false) {
+        params.set(key, value);
+      }
+    });
+    navigate({ pathname: '/', search: params.toString() });
   };
 
   const limpiarTodosFiltros = () => {
@@ -81,8 +94,10 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
       contieneEspoilers: false,
       soloMeGusta: false
     };
+    // Limpiar los filtros de la URL
+    navigate({ pathname: '/', search: '' });
     setFiltrosLocales(filtrosVacios);
-    onLimpiarFiltros();
+    // onLimpiarFiltros();
   };
 
   const hayFiltrosActivos = () => {

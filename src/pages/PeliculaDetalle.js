@@ -21,12 +21,24 @@ const PeliculaDetalle = () => {
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    if (titulo) {
-      setCargando(true);
-      const resenas = obtenerResenasPorPelicula(decodeURIComponent(titulo));
-      setResenasPelicula(resenas);
-      setCargando(false);
-    }
+    const cargarResenasPelicula = async () => {
+      if (titulo) {
+        setCargando(true);
+        // Scroll al top cuando se navega a una nueva película
+        window.scrollTo(0, 0);
+        try {
+          const resenasPelicula = await obtenerResenasPorPelicula(decodeURIComponent(titulo));
+          setResenasPelicula(resenasPelicula || []);
+        } catch (error) {
+          console.error('Error cargando reseñas de la película:', error);
+          setResenasPelicula([]);
+        } finally {
+          setCargando(false);
+        }
+      }
+    };
+
+    cargarResenasPelicula();
   }, [titulo, resenas, obtenerResenasPorPelicula]);
 
   const manejarEliminarResena = (id) => {
@@ -115,10 +127,10 @@ const PeliculaDetalle = () => {
             
             <h1 className="titulo-pelicula">{decodeURIComponent(titulo)}</h1>
             <div className="metadatos-pelicula">
-              <span className="año-pelicula">{estadisticas.año}</span>
-              {estadisticas.genero && (
+              {estadisticas?.año && <span className="año-pelicula">{estadisticas.año}</span>}
+              {estadisticas?.genero && (
                 <>
-                  <span className="separador-metadatos">•</span>
+                  {estadisticas?.año && <span className="separador-metadatos">•</span>}
                   <span className="genero-pelicula">{estadisticas.genero}</span>
                 </>
               )}
@@ -126,12 +138,12 @@ const PeliculaDetalle = () => {
             
             <div className="estadisticas-pelicula">
               <div className="estadistica">
-                <span className="valor-estadistica">{estadisticas.calificacionPromedio}</span>
+                <span className="valor-estadistica">{estadisticas?.calificacionPromedio || '0.0'}</span>
                 <div className="estrellas-promedio">
                   {[...Array(5)].map((_, i) => (
                     <span 
                       key={i} 
-                      className={`estrella-promedio ${i < Math.round(estadisticas.calificacionPromedio) ? 'activa' : ''}`}
+                      className={`estrella-promedio ${i < Math.round(estadisticas?.calificacionPromedio || 0) ? 'activa' : ''}`}
                     >
                       ★
                     </span>
@@ -141,12 +153,12 @@ const PeliculaDetalle = () => {
               </div>
               
               <div className="estadistica">
-                <span className="valor-estadistica">{estadisticas.totalResenas}</span>
+                <span className="valor-estadistica">{estadisticas?.totalResenas || 0}</span>
                 <span className="etiqueta-estadistica">Reseñas</span>
               </div>
               
               <div className="estadistica">
-                <span className="valor-estadistica">{estadisticas.totalLikes}</span>
+                <span className="valor-estadistica">{estadisticas?.totalLikes || 0}</span>
                 <span className="etiqueta-estadistica">Likes</span>
               </div>
             </div>
@@ -163,7 +175,7 @@ const PeliculaDetalle = () => {
       {/* Lista de reseñas */}
       <div className="seccion-resenas-pelicula">
         <h2 className="titulo-seccion-resenas">
-          Todas las reseñas ({estadisticas.totalResenas})
+          Todas las reseñas ({estadisticas?.totalResenas || 0})
         </h2>
         
         <div className="lista-resenas-pelicula">

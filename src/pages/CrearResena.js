@@ -92,6 +92,8 @@ const CrearResena = () => {
     setEnviando(true);
 
     try {
+      console.log('🔍 DATOS DEL FORMULARIO:', datosFormulario);
+      
       const nuevaResena = {
         id: Date.now(),
         titulo: datosFormulario.titulo,
@@ -104,7 +106,11 @@ const CrearResena = () => {
           month: 'long', 
           year: 'numeric' 
         }),
-        fechaVisionado: new Date(datosFormulario.fechaVisionado).toLocaleDateString('es-ES', { 
+        fechaVisionado: datosFormulario.fechaVisionado ? new Date(datosFormulario.fechaVisionado).toLocaleDateString('es-ES', { 
+          day: 'numeric', 
+          month: 'long', 
+          year: 'numeric' 
+        }) : new Date().toLocaleDateString('es-ES', { 
           day: 'numeric', 
           month: 'long', 
           year: 'numeric' 
@@ -118,6 +124,8 @@ const CrearResena = () => {
         yaLeDiLike: false,
         comentarios: []
       };
+
+      console.log('🔍 NUEVA RESEÑA A ENVIAR:', nuevaResena);
 
       // Simular delay de red
       await new Promise(resolve => setTimeout(resolve, 1000));

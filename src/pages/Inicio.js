@@ -153,24 +153,29 @@ const Inicio = () => {
           <div className="estado-vacio">
             <div className="icono-vacio">🎬</div>
             <h3>No se encontraron reseñas</h3>
-            <p>Intenta ajustar los filtros o sé el primero en crear una reseña</p>
+            <p>Intenta ajustar los filtros, escribir palabras más generales o sé el primero en crear una reseña</p>
+            <div className="sugerencias-filtro">
+              <small>💡 Tip: Intenta buscar por palabras clave como "padrino", "historia", "blade", etc.</small>
+            </div>
             <Link to="/crear" className="boton-crear-primera">
               Crear primera reseña
             </Link>
           </div>
         ) : (
           <div className="lista-resenas">
-            {resenasFiltradas.map(resena => (
-              <TarjetaResena 
-                key={resena.id} 
-                pelicula={resena}
-                onEliminar={manejarEliminarResena}
-                onEditar={manejarEditarResena}
-                onToggleLike={manejarToggleLike}
-                onAbrirComentarios={manejarAbrirComentarios}
-                usuarioActual="usuario_actual"
-              />
-            ))}
+            {resenasFiltradas
+              .filter(resena => resena && resena.id) // Filtrar reseñas válidas
+              .map(resena => (
+                <TarjetaResena 
+                  key={resena.id} 
+                  pelicula={resena}
+                  onEliminar={manejarEliminarResena}
+                  onEditar={manejarEditarResena}
+                  onToggleLike={manejarToggleLike}
+                  onAbrirComentarios={manejarAbrirComentarios}
+                  usuarioActual="usuario_actual"
+                />
+              ))}
           </div>
         )}
       </div>

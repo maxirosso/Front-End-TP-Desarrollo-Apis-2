@@ -51,19 +51,25 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
   ];
 
   const manejarCambioFiltro = (campo, valor) => {
-    setFiltrosLocales(prev => ({
-      ...prev,
+    const nuevosFiltros = {
+      ...filtrosLocales,
       [campo]: valor
-    }));
+    };
+    setFiltrosLocales(nuevosFiltros);
+    // Aplicar filtros automáticamente
+    onAplicarFiltros(nuevosFiltros);
   };
 
   const manejarCambioTag = (tag) => {
-    setFiltrosLocales(prev => ({
-      ...prev,
-      tags: prev.tags.includes(tag)
-        ? prev.tags.filter(t => t !== tag)
-        : [...prev.tags, tag]
-    }));
+    const nuevosFiltros = {
+      ...filtrosLocales,
+      tags: filtrosLocales.tags.includes(tag)
+        ? filtrosLocales.tags.filter(t => t !== tag)
+        : [...filtrosLocales.tags, tag]
+    };
+    setFiltrosLocales(nuevosFiltros);
+    // Aplicar filtros automáticamente
+    onAplicarFiltros(nuevosFiltros);
   };
 
   const aplicarFiltros = () => {

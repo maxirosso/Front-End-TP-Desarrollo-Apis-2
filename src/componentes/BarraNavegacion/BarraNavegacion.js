@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import SelectorUsuario from '../SelectorUsuario/SelectorUsuario';
 import './BarraNavegacion.css';
 
 const BarraNavegacion = () => {
@@ -53,6 +54,9 @@ const BarraNavegacion = () => {
         <Link to="/crear" className="boton-crear-resena-nav">
           ✏️ NUEVA RESEÑA
         </Link>
+
+        {/* Selector de usuario para testing */}
+        <SelectorUsuario />
       </div>
     </nav>
   );

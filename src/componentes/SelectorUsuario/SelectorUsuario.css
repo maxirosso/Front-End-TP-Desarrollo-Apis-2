@@ -1,0 +1,151 @@
+/* Selector de Usuario */
+.selector-usuario {
+  position: relative;
+  z-index: 1000;
+}
+
+.btn-selector-usuario {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-selector-usuario:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+}
+
+/* Overlay */
+.overlay-selector {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 999;
+}
+
+/* Dropdown */
+.dropdown-usuarios {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+  min-width: 280px;
+  z-index: 1001;
+  margin-top: 0.5rem;
+}
+
+.header-dropdown {
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-align: center;
+}
+
+.header-dropdown h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+}
+
+.info-testing {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+/* Items de usuario */
+.item-usuario {
+  width: 100%;
+  border: none;
+  background: white;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.item-usuario:hover {
+  background: #f8f9fa;
+}
+
+.item-usuario:last-of-type {
+  border-bottom: none;
+}
+
+.emoji-usuario {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.nombre-usuario {
+  flex: 1;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: left;
+}
+
+.id-usuario {
+  font-size: 0.7rem;
+  color: #7f8c8d;
+  background: #ecf0f1;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Footer */
+.footer-dropdown {
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.footer-dropdown small {
+  font-size: 0.65rem;
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+.footer-dropdown code {
+  background: #e9ecef;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dropdown-usuarios {
+    right: -1rem;
+    left: -1rem;
+    min-width: auto;
+  }
+  
+  .btn-selector-usuario {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-selector-usuario {
+    display: none; /* Ocultar en móviles muy pequeños */
+  }
+}

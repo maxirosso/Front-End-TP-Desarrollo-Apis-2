@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
   const config = {
@@ -81,42 +81,112 @@ export const reviewsAPI = {
     };
     return reviewsAPI.filter(defaultFilters);
   },
+
+  // Likes
+  getLikes: (reviewId) => 
+    apiRequest(`/reviews/${reviewId}/likes`),
+
+  addLike: (reviewId, userId) => 
+    apiRequest(`/reviews/${reviewId}/likes`, {
+      method: 'POST',
+      body: JSON.stringify({ user_id: userId }),
+    }),
+
+  removeLike: (reviewId, userId) => 
+    apiRequest(`/reviews/${reviewId}/likes`, {
+      method: 'DELETE',
+      body: JSON.stringify({ user_id: userId }),
+    }),
+
+  // Comentarios
+  getComments: (reviewId) => 
+    apiRequest(`/reviews/${reviewId}/comments`),
+
+  addComment: (reviewId, userId, comment) => 
+    apiRequest(`/reviews/${reviewId}/comments`, {
+      method: 'POST',
+      body: JSON.stringify({ user_id: userId, comment }),
+    }),
+
+  deleteComment: (commentId, userId) => 
+    apiRequest(`/reviews/comments/${commentId}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ user_id: userId }),
+    }),
 };
 
 // Servicios de usuarios
 export const usersAPI = {
-  // Obtener usuario por ID
+  // Crear usuario
+  create: (userData) => 
+    apiRequest('/users', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    }),
+
+  // Obtener usuario por ID (con estadísticas)
   getById: (id) => 
     apiRequest(`/users/${id}`),
 
   // Obtener todos los usuarios
   getAll: () => 
     apiRequest('/users'),
+
+  // Buscar usuario por email
+  getByEmail: (email) => 
+    apiRequest(`/users/search?email=${encodeURIComponent(email)}`),
+
+  // Actualizar usuario
+  update: (id, userData) => 
+    apiRequest(`/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    }),
+
+  // Eliminar usuario
+  delete: (id) => 
+    apiRequest(`/users/${id}`, {
+      method: 'DELETE',
+    }),
 };
 
-// Servicios de películas (para futura integración)
+// Servicios de películas
 export const moviesAPI = {
-  // Mock data hasta que se integre con el módulo de películas
-  getById: async (id) => {
-    const mockMovies = {
-      1: { id: 1, title: "El Padrino", year: 1972, genre: "drama" },
-      2: { id: 2, title: "Blade Runner 2049", year: 2017, genre: "ciencia-ficcion" },
-      3: { id: 3, title: "Parasite", year: 2019, genre: "thriller" },
-      4: { id: 4, title: "Mad Max: Fury Road", year: 2015, genre: "accion" },
-      5: { id: 5, title: "Her", year: 2013, genre: "romance" },
-    };
-    return mockMovies[id] || null;
-  },
+  // Obtener película por ID
+  getById: (id) => 
+    apiRequest(`/movies/${id}`),
 
-  getAll: async () => {
-    return [
-      { id: 1, title: "El Padrino", year: 1972, genre: "drama" },
-      { id: 2, title: "Blade Runner 2049", year: 2017, genre: "ciencia-ficcion" },
-      { id: 3, title: "Parasite", year: 2019, genre: "thriller" },
-      { id: 4, title: "Mad Max: Fury Road", year: 2015, genre: "accion" },
-      { id: 5, title: "Her", year: 2013, genre: "romance" },
-    ];
-  },
+  // Obtener todas las películas
+  getAll: () => 
+    apiRequest('/movies'),
+
+  // Buscar películas
+  search: (searchTerm) => 
+    apiRequest(`/movies/search?q=${encodeURIComponent(searchTerm)}`),
+
+  // Obtener películas por género
+  getByGenre: (genre) => 
+    apiRequest(`/movies/genre/${encodeURIComponent(genre)}`),
+
+  // Crear película (admin)
+  create: (movieData) => 
+    apiRequest('/movies', {
+      method: 'POST',
+      body: JSON.stringify(movieData),
+    }),
+
+  // Actualizar película (admin)
+  update: (id, movieData) => 
+    apiRequest(`/movies/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(movieData),
+    }),
+
+  // Eliminar película (admin)
+  delete: (id) => 
+    apiRequest(`/movies/${id}`, {
+      method: 'DELETE',
+    }),
 };
 
 // Utilidades para manejo de errores
@@ -141,10 +211,10 @@ export const handleApiError = (error) => {
 // Función para verificar si el backend está disponible
 export const checkBackendHealth = async () => {
   try {
-    await apiRequest('/reviews/filter?limit=1');
+    await apiRequest('/health');
     return true;
   } catch (error) {
-    console.warn('Backend not available, falling back to mock data');
+    console.warn('Backend not available:', error.message);
     return false;
   }
 };

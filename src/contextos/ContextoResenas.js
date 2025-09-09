@@ -281,13 +281,15 @@ export const ProveedorResenas = ({ children }) => {
         setUsingBackend(backendAvailable);
         
         if (backendAvailable) {
-          console.log('Cargando reseñas desde API...');
+          console.log('✅ Backend disponible - Cargando SOLO datos reales desde API...');
           const response = await reviewsAPI.getAll();
           const resenas = response.data || response.rows || [];
-          console.log('📊 Reseñas cargadas desde API:', resenas.length);
-          setResenas(resenas);
+          console.log('📊 Reseñas reales cargadas desde API:', resenas.length);
+          
+          // IMPORTANTE: Solo usar datos reales cuando el backend esté disponible
+          setResenas(resenas); // Solo datos de la base de datos, NO mock data
         } else {
-          console.log('Backend no disponible, usando datos mock...');
+          console.log('❌ Backend no disponible, usando datos mock...');
           await new Promise(resolve => setTimeout(resolve, 1000));
           setResenas(datosPeliculasEjemplo);
         }
@@ -307,7 +309,88 @@ export const ProveedorResenas = ({ children }) => {
   const agregarResena = async (nuevaResena) => {
     try {
       if (usingBackend) {
-        const response = await reviewsAPI.create(nuevaResena);
+        // Validar datos antes de enviar
+        if (!nuevaResena.titulo || nuevaResena.titulo.trim().length < 5) {
+          throw new Error('El título debe tener al menos 5 caracteres');
+        }
+        if (!nuevaResena.textoResena || nuevaResena.textoResena.trim().length < 20) {
+          throw new Error('La reseña debe tener al menos 20 caracteres');
+        }
+        if (!nuevaResena.calificacion || nuevaResena.calificacion < 1 || nuevaResena.calificacion > 5) {
+          throw new Error('La calificación debe estar entre 1 y 5');
+        }
+
+        // Obtener movie_id: usar el seleccionado o buscar/crear
+        let movieId = 1;
+        
+        if (nuevaResena.movie_id) {
+          // Ya tenemos una película seleccionada
+          movieId = nuevaResena.movie_id;
+          console.log('✅ USANDO PELÍCULA PRESELECCIONADA ID:', movieId);
+        } else {
+          // Buscar película existente por título o crear nueva
+          try {
+            console.log('🔍 Buscando película existente:', nuevaResena.titulo.trim());
+            const existingMovies = await moviesAPI.getAll();
+            
+            // Buscar película con título similar
+            const tituloLimpio = nuevaResena.titulo.trim().toLowerCase();
+            const peliculaExistente = existingMovies.find(movie => 
+              movie.title && movie.title.toLowerCase().includes(tituloLimpio) ||
+              tituloLimpio.includes(movie.title.toLowerCase())
+            );
+            
+            if (peliculaExistente) {
+              movieId = peliculaExistente.id;
+              console.log('✅ USANDO PELÍCULA EXISTENTE:', peliculaExistente.title, 'ID:', movieId);
+            } else {
+              // Solo crear nueva si no existe
+              const movieData = {
+                title: nuevaResena.titulo.trim(),
+                year: parseInt(nuevaResena.año) || new Date().getFullYear(),
+                genre: nuevaResena.genero || 'drama',
+                director: 'Director Desconocido',
+                poster_url: nuevaResena.imagenUrl || `https://via.placeholder.com/120x180/34495e/ecf0f1?text=${encodeURIComponent(nuevaResena.titulo)}`,
+                description: `Película: ${nuevaResena.titulo}`
+              };
+              
+              console.log('🎬 CREANDO PELÍCULA NUEVA:', movieData);
+              const movieResponse = await moviesAPI.create(movieData);
+              movieId = movieResponse.id || 1;
+              console.log('🎬 PELÍCULA NUEVA CREADA con ID:', movieId);
+            }
+          } catch (movieError) {
+            console.log('⚠️ Error gestionando película, usando ID por defecto:', movieError);
+            movieId = 1;
+          }
+        }
+
+        // Asegurar que tenemos un movieId válido
+        if (!movieId || !Number.isInteger(Number(movieId))) {
+          movieId = 1;
+        }
+
+        // Convertir datos del frontend al formato del backend
+        const datosParaBackend = {
+          movie_id: Number(movieId),
+          user_id: 1,
+          title: nuevaResena.titulo.trim(),
+          body: nuevaResena.textoResena.trim(),
+          rating: Number(nuevaResena.calificacion),
+          has_spoilers: Boolean(nuevaResena.contieneEspoilers),
+          tags: Array.isArray(nuevaResena.tags) ? nuevaResena.tags : []
+        };
+        
+        console.log('🔍 DATOS FINALES PARA BACKEND:', datosParaBackend);
+        console.log('🔍 VALIDACIÓN:');
+        console.log('  - title length:', datosParaBackend.title.length);
+        console.log('  - body length:', datosParaBackend.body.length);
+        console.log('  - rating:', datosParaBackend.rating);
+        console.log('  - movie_id:', datosParaBackend.movie_id, typeof datosParaBackend.movie_id);
+        console.log('  - user_id:', datosParaBackend.user_id, typeof datosParaBackend.user_id);
+        
+        const response = await reviewsAPI.create(datosParaBackend);
+        console.log('🎉 RESPUESTA DEL BACKEND:', response);
         setResenas(prev => [response, ...prev]);
         return response;
       } else {

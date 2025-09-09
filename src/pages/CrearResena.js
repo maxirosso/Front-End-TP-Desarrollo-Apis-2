@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useResenas } from '../contextos/ContextoResenas';
+import SelectorPelicula from '../componentes/SelectorPelicula/SelectorPelicula';
 import './CrearResena.css';
 
 const CrearResena = () => {
@@ -19,6 +20,9 @@ const CrearResena = () => {
     genero: '',
     tags: []
   });
+
+  const [peliculaSeleccionada, setPeliculaSeleccionada] = useState(null);
+  const [modoCrearNueva, setModoCrearNueva] = useState(false);
 
   const [calificacionHover, setCalificacionHover] = useState(0);
   const [errores, setErrores] = useState({});
@@ -48,6 +52,33 @@ const CrearResena = () => {
       tags: prev.tags.includes(tag) 
         ? prev.tags.filter(t => t !== tag)
         : [...prev.tags, tag]
+    }));
+  };
+
+  const manejarSeleccionPelicula = (pelicula) => {
+    setPeliculaSeleccionada(pelicula);
+    setModoCrearNueva(false);
+    
+    if (pelicula) {
+      // Auto-llenar datos del formulario con info de la película
+      setDatosFormulario(prev => ({
+        ...prev,
+        titulo: pelicula.title || '',
+        año: pelicula.year || '',
+        genero: pelicula.genre || prev.genero
+      }));
+    }
+  };
+
+  const manejarCrearNueva = () => {
+    setModoCrearNueva(true);
+    setPeliculaSeleccionada(null);
+    // Limpiar campos auto-llenados
+    setDatosFormulario(prev => ({
+      ...prev,
+      titulo: '',
+      año: '',
+      genero: ''
     }));
   };
 
@@ -96,9 +127,10 @@ const CrearResena = () => {
       
       const nuevaResena = {
         id: Date.now(),
-        titulo: datosFormulario.titulo,
-        año: parseInt(datosFormulario.año),
-        imagenUrl: `https://via.placeholder.com/120x180/2C3E50/ECF0F1?text=${encodeURIComponent(datosFormulario.titulo)}`,
+        // Usar datos de película seleccionada o del formulario
+        titulo: peliculaSeleccionada ? peliculaSeleccionada.title : datosFormulario.titulo,
+        año: peliculaSeleccionada ? peliculaSeleccionada.year : parseInt(datosFormulario.año),
+        imagenUrl: peliculaSeleccionada ? peliculaSeleccionada.poster_url : `https://via.placeholder.com/120x180/2C3E50/ECF0F1?text=${encodeURIComponent(datosFormulario.titulo)}`,
         calificacion: datosFormulario.calificacion,
         usuario: 'usuario_actual',
         fechaResena: new Date().toLocaleDateString('es-ES', { 
@@ -117,12 +149,14 @@ const CrearResena = () => {
         }),
         textoResena: datosFormulario.textoResena,
         megusta: datosFormulario.megusta,
-        genero: datosFormulario.genero,
+        genero: peliculaSeleccionada ? peliculaSeleccionada.genre : datosFormulario.genero,
         tags: datosFormulario.tags,
         contieneEspoilers: datosFormulario.contieneEspoilers,
         likes: 0,
         yaLeDiLike: false,
-        comentarios: []
+        comentarios: [],
+        // Agregar ID de película seleccionada para el backend
+        movie_id: peliculaSeleccionada ? peliculaSeleccionada.id : null
       };
 
       console.log('🔍 NUEVA RESEÑA A ENVIAR:', nuevaResena);
@@ -178,37 +212,53 @@ const CrearResena = () => {
         <form className="formulario-crear-resena" onSubmit={manejarEnvio}>
           {/* Información de la película */}
           <section className="seccion-pelicula">
-            <h3 className="subtitulo-seccion">Info de la Peli</h3>
+            <h3 className="subtitulo-seccion">Seleccionar Película</h3>
             
-            <div className="grupo-campos">
-              <div className="campo-formulario">
-                <label className="etiqueta-campo">Título de la Peli *</label>
-                <input
-                  type="text"
-                  value={datosFormulario.titulo}
-                  onChange={(e) => manejarCambioEntrada('titulo', e.target.value)}
-                  className={`entrada-texto ${errores.titulo ? 'error' : ''}`}
-                  placeholder="Ej: El Padrino, Relatos Salvajes, etc."
-                  disabled={enviando}
-                />
-                {errores.titulo && <span className="mensaje-error">{errores.titulo}</span>}
-              </div>
-
-              <div className="campo-formulario">
-                <label className="etiqueta-campo">Año *</label>
-                <input
-                  type="number"
-                  value={datosFormulario.año}
-                  onChange={(e) => manejarCambioEntrada('año', e.target.value)}
-                  className={`entrada-numero ${errores.año ? 'error' : ''}`}
-                  placeholder="2024"
-                  min="1900"
-                  max={new Date().getFullYear() + 5}
-                  disabled={enviando}
-                />
-                {errores.año && <span className="mensaje-error">{errores.año}</span>}
-              </div>
+            <div className="campo-formulario">
+              <label className="etiqueta-campo">Película *</label>
+              <SelectorPelicula
+                peliculaSeleccionada={peliculaSeleccionada}
+                onSeleccionarPelicula={manejarSeleccionPelicula}
+                onCrearNueva={manejarCrearNueva}
+                disabled={enviando}
+              />
+              {errores.titulo && <span className="mensaje-error">{errores.titulo}</span>}
             </div>
+
+            {/* Mostrar campos manuales solo si está en modo crear nueva */}
+            {(modoCrearNueva || !peliculaSeleccionada) && (
+              <div className="formulario-pelicula-nueva">
+                <h4 className="subtitulo-menor">Información de la nueva película</h4>
+                <div className="grupo-campos">
+                  <div className="campo-formulario">
+                    <label className="etiqueta-campo">Título de la Peli *</label>
+                    <input
+                      type="text"
+                      value={datosFormulario.titulo}
+                      onChange={(e) => manejarCambioEntrada('titulo', e.target.value)}
+                      className={`entrada-texto ${errores.titulo ? 'error' : ''}`}
+                      placeholder="Ej: El Padrino, Relatos Salvajes, etc."
+                      disabled={enviando}
+                    />
+                  </div>
+
+                  <div className="campo-formulario">
+                    <label className="etiqueta-campo">Año *</label>
+                    <input
+                      type="number"
+                      value={datosFormulario.año}
+                      onChange={(e) => manejarCambioEntrada('año', e.target.value)}
+                      className={`entrada-numero ${errores.año ? 'error' : ''}`}
+                      placeholder="2024"
+                      min="1900"
+                      max={new Date().getFullYear() + 5}
+                      disabled={enviando}
+                    />
+                    {errores.año && <span className="mensaje-error">{errores.año}</span>}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="campo-formulario">
               <label className="etiqueta-campo">Género</label>

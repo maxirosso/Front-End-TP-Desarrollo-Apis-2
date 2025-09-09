@@ -16,7 +16,7 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
   const [mostrarFiltrosAvanzados, setMostrarFiltrosAvanzados] = useState(false);
 
   const opcionesCalificacion = [
-    { valor: '', etiqueta: 'Todas las calificaciones' },
+    { valor: '', etiqueta: 'Todas las puntuaciones' },
     { valor: '5', etiqueta: '5 estrellas' },
     { valor: '4', etiqueta: '4+ estrellas' },
     { valor: '3', etiqueta: '3+ estrellas' },

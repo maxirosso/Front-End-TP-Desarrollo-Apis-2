@@ -148,20 +148,20 @@ const TarjetaResena = ({
           {/* Advertencia de spoilers */}
           {contieneEspoilers && (
             <div className="advertencia-spoilers">
-              ⚠️ Esta reseña contiene spoilers
+              ⚠️ Esta reseña tiene spoilers
             </div>
           )}
 
           {/* Pie de la reseña */}
           <footer className="pie-resena">
-            <span className="fecha-publicacion">Publicado el {fechaResena}</span>
+            <span className="fecha-publicacion">Posteado el {fechaResena}</span>
             
             <div className="acciones-resena">
               {/* Botón de like */}
               <button 
                 className={`boton-like ${yaLeDiLike ? 'activo' : ''}`}
                 onClick={() => onToggleLike && onToggleLike(id)}
-                title={yaLeDiLike ? 'Quitar me gusta' : 'Me gusta'}
+                title={yaLeDiLike ? 'Sacar me gusta' : 'Me gusta'}
               >
                 <span className="icono-like">
                   {yaLeDiLike ? '❤️' : '🤍'}

@@ -77,7 +77,7 @@ const Inicio = () => {
           <div className="punto-carga"></div>
           <div className="punto-carga"></div>
         </div>
-        <p>Cargando reseñas...</p>
+        <p>Cargando las reseñas más copadas...</p>
       </div>
     );
   }
@@ -87,16 +87,16 @@ const Inicio = () => {
       {/* Hero Section */}
       <div className="seccion-hero">
         <div className="contenido-hero">
-          <h1 className="titulo-hero">Descubre, Reseña, Comparte</h1>
+          <h1 className="titulo-hero">Descubrí, Reseñá, Compartí</h1>
           <p className="subtitulo-hero">
-            Únete a la comunidad cinéfila más activa. Comparte tus opiniones y descubre nuevas películas.
+            Sumate a la comunidad cinéfila más copada. Compartí tus opiniones y descubrí pelis geniales.
           </p>
           <div className="botones-hero">
             <Link to="/crear" className="boton-principal-hero">
-              ✏️ Escribir Reseña
+              ✏️ Escribir mi Reseña
             </Link>
             <Link to="/peliculas" className="boton-secundario-hero">
-              🎬 Explorar Películas
+              🎬 Ver todas las Pelis
             </Link>
           </div>
         </div>
@@ -106,31 +106,31 @@ const Inicio = () => {
       <div className="seccion-estadisticas">
         <div className="estadistica">
           <span className="numero-estadistica">{resenas.length}</span>
-          <span className="etiqueta-estadistica">Reseñas totales</span>
+          <span className="etiqueta-estadistica">Reseñas en total</span>
         </div>
         <div className="estadistica">
           <span className="numero-estadistica">
             {new Set(resenas.map(r => r.titulo)).size}
           </span>
-          <span className="etiqueta-estadistica">Películas reseñadas</span>
+          <span className="etiqueta-estadistica">Pelis reseñadas</span>
         </div>
         <div className="estadistica">
           <span className="numero-estadistica">
             {new Set(resenas.map(r => r.usuario)).size}
           </span>
-          <span className="etiqueta-estadistica">Usuarios activos</span>
+          <span className="etiqueta-estadistica">Usuarios copados</span>
         </div>
         <div className="estadistica">
           <span className="numero-estadistica">
             {resenas.reduce((total, r) => total + r.likes, 0)}
           </span>
-          <span className="etiqueta-estadistica">Likes totales</span>
+          <span className="etiqueta-estadistica">Me gusta total</span>
         </div>
       </div>
 
       {/* Controles principales */}
       <div className="controles-principales">
-        <h2 className="titulo-seccion">Reseñas Recientes</h2>
+        <h2 className="titulo-seccion">Las Últimas Reseñas</h2>
         
         {/* Filtros */}
         <FiltrosResenas
@@ -152,13 +152,13 @@ const Inicio = () => {
         {resenasFiltradas.length === 0 ? (
           <div className="estado-vacio">
             <div className="icono-vacio">🎬</div>
-            <h3>No se encontraron reseñas</h3>
-            <p>Intenta ajustar los filtros, escribir palabras más generales o sé el primero en crear una reseña</p>
+            <h3>No encontramos ninguna reseña</h3>
+            <p>Probá ajustando los filtros, escribí palabras más generales o sé el primero en crear una reseña copada</p>
             <div className="sugerencias-filtro">
-              <small>💡 Tip: Intenta buscar por palabras clave como "padrino", "historia", "blade", etc.</small>
+              <small>💡 Tip: Probá buscar por palabras como "padrino", "historia", "blade", etc.</small>
             </div>
             <Link to="/crear" className="boton-crear-primera">
-              Crear primera reseña
+              Escribir la primera reseña
             </Link>
           </div>
         ) : (

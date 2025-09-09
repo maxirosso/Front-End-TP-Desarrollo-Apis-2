@@ -7,39 +7,39 @@ const BarraOrdenamiento = ({ onCambiarOrdenamiento, ordenamientoActual, totalRes
   const opcionesOrdenamiento = [
     {
       valor: 'fecha-desc',
-      etiqueta: 'Más recientes primero',
+      etiqueta: 'Más nuevitas primero',
       icono: '🕐',
       descripcion: 'Ordenar por fecha de publicación (nuevas → antiguas)'
     },
     {
       valor: 'fecha-asc',
-      etiqueta: 'Más antiguas primero',
+      etiqueta: 'Más viejitas primero',
       icono: '⏰',
       descripcion: 'Ordenar por fecha de publicación (antiguas → nuevas)'
     },
     {
       valor: 'calificacion-desc',
-      etiqueta: 'Mejor calificación primero',
+      etiqueta: 'Mejor puntuación primero',
       icono: '⭐',
       descripcion: 'Ordenar por calificación (5★ → 1★)'
     },
     {
       valor: 'calificacion-asc',
-      etiqueta: 'Peor calificación primero',
+      etiqueta: 'Peor puntuación primero',
       icono: '☆',
       descripcion: 'Ordenar por calificación (1★ → 5★)'
     },
     {
       valor: 'likes-desc',
-      etiqueta: 'Más likes primero',
+      etiqueta: 'Más me gusta primero',
       icono: '👍',
-      descripcion: 'Ordenar por cantidad de likes (más → menos)'
+      descripcion: 'Ordenar por cantidad de me gusta (más → menos)'
     },
     {
       valor: 'likes-asc',
-      etiqueta: 'Menos likes primero',
+      etiqueta: 'Menos me gusta primero',
       icono: '👎',
-      descripcion: 'Ordenar por cantidad de likes (menos → más)'
+      descripcion: 'Ordenar por cantidad de me gusta (menos → más)'
     },
     {
       valor: 'titulo-asc',

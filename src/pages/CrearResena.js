@@ -25,9 +25,9 @@ const CrearResena = () => {
   const [enviando, setEnviando] = useState(false);
 
   const tagsDisponibles = [
-    'Spoiler Free', 'Acción', 'Drama', 'Comedia', 'Terror', 'Romance', 
+    'Sin Spoilers', 'Acción', 'Drama', 'Comedia', 'Terror', 'Romance', 
     'Ciencia Ficción', 'Thriller', 'Familiar', 'Animación', 'Documental',
-    'Obra Maestra', 'Decepcionante', 'Sobrevalorada', 'Infravalorada'
+    'Obra Maestra', 'Una Decepción', 'Sobrevalorada', 'Infravalorada', 'Imperdible'
   ];
 
   const manejarCambioEntrada = (campo, valor) => {
@@ -138,7 +138,7 @@ const CrearResena = () => {
       
     } catch (error) {
       console.error('Error al crear reseña:', error);
-      alert('Hubo un error al crear la reseña. Inténtalo de nuevo.');
+      alert('Uh, hubo un problema al crear la reseña. Probá de nuevo.');
     } finally {
       setEnviando(false);
     }
@@ -169,26 +169,26 @@ const CrearResena = () => {
     <div className="pagina-crear-resena">
       <div className="contenedor-crear-resena">
         <header className="encabezado-crear-resena">
-          <h1 className="titulo-crear-resena">Nueva Reseña</h1>
+          <h1 className="titulo-crear-resena">Escribir mi Reseña</h1>
           <p className="subtitulo-crear-resena">
-            Comparte tu opinión sobre una película y ayuda a otros cinéfilos a descubrir nuevas joyas
+            Compartí tu opinión sobre una peli y ayudá a otros cinéfilos a descubrir nuevas joyitas
           </p>
         </header>
 
         <form className="formulario-crear-resena" onSubmit={manejarEnvio}>
           {/* Información de la película */}
           <section className="seccion-pelicula">
-            <h3 className="subtitulo-seccion">Información de la Película</h3>
+            <h3 className="subtitulo-seccion">Info de la Peli</h3>
             
             <div className="grupo-campos">
               <div className="campo-formulario">
-                <label className="etiqueta-campo">Título de la Película *</label>
+                <label className="etiqueta-campo">Título de la Peli *</label>
                 <input
                   type="text"
                   value={datosFormulario.titulo}
                   onChange={(e) => manejarCambioEntrada('titulo', e.target.value)}
                   className={`entrada-texto ${errores.titulo ? 'error' : ''}`}
-                  placeholder="Ej: El Padrino"
+                  placeholder="Ej: El Padrino, Relatos Salvajes, etc."
                   disabled={enviando}
                 />
                 {errores.titulo && <span className="mensaje-error">{errores.titulo}</span>}

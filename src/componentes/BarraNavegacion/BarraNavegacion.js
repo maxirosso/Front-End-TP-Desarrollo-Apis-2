@@ -42,7 +42,7 @@ const BarraNavegacion = () => {
         <form className="formulario-busqueda" onSubmit={enviarBusqueda}>
           <input
             type="text"
-            placeholder="Buscar películas..."
+            placeholder="Buscá tu película favorita..."
             value={terminoBusqueda}
             onChange={manejarBusqueda}
             className="entrada-busqueda"
@@ -52,7 +52,7 @@ const BarraNavegacion = () => {
 
         {/* Botón de crear reseña */}
         <Link to="/crear" className="boton-crear-resena-nav">
-          ✏️ NUEVA RESEÑA
+          ✏️ ESCRIBIR RESEÑA
         </Link>
 
         {/* Selector de usuario para testing */}

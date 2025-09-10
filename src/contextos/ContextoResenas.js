@@ -529,6 +529,26 @@ export const ProveedorResenas = ({ children }) => {
   const obtenerResenasPorPelicula = async (movieId, filtros = {}) => {
     try {
       if (usingBackend) {
+        // Si tu reviewsAPI tiene un método getAll, úsalo con filtro
+        const response = await reviewsAPI.getAll({ movie_id: movieId, ...filtros });
+        // Si tu backend filtra correctamente, esto es suficiente
+        return response.data || response.rows || [];
+      } else {
+        // FILTRAR SOLO POR movie_id (no por título)
+        return resenas.filter(resena => 
+          String(resena.movie_id) === String(movieId)
+        );
+      }
+    } catch (err) {
+      console.error('Error obteniendo reseñas por película:', err);
+      setError(handleApiError(err));
+      return [];
+    }
+  };
+
+  /* const obtenerResenasPorPelicula = async (movieId, filtros = {}) => {
+    try {
+      if (usingBackend) {
         const response = await reviewsAPI.getByMovie(movieId, filtros);
         return response.data || response.rows || [];
       } else {
@@ -542,7 +562,7 @@ export const ProveedorResenas = ({ children }) => {
       setError(handleApiError(err));
       return [];
     }
-  };
+  }; */
 
   const obtenerResenasPorUsuario = async (userId, filtros = {}) => {
     try {

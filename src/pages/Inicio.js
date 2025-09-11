@@ -110,19 +110,22 @@ const Inicio = () => {
         </div>
         <div className="estadistica">
           <span className="numero-estadistica">
-            {new Set(resenas.map(r => r.titulo)).size}
+            {/* {new Set(resenas.map(r => r.titulo)).size} */}
+            {new Set(resenas.map(r => r.movie_title || r.titulo)).size}
           </span>
           <span className="etiqueta-estadistica">Pelis reseñadas</span>
         </div>
         <div className="estadistica">
           <span className="numero-estadistica">
-            {new Set(resenas.map(r => r.usuario)).size}
+            {new Set(resenas.map(r => r.user_name || r.usuario)).size}
+            {/* {new Set(resenas.map(r => r.usuario)).size} */}
           </span>
           <span className="etiqueta-estadistica">Usuarios copados</span>
         </div>
         <div className="estadistica">
           <span className="numero-estadistica">
-            {resenas.reduce((total, r) => total + r.likes, 0)}
+            {resenas.reduce((total, r) => Number(total) + Number(r.likes_count || r.likes || 0), 0)}
+            {/* {resenas.reduce((total, r) => total + r.likes, 0)} */}
           </span>
           <span className="etiqueta-estadistica">Me gusta total</span>
         </div>

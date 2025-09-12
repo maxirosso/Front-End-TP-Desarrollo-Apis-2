@@ -588,29 +588,36 @@ export const ProveedorResenas = ({ children }) => {
 
     if (filtros.pelicula) {
       resenasFiltradas = resenasFiltradas.filter(resena => {
-        const titulo = resena.titulo || resena.title || '';
-        return titulo && titulo.toLowerCase().includes(filtros.pelicula.toLowerCase());
+        //const titulo = resena.titulo || resena.title || '';
+        const titulo = resena.movie_title || resena.titulo || resena.title || '';
+        //return titulo && titulo.toLowerCase().includes(filtros.pelicula.toLowerCase());
+        return titulo.toLowerCase().startsWith(filtros.pelicula.toLowerCase());
       });
     }
 
     if (filtros.usuario) {
       resenasFiltradas = resenasFiltradas.filter(resena => {
-        const usuario = resena.usuario || resena.user_name || '';
-        return usuario && usuario.toLowerCase().includes(filtros.usuario.toLowerCase());
+        //const usuario = resena.usuario || resena.user_name || '';
+        const usuario = resena.user_name || resena.usuario || '';
+        //return usuario && usuario.toLowerCase() === filtros.usuario.toLowerCase();
+        return usuario && usuario.toLowerCase().startsWith(filtros.usuario.toLowerCase());
+        //return usuario && usuario.toLowerCase().includes(filtros.usuario.toLowerCase());
       });
     }
 
     if (filtros.calificacion) {
-      const calMin = parseInt(filtros.calificacion);
+      const calExacta = parseInt(filtros.calificacion);
       resenasFiltradas = resenasFiltradas.filter(resena => {
         const calificacion = resena.calificacion || resena.rating || 0;
-        return Number(calificacion) >= calMin;
+        //return Number(calificacion) >= calMin;
+        return Number(calificacion) === calExacta
       });
     }
 
     if (filtros.genero) {
       resenasFiltradas = resenasFiltradas.filter(resena => resena.genero === filtros.genero);
     }
+    
 
     if (filtros.tags && filtros.tags.length > 0) {
       resenasFiltradas = resenasFiltradas.filter(resena =>
@@ -644,9 +651,11 @@ export const ProveedorResenas = ({ children }) => {
         case 'calificacion-asc':
           return a.calificacion - b.calificacion;
         case 'likes-desc':
-          return b.likes - a.likes;
+          return (b.likes_count || b.likes || 0) - (a.likes_count || a.likes || 0);
+          //return b.likes - a.likes;
         case 'likes-asc':
-          return a.likes - b.likes;
+          return (a.likes_count || a.likes || 0) - (b.likes_count || b.likes || 0);
+          //return a.likes - b.likes;
         case 'titulo-asc':
           return a.titulo.localeCompare(b.titulo);
         case 'titulo-desc':

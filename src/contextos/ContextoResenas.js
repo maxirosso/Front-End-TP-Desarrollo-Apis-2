@@ -53,7 +53,7 @@ const datosPeliculasEjemplo = [
     year: 2017,
     poster_url: "https://via.placeholder.com/120x180/E74C3C/ECF0F1?text=Blade+Runner",
     rating: 4,
-    user_name: "scifi_lover",
+    user_name: "Juan Pérez",
     created_at: "2024-03-12T10:00:00Z",
     body: "Denis Villeneuve logra crear una secuela que honra al original mientras construye algo completamente nuevo. La cinematografía es deslumbrante, el diseño de sonido es excepcional, y Ryan Gosling ofrece una actuación muy matizada. Una reflexión profunda sobre la humanidad y la identidad en un futuro distópico.",
     likes: 18,
@@ -67,7 +67,7 @@ const datosPeliculasEjemplo = [
     año: 2017,
     imagenUrl: "https://via.placeholder.com/120x180/E74C3C/ECF0F1?text=Blade+Runner",
     calificacion: 4,
-    usuario: "scifi_lover",
+    usuario: "Juan Pérez",
     fechaResena: "12 de marzo, 2024",
     textoResena: "Denis Villeneuve logra crear una secuela que honra al original mientras construye algo completamente nuevo. La cinematografía es deslumbrante, el diseño de sonido es excepcional, y Ryan Gosling ofrece una actuación muy matizada. Una reflexión profunda sobre la humanidad y la identidad en un futuro distópico.",
     megusta: true,
@@ -82,7 +82,7 @@ const datosPeliculasEjemplo = [
     year: 2019,
     poster_url: "https://via.placeholder.com/120x180/1ABC9C/ECF0F1?text=Parasite",
     rating: 5,
-    user_name: "cinema_critic",
+    user_name: "María García",
     created_at: "2024-03-10T10:00:00Z",
     body: "Bong Joon-ho presenta una crítica social brillante envuelta en un thriller impredecible. La película funciona en múltiples niveles: como comedia negra, thriller psicológico y comentario social. Cada detalle visual tiene un propósito, y la forma en que construye la tensión es magistral.",
     likes: 31,
@@ -99,7 +99,7 @@ const datosPeliculasEjemplo = [
     año: 2019,
     imagenUrl: "https://via.placeholder.com/120x180/1ABC9C/ECF0F1?text=Parasite",
     calificacion: 5,
-    usuario: "cinema_critic",
+    usuario: "María García",
     fechaResena: "10 de marzo, 2024",
     textoResena: "Bong Joon-ho presenta una crítica social brillante envuelta en un thriller impredecible. La película funciona en múltiples niveles: como comedia negra, thriller psicológico y comentario social. Cada detalle visual tiene un propósito, y la forma en que construye la tensión es magistral.",
     megusta: false,
@@ -114,7 +114,7 @@ const datosPeliculasEjemplo = [
     year: 2015,
     poster_url: "https://via.placeholder.com/120x180/F39C12/ECF0F1?text=Mad+Max",
     rating: 4,
-    user_name: "action_fan",
+    user_name: "Carlos López",
     created_at: "2024-03-08T10:00:00Z",
     body: "George Miller demuestra que las películas de acción pueden ser arte. Cada secuencia de acción está coreografiada con precisión cinematográfica. Charlize Theron y Tom Hardy tienen una química fantástica, y la película logra contar una historia completa con diálogo mínimo pero impacto máximo.",
     likes: 12,
@@ -128,7 +128,7 @@ const datosPeliculasEjemplo = [
     año: 2015,
     imagenUrl: "https://via.placeholder.com/120x180/F39C12/ECF0F1?text=Mad+Max",
     calificacion: 4,
-    usuario: "action_fan",
+    usuario: "Carlos López",
     fechaResena: "8 de marzo, 2024",
     textoResena: "George Miller demuestra que las películas de acción pueden ser arte. Cada secuencia de acción está coreografiada con precisión cinematográfica. Charlize Theron y Tom Hardy tienen una química fantástica, y la película logra contar una historia completa con diálogo mínimo pero impacto máximo.",
     megusta: true,
@@ -268,6 +268,7 @@ export const ProveedorResenas = ({ children }) => {
   const [cargando, setCargando] = useState(true);
   const [filtrosActivos, setFiltrosActivos] = useState({});
   const [ordenamientoActual, setOrdenamientoActual] = useState('fecha-desc');
+  const [usuarioActual, setUsuarioActual] = useState(1); // Nuevo estado para usuario actual
   const [usingBackend, setUsingBackend] = useState(false);
   const [error, setError] = useState(null);
 
@@ -281,15 +282,12 @@ export const ProveedorResenas = ({ children }) => {
         setUsingBackend(backendAvailable);
         
         if (backendAvailable) {
-          console.log('✅ Backend disponible - Cargando SOLO datos reales desde API...');
           const response = await reviewsAPI.getAll();
           const resenas = response.data || response.rows || [];
-          console.log('📊 Reseñas reales cargadas desde API:', resenas.length);
           
           // IMPORTANTE: Solo usar datos reales cuando el backend esté disponible
           setResenas(resenas); // Solo datos de la base de datos, NO mock data
         } else {
-          console.log('❌ Backend no disponible, usando datos mock...');
           await new Promise(resolve => setTimeout(resolve, 1000));
           setResenas(datosPeliculasEjemplo);
         }
@@ -326,23 +324,20 @@ export const ProveedorResenas = ({ children }) => {
         if (nuevaResena.movie_id) {
           // Ya tenemos una película seleccionada
           movieId = nuevaResena.movie_id;
-          console.log('✅ USANDO PELÍCULA PRESELECCIONADA ID:', movieId);
         } else {
           // Buscar película existente por título o crear nueva
           try {
-            console.log('🔍 Buscando película existente:', nuevaResena.titulo.trim());
             const existingMovies = await moviesAPI.getAll();
             
             // Buscar película con título similar
             const tituloLimpio = nuevaResena.titulo.trim().toLowerCase();
             const peliculaExistente = existingMovies.find(movie => 
-              movie.title && movie.title.toLowerCase().includes(tituloLimpio) ||
-              tituloLimpio.includes(movie.title.toLowerCase())
+              (movie.title && movie.title.toLowerCase().includes(tituloLimpio)) ||
+              (tituloLimpio.includes(movie.title && movie.title.toLowerCase()))
             );
             
             if (peliculaExistente) {
               movieId = peliculaExistente.id;
-              console.log('✅ USANDO PELÍCULA EXISTENTE:', peliculaExistente.title, 'ID:', movieId);
             } else {
               // Solo crear nueva si no existe
               const movieData = {
@@ -354,13 +349,10 @@ export const ProveedorResenas = ({ children }) => {
                 description: `Película: ${nuevaResena.titulo}`
               };
               
-              console.log('🎬 CREANDO PELÍCULA NUEVA:', movieData);
               const movieResponse = await moviesAPI.create(movieData);
               movieId = movieResponse.id || 1;
-              console.log('🎬 PELÍCULA NUEVA CREADA con ID:', movieId);
             }
           } catch (movieError) {
-            console.log('⚠️ Error gestionando película, usando ID por defecto:', movieError);
             movieId = 1;
           }
         }
@@ -373,7 +365,7 @@ export const ProveedorResenas = ({ children }) => {
         // Convertir datos del frontend al formato del backend
         const datosParaBackend = {
           movie_id: Number(movieId),
-          user_id: 1,
+          user_id: Number(usuarioActual),
           title: nuevaResena.titulo.trim(),
           body: nuevaResena.textoResena.trim(),
           rating: Number(nuevaResena.calificacion),
@@ -381,35 +373,30 @@ export const ProveedorResenas = ({ children }) => {
           tags: Array.isArray(nuevaResena.tags) ? nuevaResena.tags : []
         };
         
-        console.log('🔍 DATOS FINALES PARA BACKEND:', datosParaBackend);
-        console.log('🔍 VALIDACIÓN:');
-        console.log('  - title length:', datosParaBackend.title.length);
-        console.log('  - body length:', datosParaBackend.body.length);
-        console.log('  - rating:', datosParaBackend.rating);
-        console.log('  - movie_id:', datosParaBackend.movie_id, typeof datosParaBackend.movie_id);
-        console.log('  - user_id:', datosParaBackend.user_id, typeof datosParaBackend.user_id);
-        
         const response = await reviewsAPI.create(datosParaBackend);
-        console.log('🎉 RESPUESTA DEL BACKEND:', response);
         setResenas(prev => [response, ...prev]);
         return response;
       } else {
         const fechaActual = new Date();
-        console.log('🔍 DATOS RECIBIDOS DEL FORMULARIO:', nuevaResena);
         
         const resenaConId = { 
           // Propiedades para compatibilidad con backend
           id: Date.now(),
           title: nuevaResena.titulo,
           rating: nuevaResena.calificacion,
-          user_name: "usuario_actual",
+          user_name: usuarioActual === 1 ? 'Admin' : 
+                     usuarioActual === 2 ? 'Juan Pérez' :
+                     usuarioActual === 3 ? 'María García' :
+                     usuarioActual === 4 ? 'Carlos López' :
+                     usuarioActual === 5 ? 'Ana Martín' :
+                     usuarioActual === 6 ? 'Luis Rodríguez' : `Usuario ${usuarioActual}`,
           created_at: fechaActual.toISOString(),
           body: nuevaResena.textoResena,
           likes: 0,
           year: parseInt(nuevaResena.año) || new Date().getFullYear(),
           poster_url: nuevaResena.imagenUrl || `https://via.placeholder.com/120x180/34495e/ecf0f1?text=${encodeURIComponent(nuevaResena.titulo || 'Pelicula')}`,
           movie_id: Date.now(),
-          user_id: 1,
+          user_id: Number(usuarioActual),
           has_spoilers: nuevaResena.contieneEspoilers || false,
           genre: nuevaResena.genero || '',
           tags: nuevaResena.tags || [],
@@ -420,7 +407,12 @@ export const ProveedorResenas = ({ children }) => {
           titulo: nuevaResena.titulo,              // ✅ Para que TarjetaResena encuentre el título
           año: parseInt(nuevaResena.año) || new Date().getFullYear(),
           calificacion: nuevaResena.calificacion,  // ✅ Para que TarjetaResena encuentre la calificación
-          usuario: "usuario_actual",               // ✅ Para que TarjetaResena encuentre el usuario
+          usuario: usuarioActual === 1 ? 'Admin' : 
+                   usuarioActual === 2 ? 'Juan Pérez' :
+                   usuarioActual === 3 ? 'María García' :
+                   usuarioActual === 4 ? 'Carlos López' :
+                   usuarioActual === 5 ? 'Ana Martín' :
+                   usuarioActual === 6 ? 'Luis Rodríguez' : `Usuario ${usuarioActual}`,               // ✅ Para que TarjetaResena encuentre el usuario
           fechaResena: fechaActual.toLocaleDateString('es-ES', {
             year: 'numeric',
             month: 'long',
@@ -438,7 +430,6 @@ export const ProveedorResenas = ({ children }) => {
           genero: nuevaResena.genero || ''
         };
         
-        console.log('🔍 DATOS FINALES CREADOS:', resenaConId);
         setResenas(prev => [resenaConId, ...prev]);
         return resenaConId;
       }
@@ -582,8 +573,68 @@ export const ProveedorResenas = ({ children }) => {
     }
   };
 
-  // Función para aplicar filtros
-  const aplicarFiltros = (resenasList, filtros) => {
+  // Función para aplicar filtros (usa backend cuando es necesario)
+  const aplicarFiltros = async (filtros = {}) => {
+    try {
+      if (usingBackend && (filtros.genero || filtros.calificacion || filtros.usuario || filtros.pelicula)) {
+        // Usar backend para filtros complejos
+        const filtrosBackend = {};
+        
+        if (filtros.genero) filtrosBackend.genre = filtros.genero;
+        if (filtros.calificacion) filtrosBackend.min_rating = parseInt(filtros.calificacion);
+        if (filtros.contieneEspoilers !== undefined) filtrosBackend.has_spoilers = filtros.contieneEspoilers;
+        
+        const response = await reviewsAPI.filter(filtrosBackend);
+        let resenasFiltradas = response.data || response.rows || [];
+        
+        // Aplicar filtros adicionales que el backend no maneja
+        if (filtros.pelicula) {
+          resenasFiltradas = resenasFiltradas.filter(resena => {
+            const titulo = resena.movie_title || resena.titulo || resena.title || '';
+            return titulo.toLowerCase().startsWith(filtros.pelicula.toLowerCase());
+          });
+        }
+
+        if (filtros.usuario) {
+          resenasFiltradas = resenasFiltradas.filter(resena => {
+            const usuario = resena.user_name || resena.usuario || '';
+            return usuario && usuario.toLowerCase().startsWith(filtros.usuario.toLowerCase());
+          });
+        }
+
+        if (filtros.tags && filtros.tags.length > 0) {
+          resenasFiltradas = resenasFiltradas.filter(resena =>
+            resena.tags && filtros.tags.some(tag => resena.tags.includes(tag))
+          );
+        }
+
+        if (filtros.soloMeGusta) {
+          resenasFiltradas = resenasFiltradas.filter(resena => resena.megusta);
+        }
+
+        if (!filtros.contieneEspoilers) {
+          resenasFiltradas = resenasFiltradas.filter(resena => !resena.contieneEspoilers);
+        }
+        
+        return resenasFiltradas;
+      } else {
+        // Usar filtrado local para casos simples o cuando backend no está disponible
+        return aplicarFiltrosLocal(resenas, filtros);
+      }
+    } catch (err) {
+      console.error('Error aplicando filtros:', err);
+      return aplicarFiltrosLocal(resenas, filtros);
+    }
+  };
+
+  // Función para aplicar filtros localmente (original)
+  const aplicarFiltrosLocal = (resenasList, filtros) => {
+    // Validar que resenasList sea un array
+    if (!Array.isArray(resenasList)) {
+      console.warn('aplicarFiltrosLocal: resenasList no es un array:', resenasList);
+      return [];
+    }
+    
     let resenasFiltradas = [...resenasList];
 
     if (filtros.pelicula) {
@@ -615,7 +666,10 @@ export const ProveedorResenas = ({ children }) => {
     }
 
     if (filtros.genero) {
-      resenasFiltradas = resenasFiltradas.filter(resena => resena.genero === filtros.genero);
+      resenasFiltradas = resenasFiltradas.filter(resena => {
+        const genero = resena.movie_genre || resena.genero || resena.genre || '';
+        return genero === filtros.genero;
+      });
     }
     
 
@@ -638,6 +692,12 @@ export const ProveedorResenas = ({ children }) => {
 
   // Función para aplicar ordenamiento
   const aplicarOrdenamiento = (resenasList, ordenamiento) => {
+    // Validar que resenasList sea un array
+    if (!Array.isArray(resenasList)) {
+      console.warn('aplicarOrdenamiento: resenasList no es un array:', resenasList);
+      return [];
+    }
+    
     const resenasOrdenadas = [...resenasList];
     
     resenasOrdenadas.sort((a, b) => {
@@ -677,12 +737,14 @@ export const ProveedorResenas = ({ children }) => {
     cargando,
     filtrosActivos,
     ordenamientoActual,
+    usuarioActual,
     usingBackend,
     error,
     
     // Setters
     setFiltrosActivos,
     setOrdenamientoActual,
+    setUsuarioActual,
     setError,
     
     // Funciones de reseñas

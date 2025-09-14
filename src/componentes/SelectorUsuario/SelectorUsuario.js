@@ -5,20 +5,25 @@ import './SelectorUsuario.css';
 
 const SelectorUsuario = () => {
   const [mostrarSelector, setMostrarSelector] = useState(false);
-  const { usersAPI } = useResenas();
+  const { usersAPI, setUsuarioActual, usuarioActual } = useResenas();
   const navigate = useNavigate();
 
   const usuarios = [
-    { id: 1, name: "usuario_actual", emoji: "👤" },
-    { id: 2, name: "scifi_lover", emoji: "🚀" },
-    { id: 3, name: "cinema_critic", emoji: "🎭" },
-    { id: 4, name: "action_fan", emoji: "💥" }
+    { id: 1, name: "Admin", emoji: "👤" },
+    { id: 2, name: "Juan Pérez", emoji: "🚀" },
+    { id: 3, name: "María García", emoji: "🎭" },
+    { id: 4, name: "Carlos López", emoji: "💥" },
+    { id: 5, name: "Ana Martín", emoji: "🎬" },
+    { id: 6, name: "Luis Rodríguez", emoji: "🎞️" }
   ];
 
   const cambiarUsuario = (userId) => {
+    setUsuarioActual(userId); // Actualizar usuario actual en el contexto
     navigate(`/usuario/${userId}`);
     setMostrarSelector(false);
   };
+
+  const usuarioActualData = usuarios.find(u => u.id === usuarioActual) || usuarios[0];
 
   return (
     <div className="selector-usuario">
@@ -27,7 +32,7 @@ const SelectorUsuario = () => {
         className="btn-selector-usuario"
         title="Cambiar usuario (para testing)"
       >
-        👤 Cambiar Usuario
+        {usuarioActualData.emoji} {usuarioActualData.name}
       </button>
       
       {mostrarSelector && (
@@ -45,11 +50,12 @@ const SelectorUsuario = () => {
               <button
                 key={usuario.id}
                 onClick={() => cambiarUsuario(usuario.id)}
-                className="item-usuario"
+                className={`item-usuario ${usuario.id === usuarioActual ? 'activo' : ''}`}
               >
                 <span className="emoji-usuario">{usuario.emoji}</span>
                 <span className="nombre-usuario">{usuario.name}</span>
                 <span className="id-usuario">ID: {usuario.id}</span>
+                {usuario.id === usuarioActual && <span className="indicador-activo">●</span>}
               </button>
             ))}
             <div className="footer-dropdown">

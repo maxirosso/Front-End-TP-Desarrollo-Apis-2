@@ -6,7 +6,7 @@ import './CrearResena.css';
 
 const CrearResena = () => {
   const navigate = useNavigate();
-  const { agregarResena } = useResenas();
+  const { agregarResena, usuarioActual } = useResenas();
 
   const [datosFormulario, setDatosFormulario] = useState({
     titulo: '',
@@ -123,8 +123,6 @@ const CrearResena = () => {
     setEnviando(true);
 
     try {
-      console.log('🔍 DATOS DEL FORMULARIO:', datosFormulario);
-      
       const nuevaResena = {
         id: Date.now(),
         // Usar datos de película seleccionada o del formulario
@@ -132,7 +130,8 @@ const CrearResena = () => {
         año: peliculaSeleccionada ? peliculaSeleccionada.year : parseInt(datosFormulario.año),
         imagenUrl: peliculaSeleccionada ? peliculaSeleccionada.poster_url : `https://via.placeholder.com/120x180/2C3E50/ECF0F1?text=${encodeURIComponent(datosFormulario.titulo)}`,
         calificacion: datosFormulario.calificacion,
-        usuario: 'usuario_actual',
+        usuario: `usuario_${usuarioActual}`, // Usar usuario actual del contexto
+        user_id: usuarioActual, // Para el backend
         fechaResena: new Date().toLocaleDateString('es-ES', { 
           day: 'numeric', 
           month: 'long', 
@@ -158,8 +157,6 @@ const CrearResena = () => {
         // Agregar ID de película seleccionada para el backend
         movie_id: peliculaSeleccionada ? peliculaSeleccionada.id : null
       };
-
-      console.log('🔍 NUEVA RESEÑA A ENVIAR:', nuevaResena);
 
       // Simular delay de red
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -269,15 +266,17 @@ const CrearResena = () => {
                 disabled={enviando}
               >
                 <option value="">Seleccionar género</option>
-                <option value="accion">Acción</option>
-                <option value="drama">Drama</option>
-                <option value="comedia">Comedia</option>
-                <option value="terror">Terror</option>
-                <option value="romance">Romance</option>
-                <option value="ciencia-ficcion">Ciencia Ficción</option>
-                <option value="thriller">Thriller</option>
-                <option value="animacion">Animación</option>
-                <option value="documental">Documental</option>
+                <option value="Acción">Acción</option>
+                <option value="Drama">Drama</option>
+                <option value="Comedia">Comedia</option>
+                <option value="Terror">Terror</option>
+                <option value="Romance">Romance</option>
+                <option value="Ciencia Ficción">Ciencia Ficción</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Animación">Animación</option>
+                <option value="Fantasía">Fantasía</option>
+                <option value="Musical">Musical</option>
+                <option value="Crimen">Crimen</option>
               </select>
             </div>
           </section>

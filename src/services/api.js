@@ -59,8 +59,9 @@ export const reviewsAPI = {
 
   // HU-006: Buscar reseñas por usuario
   getByUser: (userId, filters = {}) => {
-    const queryParams = new URLSearchParams(filters).toString();
-    const endpoint = `/users/${userId}/reviews${queryParams ? `?${queryParams}` : ''}`;
+    const allFilters = { user_id: userId, ...filters };
+    const queryParams = new URLSearchParams(allFilters).toString();
+    const endpoint = `/reviews${queryParams ? `?${queryParams}` : ''}`;
     return apiRequest(endpoint);
   },
 

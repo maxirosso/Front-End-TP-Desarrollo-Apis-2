@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useResenas } from '../contextos/ContextoResenas';
 
 const Usuario = () => {
   const navigate = useNavigate();
+  const { usuarioActual } = useResenas();
 
   useEffect(() => {
-    // Redirigir al perfil del usuario actual (ID 1 por defecto)
-    // En una app real, esto vendría del contexto de autenticación
-    const usuarioActual = 1;
+    // Redirigir al perfil del usuario actual (desde el contexto)
     navigate(`/usuario/${usuarioActual}`);
-  }, [navigate]);
+  }, [navigate, usuarioActual]);
 
   return (
     <div style={{ 

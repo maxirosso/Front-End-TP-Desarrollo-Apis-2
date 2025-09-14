@@ -34,15 +34,17 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
 
   const opcionesGenero = [
     { valor: '', etiqueta: 'Todos los géneros' },
-    { valor: 'accion', etiqueta: 'Acción' },
-    { valor: 'drama', etiqueta: 'Drama' },
-    { valor: 'comedia', etiqueta: 'Comedia' },
-    { valor: 'terror', etiqueta: 'Terror' },
-    { valor: 'romance', etiqueta: 'Romance' },
-    { valor: 'ciencia-ficcion', etiqueta: 'Ciencia Ficción' },
-    { valor: 'thriller', etiqueta: 'Thriller' },
-    { valor: 'animacion', etiqueta: 'Animación' },
-    { valor: 'documental', etiqueta: 'Documental' }
+    { valor: 'Acción', etiqueta: 'Acción' },
+    { valor: 'Drama', etiqueta: 'Drama' },
+    { valor: 'Comedia', etiqueta: 'Comedia' },
+    { valor: 'Terror', etiqueta: 'Terror' },
+    { valor: 'Romance', etiqueta: 'Romance' },
+    { valor: 'Ciencia Ficción', etiqueta: 'Ciencia Ficción' },
+    { valor: 'Thriller', etiqueta: 'Thriller' },
+    { valor: 'Animación', etiqueta: 'Animación' },
+    { valor: 'Fantasía', etiqueta: 'Fantasía' },
+    { valor: 'Musical', etiqueta: 'Musical' },
+    { valor: 'Crimen', etiqueta: 'Crimen' }
   ];
 
   const tagsDisponibles = [

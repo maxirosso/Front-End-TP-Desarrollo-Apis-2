@@ -101,6 +101,21 @@
   text-align: left;
 }
 
+.item-usuario.activo {
+  background: #e8f5e8;
+  border-color: #27ae60;
+}
+
+.item-usuario.activo:hover {
+  background: #d5f0d5;
+}
+
+.indicador-activo {
+  color: #27ae60;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
 .id-usuario {
   font-size: 0.7rem;
   color: #7f8c8d;

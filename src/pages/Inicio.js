@@ -19,7 +19,8 @@ const Inicio = () => {
     toggleLikeResena,
     agregarComentario,
     aplicarFiltros,
-    aplicarOrdenamiento
+    aplicarOrdenamiento,
+    usingBackend
   } = useResenas();
 
   const [resenasFiltradas, setResenasFiltradas] = useState([]);
@@ -28,10 +29,49 @@ const Inicio = () => {
 
   // Aplicar filtros y ordenamiento
   useEffect(() => {
-    let resenasProcesadas = aplicarFiltros(resenas, filtrosActivos);
-    resenasProcesadas = aplicarOrdenamiento(resenasProcesadas, ordenamientoActual);
-    setResenasFiltradas(resenasProcesadas);
-  }, [resenas, filtrosActivos, ordenamientoActual, aplicarFiltros, aplicarOrdenamiento]);
+    const aplicarFiltrosYOrdenamiento = async () => {
+      try {
+        // Verificar si algún filtro requiere backend
+        const requiereBackend = filtrosActivos.genero || 
+                               (usingBackend && (filtrosActivos.calificacion || filtrosActivos.usuario || filtrosActivos.pelicula));
+        
+        let resenasProcesadas;
+        if (requiereBackend) {
+          // Usar función asíncrona del contexto
+          resenasProcesadas = await aplicarFiltros(filtrosActivos);
+        } else {
+          // Usar función síncrona local
+          resenasProcesadas = aplicarOrdenamiento(resenas, ordenamientoActual);
+          resenasProcesadas = resenasProcesadas.filter(resena => {
+            // Aplicar filtros simples localmente
+            if (filtrosActivos.pelicula) {
+              const titulo = resena.movie_title || resena.titulo || resena.title || '';
+              if (!titulo.toLowerCase().startsWith(filtrosActivos.pelicula.toLowerCase())) {
+                return false;
+              }
+            }
+            if (filtrosActivos.usuario) {
+              const usuario = resena.user_name || resena.usuario || '';
+              if (!usuario || !usuario.toLowerCase().startsWith(filtrosActivos.usuario.toLowerCase())) {
+                return false;
+              }
+            }
+            return true;
+          });
+        }
+        
+        const resenasOrdenadas = aplicarOrdenamiento(resenasProcesadas, ordenamientoActual);
+        setResenasFiltradas(resenasOrdenadas);
+      } catch (error) {
+        console.error('Error aplicando filtros:', error);
+        // Fallback: usar las reseñas originales
+        const resenasOrdenadas = aplicarOrdenamiento(resenas, ordenamientoActual);
+        setResenasFiltradas(resenasOrdenadas);
+      }
+    };
+
+    aplicarFiltrosYOrdenamiento();
+  }, [resenas, filtrosActivos, ordenamientoActual, aplicarFiltros, aplicarOrdenamiento, usingBackend]);
 
   // Funciones de manejo de eventos
   const manejarEliminarResena = (id) => {
@@ -124,8 +164,7 @@ const Inicio = () => {
         </div>
         <div className="estadistica">
           <span className="numero-estadistica">
-            {resenas.reduce((total, r) => Number(total) + Number(r.likes_count || r.likes || 0), 0)}
-            {/* {resenas.reduce((total, r) => total + r.likes, 0)} */}
+            {resenas.reduce((total, r) => total + parseInt(r.likes_count || r.likes || 0), 0)}
           </span>
           <span className="etiqueta-estadistica">Me gusta total</span>
         </div>

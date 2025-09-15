@@ -35,6 +35,7 @@ const CrearResena = () => {
   ];
 
   const manejarCambioEntrada = (campo, valor) => {
+    debugger
     setDatosFormulario(prev => ({
       ...prev,
       [campo]: valor
@@ -125,6 +126,7 @@ const CrearResena = () => {
     try {
       const nuevaResena = {
         id: Date.now(),
+        tituloResena: datosFormulario.tituloResenia,
         // Usar datos de película seleccionada o del formulario
         titulo: peliculaSeleccionada ? peliculaSeleccionada.title : datosFormulario.titulo,
         año: peliculaSeleccionada ? peliculaSeleccionada.year : parseInt(datosFormulario.año),
@@ -207,6 +209,23 @@ const CrearResena = () => {
         </header>
 
         <form className="formulario-crear-resena" onSubmit={manejarEnvio}>
+          {/* Titulo de la reseña */}
+          <h2 className="subtitulo-formulario">Detalles de la Reseña</h2>
+           {/* Fecha de visionado */}
+          <section className="seccion-fecha">
+            <div className="campo-formulario">
+              <label className="etiqueta-campo">Titulo de reseña</label>
+              <input
+                type="text"
+                value={datosFormulario.tituloResenia}
+                onChange={(e) => manejarCambioEntrada('tituloResenia', e.target.value)}
+                className={`entrada-fecha ${errores.tituloResenia ? 'error' : ''}`}
+                disabled={enviando}
+              />
+              {errores.tituloResenia && <span className="mensaje-error">{errores.tituloResenia}</span>}
+            </div>
+          </section>
+
           {/* Información de la película */}
           <section className="seccion-pelicula">
             <h3 className="subtitulo-seccion">Seleccionar Película</h3>

@@ -37,13 +37,30 @@ const TarjetaResena = ({
     yaLeDiLike = pelicula?.yaLeDiLike || false,
     comentarios = pelicula?.comentarios || [],
     tags = pelicula?.tags || [],
-    contieneEspoilers = pelicula?.has_spoilers || pelicula?.contieneEspoilers || false
+    contieneEspoilers = pelicula?.has_spoilers || pelicula?.contieneEspoilers || false,
+    movieTitle = pelicula?.movie_title || pelicula?.titulo || pelicula?.title || 'Título no disponible',
+    moviePoster = pelicula?.movie_poster  || pelicula?.imagenUrl,
   } = pelicula || {};
 
   console.log('🎬 TARJETA RESENA - Datos mapeados:');
   console.log('  - titulo:', titulo, '(de:', pelicula?.titulo, '/', pelicula?.title, ')');
   console.log('  - usuario:', usuario, '(de:', pelicula?.usuario, '/', pelicula?.user_name, ')');
   console.log('  - calificacion:', calificacion, '(de:', pelicula?.calificacion, '/', pelicula?.rating, ')');
+  console.log('  - año:', año, '(de:', pelicula?.año, '/', pelicula?.year, ')');
+  console.log('  - imagenUrl:', imagenUrl, '(de:', pelicula?.imagenUrl, '/', pelicula?.poster_url, ')');
+  console.log('  - fechaResena:', fechaResena, '(de:', pelicula?.fechaResena, '/', pelicula?.created_at, ')');
+  console.log('  - textoResena:', textoResena, '(de:', pelicula?.textoResena, '/', pelicula?.body, ')');
+  console.log('  - megusta:', megusta, '(de:', pelicula?.megusta, ')');
+  console.log('  - fechaVisionado:', fechaVisionado, '(de:', pelicula?.fechaVisionado, ')');
+  console.log('  - likes:', likes, '(de:', pelicula?.likes, ')');
+  console.log('  - yaLeDiLike:', yaLeDiLike, '(de:', pelicula?.yaLeDiLike, ')');
+  console.log('  - comentarios:', comentarios.length, '(de:', pelicula?.comentarios?.length, ')');
+  console.log('  - tags:', tags, '(de:', pelicula?.tags, ')');
+  console.log('  - contieneEspoilers:', contieneEspoilers, '(de:', pelicula?.contieneEspoilers, '/', pelicula?.has_spoilers, ')');
+  console.log('  - movieTitle:', movieTitle, '(de:', pelicula?.movie_title, '/', pelicula?.titulo, '/', pelicula?.title, ')');
+
+
+
 
   // Validar que los números sean válidos
   const calificacionSegura = isNaN(calificacion) ? 0 : calificacion;
@@ -81,7 +98,7 @@ const TarjetaResena = ({
         {/* Imagen de la película */}
         <div className="contenedor-imagen-pelicula">
           <img 
-            src={imagenUrl} 
+            src={moviePoster} 
             alt={`Póster de ${titulo}`}
             className="imagen-pelicula"
           />
@@ -108,9 +125,18 @@ const TarjetaResena = ({
               to={`/pelicula/${encodeURIComponent(titulo)}`}
               className="enlace-titulo-pelicula"
             >
-              <h3 className="titulo-pelicula">{titulo}</h3>
+              <h3 className="titulo-pelicula">{movieTitle}</h3>
             </Link>
             <span className="año-pelicula">{añoSeguro}</span>
+          </div>
+
+          <div className="titulo-pelicula-contenedor">
+            <Link 
+              to={`/pelicula/${encodeURIComponent(titulo)}`}
+              className="enlace-titulo-pelicula"
+            >
+              <h3 className="titulo-resenia">{titulo}</h3>
+            </Link>
           </div>
 
           {/* Calificación con estrellas */}

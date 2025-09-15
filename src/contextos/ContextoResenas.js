@@ -308,9 +308,9 @@ export const ProveedorResenas = ({ children }) => {
     try {
       if (usingBackend) {
         // Validar datos antes de enviar
-        if (!nuevaResena.titulo || nuevaResena.titulo.trim().length < 5) {
-          throw new Error('El título debe tener al menos 5 caracteres');
-        }
+        // if (!nuevaResena.titulo || nuevaResena.titulo.trim().length < 5) {
+        //   throw new Error(`El título debe tener al menos 5 caracteres: ${nuevaResena.titulo}`);
+        // }
         if (!nuevaResena.textoResena || nuevaResena.textoResena.trim().length < 20) {
           throw new Error('La reseña debe tener al menos 20 caracteres');
         }
@@ -328,7 +328,7 @@ export const ProveedorResenas = ({ children }) => {
           // Buscar película existente por título o crear nueva
           try {
             const existingMovies = await moviesAPI.getAll();
-            
+            debugger
             // Buscar película con título similar
             const tituloLimpio = nuevaResena.titulo.trim().toLowerCase();
             const peliculaExistente = existingMovies.find(movie => 
@@ -366,12 +366,13 @@ export const ProveedorResenas = ({ children }) => {
         const datosParaBackend = {
           movie_id: Number(movieId),
           user_id: Number(usuarioActual),
-          title: nuevaResena.titulo.trim(),
+          title: nuevaResena.tituloResena.trim(),
           body: nuevaResena.textoResena.trim(),
           rating: Number(nuevaResena.calificacion),
           has_spoilers: Boolean(nuevaResena.contieneEspoilers),
           tags: Array.isArray(nuevaResena.tags) ? nuevaResena.tags : []
         };
+        console.log('Datos para backend:', datosParaBackend);
         
         const response = await reviewsAPI.create(datosParaBackend);
         setResenas(prev => [response, ...prev]);

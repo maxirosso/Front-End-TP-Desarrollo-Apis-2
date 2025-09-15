@@ -1,7 +1,5 @@
-# Nombre del pipeline
 name: Deploy Frontend to AWS S3 and CloudFront
 
-# Disparador: Se ejecuta cada vez que hay un push a la rama 'feature-front'
 on:
   push:
     branches: [ "feature-front" ]

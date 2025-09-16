@@ -1,153 +1,449 @@
-/* Página de Películas */
+/* ====== DISEÑO ULTRA MODERNO Y AESTHETIC PARA /PELICULAS ====== */
+
 .pagina-peliculas {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
   min-height: 100vh;
+  background: #0f0f23;
+  background-image: 
+    radial-gradient(circle at 25% 25%, #1e1e3a 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, #2a2a5a 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, #1a1a3a 0%, transparent 50%);
+  background-attachment: fixed;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* Header */
+.pagina-peliculas::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="30" cy="25" r="0.3" fill="%23ffffff" opacity="0.05"/><circle cx="60" cy="45" r="0.4" fill="%23ffffff" opacity="0.08"/><circle cx="80" cy="70" r="0.3" fill="%23ffffff" opacity="0.06"/><circle cx="20" cy="85" r="0.5" fill="%23ffffff" opacity="0.04"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+  z-index: 1;
+}
+
+.contenido-peliculas {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* ====== HEADER CINEMATOGRÁFICO ULTRA MODERNO ====== */
 .header-peliculas {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.header-peliculas::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
 
 .header-peliculas h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+  animation: gradientShift 4s ease-in-out infinite;
+  letter-spacing: -0.5px;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .header-peliculas p {
-  font-size: 1.1rem;
-  color: #7f8c8d;
-  max-width: 600px;
-  margin: 0 auto;
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  font-weight: 300;
+  letter-spacing: 0.5px;
 }
 
-/* Grid de películas */
+.aviso-offline {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffd93d;
+  padding: 1rem 2rem;
+  border-radius: 20px;
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(255, 193, 7, 0.2);
+}
+
+/* ====== GRID OPTIMIZADO Y COMPACTO ====== */
 .grid-peliculas {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 2rem;
+  padding: 0 0.5rem;
 }
 
-/* Tarjeta de película */
+/* ====== TARJETAS CINEMATOGRÁFICAS OPTIMIZADAS ====== */
 .tarjeta-pelicula {
-  background: white;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
   border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  height: auto;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.25),
+    0 1px 0 rgba(255, 255, 255, 0.1) inset;
+  display: flex;
+  flex-direction: column;
+}
+
+.tarjeta-pelicula::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 107, 107, 0.05) 0%, 
+    rgba(78, 205, 196, 0.05) 25%, 
+    rgba(69, 183, 209, 0.05) 50%, 
+    rgba(150, 206, 180, 0.05) 75%, 
+    rgba(254, 202, 87, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .tarjeta-pelicula:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.2),
+    0 1px 0 rgba(255, 255, 255, 0.2) inset;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.tarjeta-pelicula:hover::before {
+  opacity: 1;
+}
+
+/* ====== CONTENEDOR DEL POSTER ARREGLADO ====== */
+.contenedor-poster {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  flex-shrink: 0;
+}
+
+.contenedor-poster::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.4));
+  z-index: 2;
 }
 
 .poster-pelicula {
   width: 100%;
-  height: 400px;
+  height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  object-position: center;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  z-index: 1;
 }
 
 .tarjeta-pelicula:hover .poster-pelicula {
-  transform: scale(1.05);
+  transform: scale(1.03);
+  filter: brightness(1.05) saturate(1.1);
 }
 
-/* Información de la película */
+/* ====== INFORMACIÓN BIEN ESPACIADA Y VISIBLE ====== */
 .info-pelicula {
-  padding: 1.5rem;
+  padding: 1.25rem;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.25) 100%);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 3;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 300px;
+}
+
+/* Crear un contenedor para el contenido principal */
+.contenido-tarjeta {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .titulo-pelicula {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-  line-height: 1.3;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+  min-height: 2.4rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  letter-spacing: -0.2px;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .meta-pelicula {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin: 0 0 0.75rem 0;
   flex-wrap: wrap;
+  align-items: center;
+  min-height: auto;
 }
 
-.ano-pelicula,
-.genero-pelicula {
-  background: #ecf0f1;
-  color: #2c3e50;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-.genero-pelicula {
-  background: #3498db;
+.ano-pelicula {
+  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
+}
+
+.genero-pelicula {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
+}
+
+.director-pelicula {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(78, 205, 196, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
 }
 
 .descripcion-pelicula {
-  font-size: 0.9rem;
-  color: #7f8c8d;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1.5;
-  margin-bottom: 1.5rem;
+  margin: 0 0 0.75rem 0;
+  height: auto;
+  max-height: 4.5rem;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-/* Acciones */
+/* ====== BOTONES PROFESIONALES Y AESTHETIC ====== */
 .acciones-pelicula {
   display: flex;
+  flex-direction: row;
   gap: 0.75rem;
-  flex-direction: column;
+  margin-top: 1rem;
+  padding: 1rem 0 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: stretch;
+  flex-shrink: 0;
 }
 
 .btn-ver-resenas,
 .btn-escribir-resena {
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
   text-decoration: none;
   font-weight: 600;
   text-align: center;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-size: 0.75rem;
+  border: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  line-height: 1.2;
+  height: 40px;
+  backdrop-filter: blur(10px);
+}
+
+.btn-ver-resenas::before,
+.btn-escribir-resena::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transition: left 0.4s ease;
+}
+
+.btn-ver-resenas:hover::before,
+.btn-escribir-resena:hover::before {
+  left: 100%;
 }
 
 .btn-ver-resenas {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  box-shadow: 
+    0 4px 15px rgba(102, 126, 234, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .btn-ver-resenas:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 8px 25px rgba(102, 126, 234, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
   text-decoration: none;
   color: white;
 }
 
 .btn-escribir-resena {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
   color: white;
+  box-shadow: 
+    0 4px 15px rgba(255, 107, 107, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .btn-escribir-resena:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+  background: linear-gradient(135deg, #ff5252 0%, #e53935 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 8px 25px rgba(255, 107, 107, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
   text-decoration: none;
   color: white;
 }
 
-/* Modo offline */
+/* ====== ESTADOS DE ERROR Y VACÍO ULTRA MODERNOS ====== */
+.error-peliculas,
+.sin-peliculas {
+  text-align: center;
+  padding: 4rem 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  margin: 3rem auto;
+  max-width: 700px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.error-peliculas h2,
+.sin-peliculas h3 {
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 800;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.error-peliculas p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.error-peliculas button {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem 2rem;
+  border-radius: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+.error-peliculas button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(255, 107, 107, 0.5);
+  background: linear-gradient(135deg, #ff5252, #e53935);
+}
+
+/* ====== MODO OFFLINE ====== */
 .modo-offline {
   position: fixed;
   bottom: 1rem;
@@ -160,23 +456,40 @@
   z-index: 1000;
 }
 
-/* Responsive */
+/* ====== RESPONSIVE DESIGN OPTIMIZADO ====== */
+@media (max-width: 1200px) {
+  .grid-peliculas {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
 @media (max-width: 768px) {
-  .pagina-peliculas {
-    padding: 1rem 0.5rem;
+  .contenido-peliculas {
+    padding: 1.5rem 1rem;
+  }
+
+  .header-peliculas {
+    padding: 2rem 1.5rem;
+    margin-bottom: 2rem;
   }
 
   .header-peliculas h1 {
-    font-size: 2rem;
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+  }
+
+  .header-peliculas p {
+    font-size: 1rem;
   }
 
   .grid-peliculas {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    padding: 0;
   }
 
-  .poster-pelicula {
-    height: 350px;
+  .contenedor-poster {
+    height: 280px;
   }
 
   .info-pelicula {
@@ -184,32 +497,122 @@
   }
 
   .titulo-pelicula {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    height: 2.4rem;
   }
 
-  .acciones-pelicula {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .grid-peliculas {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .poster-pelicula {
-    height: 300px;
-  }
-
-  .acciones-pelicula {
-    gap: 0.5rem;
+  .descripcion-pelicula {
+    height: 3.2rem;
+    font-size: 0.75rem;
   }
 
   .btn-ver-resenas,
   .btn-escribir-resena {
     padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
+}
+
+@media (max-width: 480px) {
+  .contenido-peliculas {
+    padding: 1rem 0.5rem;
+  }
+
+  .header-peliculas {
+    padding: 1.5rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .grid-peliculas {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .contenedor-poster {
+    height: 250px;
+  }
+
+  .info-pelicula {
+    padding: 0.75rem;
+  }
+
+  .titulo-pelicula {
+    font-size: 0.95rem;
+    height: 2.2rem;
+  }
+
+  .descripcion-pelicula {
+    height: 3rem;
+    font-size: 0.7rem;
+  }
+
+  .btn-ver-resenas,
+  .btn-escribir-resena {
+    padding: 0.45rem 0.6rem;
+    font-size: 0.6rem;
+  }
+
+  .meta-pelicula {
+    gap: 0.25rem;
+  }
+
+  .ano-pelicula,
+  .genero-pelicula,
+  .director-pelicula {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .error-peliculas,
+  .sin-peliculas {
+    padding: 2rem 1rem;
+    margin: 1.5rem auto;
+  }
+
+  .error-peliculas h2,
+  .sin-peliculas h3 {
+    font-size: 1.3rem;
+  }
+}
+
+/* ====== ANIMACIONES ADICIONALES ====== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tarjeta-pelicula {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.tarjeta-pelicula:nth-child(even) {
+  animation-delay: 0.1s;
+}
+
+.tarjeta-pelicula:nth-child(3n) {
+  animation-delay: 0.2s;
+}
+
+/* ====== SCROLLBAR PERSONALIZADA ====== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a6fd8, #6a4190);
 }

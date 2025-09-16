@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TAGS_DISPONIBLES } from '../../constants/tags'; // ✅ Importar tags compartidos
 import './FiltrosResenas.css';
 
 const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) => {
@@ -47,10 +48,8 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
     { valor: 'Crimen', etiqueta: 'Crimen' }
   ];
 
-  const tagsDisponibles = [
-    'Spoiler Free', 'Obra Maestra', 'Decepcionante', 'Sobrevalorada', 
-    'Infravalorada', 'Acción', 'Drama', 'Comedia', 'Terror', 'Romance'
-  ];
+  // ✅ Usar tags compartidos en lugar de definir aquí
+  const tagsDisponibles = TAGS_DISPONIBLES;
 
   const manejarCambioFiltro = (campo, valor) => {
     const nuevosFiltros = {

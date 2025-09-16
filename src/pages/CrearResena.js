@@ -1,41 +1,172 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useResenas } from '../contextos/ContextoResenas';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import ContextoResenas from '../contextos/ContextoResenas';
 import SelectorPelicula from '../componentes/SelectorPelicula/SelectorPelicula';
+import { TAGS_DISPONIBLES } from '../constants/tags'; // ✅ Importar tags compartidos
 import './CrearResena.css';
 
 const CrearResena = () => {
+  console.log('🚀 CrearResena component mounting...');
+  
   const navigate = useNavigate();
-  const { agregarResena, usuarioActual } = useResenas();
+  const { id } = useParams(); // Para edición
+  const [searchParams] = useSearchParams(); // Para crear nueva con datos de película
+  
+  console.log('🔍 Component params:', { id, esEdicion: !!id });
+  
+  const { 
+    agregarResena, 
+    actualizarResena, // ✅ Cambiar de editarResena a actualizarResena
+    obtenerResenaPorId,
+    usuarioActual, 
+    obtenerNombreUsuario,
+    resenas,
+    usingBackend,
+    reviewsAPI // ✅ Agregar reviewsAPI para carga directa
+  } = useContext(ContextoResenas);
+
+  console.log('🔍 Context values:', { 
+    usuarioActual, 
+    resenasCount: resenas?.length || 0, 
+    usingBackend, 
+    reviewsAPIAvailable: !!reviewsAPI 
+  });
+
+  const esEdicion = !!id;
+  const movieIdFromUrl = searchParams.get('movieId');
+  const tituloFromUrl = searchParams.get('titulo');
+  const yearFromUrl = searchParams.get('year');
+  const genreFromUrl = searchParams.get('genre');
+  const directorFromUrl = searchParams.get('director');
+  const posterFromUrl = searchParams.get('poster');
+  const descriptionFromUrl = searchParams.get('description');
 
   const [datosFormulario, setDatosFormulario] = useState({
-    titulo: '',
-    año: '',
+    tituloResenia: '', // ✅ Agregar título de reseña
+    titulo: tituloFromUrl || '',
+    año: yearFromUrl || '',
+    poster: posterFromUrl || '',
+    posterFile: null, // Para almacenar el archivo de imagen
     calificacion: 0,
     fechaVisionado: '',
     textoResena: '',
     megusta: false,
     contieneEspoilers: false,
     esSpoilerFree: true,
-    genero: '',
+    genero: genreFromUrl || '',
     tags: []
   });
 
-  const [peliculaSeleccionada, setPeliculaSeleccionada] = useState(null);
+  const [peliculaSeleccionada, setPeliculaSeleccionada] = useState(movieIdFromUrl ? {
+    id: movieIdFromUrl,
+    title: tituloFromUrl,
+    year: yearFromUrl,
+    genre: genreFromUrl,
+    director: directorFromUrl,
+    poster_url: posterFromUrl,
+    description: descriptionFromUrl
+  } : null);
   const [modoCrearNueva, setModoCrearNueva] = useState(false);
+  const [cargandoDatos, setCargandoDatos] = useState(esEdicion);
 
   const [calificacionHover, setCalificacionHover] = useState(0);
   const [errores, setErrores] = useState({});
   const [enviando, setEnviando] = useState(false);
 
-  const tagsDisponibles = [
-    'Sin Spoilers', 'Acción', 'Drama', 'Comedia', 'Terror', 'Romance', 
-    'Ciencia Ficción', 'Thriller', 'Familiar', 'Animación', 'Documental',
-    'Obra Maestra', 'Una Decepción', 'Sobrevalorada', 'Infravalorada', 'Imperdible'
-  ];
+  // Cargar datos para edición - VERSION SIMPLIFICADA PARA DEBUG
+  useEffect(() => {
+    console.log('🔄 useEffect ejecutándose:', { esEdicion, id });
+    
+    if (esEdicion && id) {
+      console.log('✅ Condiciones cumplidas, iniciando carga...');
+      
+      const cargarDatosResena = async () => {
+        console.log('📥 Función cargarDatosResena iniciada');
+        setCargandoDatos(true);
+        
+        try {
+          const resenaId = parseInt(id, 10);
+          console.log('🆔 ID convertido:', resenaId);
+          
+          // PRUEBA DIRECTA: Solo intentar backend
+          console.log('🌐 Haciendo llamada directa al backend...');
+          const response = await fetch(`http://localhost:8080/reviews/${resenaId}`);
+          
+          console.log('📡 Response status:', response.status);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          
+          const resena = await response.json();
+          console.log('� Reseña recibida:', resena);
+          
+          if (resena) {
+            console.log('📝 Cargando datos al formulario...');
+            
+            // Convertir fecha ISO a formato YYYY-MM-DD para el input
+            let fechaFormateada = '';
+            if (resena.created_at) {
+              const fecha = new Date(resena.created_at);
+              fechaFormateada = fecha.toISOString().split('T')[0];
+            }
+            console.log('📅 Fecha convertida:', { original: resena.created_at, formateada: fechaFormateada });
+            
+            setDatosFormulario({
+              tituloResenia: resena.title || '',
+              titulo: resena.movie_title || '',
+              año: resena.year || '',
+              poster: resena.movie_poster || resena.poster_url || '',
+              calificacion: resena.rating || 0,
+              fechaVisionado: fechaFormateada,
+              textoResena: resena.body || '',
+              megusta: false,
+              contieneEspoilers: resena.has_spoilers || false,
+              esSpoilerFree: !resena.has_spoilers,
+              genero: resena.movie_genre || resena.genre || '',
+              tags: resena.tags || []
+            });
+
+            // Solo establecer película si tenemos los datos completos
+            if (resena.movie_id && resena.movie_title) {
+              setPeliculaSeleccionada({
+                id: resena.movie_id,
+                title: resena.movie_title,
+                year: resena.year,
+                genre: resena.movie_genre || resena.genre,
+                director: resena.movie_director,
+                poster_url: resena.movie_poster || resena.poster_url,
+                description: resena.movie_description
+              });
+              console.log('🎬 Película establecida:', { 
+                id: resena.movie_id, 
+                title: resena.movie_title,
+                genre: resena.movie_genre || resena.genre
+              });
+            }
+            
+            console.log('✅ Datos cargados exitosamente');
+          }
+          
+        } catch (error) {
+          console.error('💥 Error en carga directa:', error);
+          alert('Error al cargar la reseña: ' + error.message);
+        } finally {
+          setCargandoDatos(false);
+          console.log('🏁 Carga finalizada');
+        }
+      };
+
+      cargarDatosResena();
+    } else {
+      console.log('ℹ️ No es edición o no hay ID:', { esEdicion, id });
+    }
+  }, [id, esEdicion]);
+
+  // ✅ Usar tags compartidos en lugar de definir aquí
+  const tagsDisponibles = TAGS_DISPONIBLES;
 
   const manejarCambioEntrada = (campo, valor) => {
-    debugger
     setDatosFormulario(prev => ({
       ...prev,
       [campo]: valor
@@ -44,6 +175,74 @@ const CrearResena = () => {
     // Limpiar error específico cuando el usuario empiece a corregir
     if (errores[campo]) {
       setErrores(prev => ({ ...prev, [campo]: null }));
+    }
+  };
+
+  const redimensionarImagen = (file, maxWidth = 300, maxHeight = 450, quality = 0.8) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Calcular nuevas dimensiones manteniendo aspecto
+        let { width, height } = img;
+        
+        if (width > height) {
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = (width * maxHeight) / height;
+            height = maxHeight;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Dibujar imagen redimensionada
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convertir a base64 con compresión
+        const dataURL = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataURL);
+      };
+      
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const manejarCambioImagen = async (evento) => {
+    const archivo = evento.target.files[0];
+    if (archivo) {
+      // Validar que sea una imagen
+      if (!archivo.type.startsWith('image/')) {
+        alert('Por favor selecciona un archivo de imagen válido');
+        return;
+      }
+      
+      // Validar tamaño (máximo 5MB)
+      if (archivo.size > 5 * 1024 * 1024) {
+        alert('La imagen es demasiado grande. Máximo 5MB');
+        return;
+      }
+      
+      try {
+        // Redimensionar y comprimir imagen
+        const imagenComprimida = await redimensionarImagen(archivo);
+        
+        setDatosFormulario(prev => ({
+          ...prev,
+          poster: imagenComprimida,
+          posterFile: archivo
+        }));
+      } catch (error) {
+        console.error('Error procesando imagen:', error);
+        alert('Error al procesar la imagen. Inténtalo de nuevo.');
+      }
     }
   };
 
@@ -79,6 +278,8 @@ const CrearResena = () => {
       ...prev,
       titulo: '',
       año: '',
+      poster: '',
+      posterFile: null,
       genero: ''
     }));
   };
@@ -110,6 +311,11 @@ const CrearResena = () => {
       nuevosErrores.textoResena = 'La reseña no puede exceder 1000 caracteres';
     }
 
+    // Validar que la imagen no sea demasiado grande para la base de datos
+    if (datosFormulario.poster && datosFormulario.poster.length > 50000) {
+      nuevosErrores.poster = 'La imagen es demasiado grande. Intenta con una imagen más pequeña.';
+    }
+
     setErrores(nuevosErrores);
     return Object.keys(nuevosErrores).length === 0;
   };
@@ -124,21 +330,17 @@ const CrearResena = () => {
     setEnviando(true);
 
     try {
-      const nuevaResena = {
-        id: Date.now(),
+      const datosResena = {
         tituloResena: datosFormulario.tituloResenia,
         // Usar datos de película seleccionada o del formulario
         titulo: peliculaSeleccionada ? peliculaSeleccionada.title : datosFormulario.titulo,
         año: peliculaSeleccionada ? peliculaSeleccionada.year : parseInt(datosFormulario.año),
-        imagenUrl: peliculaSeleccionada ? peliculaSeleccionada.poster_url : `https://via.placeholder.com/120x180/2C3E50/ECF0F1?text=${encodeURIComponent(datosFormulario.titulo)}`,
+        imagenUrl: peliculaSeleccionada ? 
+          peliculaSeleccionada.poster_url : 
+          (datosFormulario.poster || `https://via.placeholder.com/120x180/2C3E50/ECF0F1?text=${encodeURIComponent(datosFormulario.titulo)}`),
         calificacion: datosFormulario.calificacion,
         usuario: `usuario_${usuarioActual}`, // Usar usuario actual del contexto
         user_id: usuarioActual, // Para el backend
-        fechaResena: new Date().toLocaleDateString('es-ES', { 
-          day: 'numeric', 
-          month: 'long', 
-          year: 'numeric' 
-        }),
         fechaVisionado: datosFormulario.fechaVisionado ? new Date(datosFormulario.fechaVisionado).toLocaleDateString('es-ES', { 
           day: 'numeric', 
           month: 'long', 
@@ -160,13 +362,23 @@ const CrearResena = () => {
         movie_id: peliculaSeleccionada ? peliculaSeleccionada.id : null
       };
 
-      // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (esEdicion) {
+        // Modo edición
+        await actualizarResena(id, datosResena); // ✅ Cambiar de editarResena a actualizarResena
+        alert('¡Reseña actualizada exitosamente! 🎉');
+      } else {
+        // Modo creación
+        datosResena.id = Date.now();
+        datosResena.fechaResena = new Date().toLocaleDateString('es-ES', { 
+          day: 'numeric', 
+          month: 'long', 
+          year: 'numeric' 
+        });
+        await agregarResena(datosResena);
+        alert('¡Reseña creada exitosamente! 🎉');
+      }
 
-      agregarResena(nuevaResena);
-      
-      // Mostrar mensaje de éxito y navegar
-      alert('¡Reseña creada exitosamente!');
+      // Redirigir al inicio
       navigate('/');
       
     } catch (error) {
@@ -198,17 +410,43 @@ const CrearResena = () => {
     return estrellas;
   };
 
+  if (cargandoDatos) {
+    return (
+      <div className="pagina-crear-resena">
+        <div className="contenedor-crear-resena">
+          <div className="estado-carga">
+            <h2>Cargando datos de la reseña...</h2>
+            <div className="spinner"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pagina-crear-resena">
       <div className="contenedor-crear-resena">
         <header className="encabezado-crear-resena">
-          <h1 className="titulo-crear-resena">Escribir mi Reseña</h1>
+          <h1 className="titulo-crear-resena">
+            {cargandoDatos ? 'Cargando datos de la reseña...' : 
+             esEdicion ? 'Editar mi Reseña' : 'Escribir mi Reseña'}
+          </h1>
           <p className="subtitulo-crear-resena">
-            Compartí tu opinión sobre una peli y ayudá a otros cinéfilos a descubrir nuevas joyitas
+            {cargandoDatos ? 'Por favor espera mientras cargamos los datos de tu reseña' :
+             esEdicion 
+              ? 'Modificá tu reseña para mejorarla o corregir algún detalle'
+              : 'Compartí tu opinión sobre una peli y ayudá a otros cinéfilos a descubrir nuevas joyitas'
+            }
           </p>
         </header>
 
-        <form className="formulario-crear-resena" onSubmit={manejarEnvio}>
+        {cargandoDatos ? (
+          <div className="cargando-datos">
+            <div className="spinner"></div>
+            <p>Cargando datos de la reseña...</p>
+          </div>
+        ) : (
+          <form className="formulario-crear-resena" onSubmit={manejarEnvio}>
           {/* Titulo de la reseña */}
           <h2 className="subtitulo-formulario">Detalles de la Reseña</h2>
            {/* Fecha de visionado */}
@@ -271,6 +509,43 @@ const CrearResena = () => {
                       disabled={enviando}
                     />
                     {errores.año && <span className="mensaje-error">{errores.año}</span>}
+                  </div>
+
+                  <div className="campo-formulario">
+                    <label className="etiqueta-campo">Póster de la Película</label>
+                    <div className="contenedor-imagen">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={manejarCambioImagen}
+                        className="entrada-archivo"
+                        disabled={enviando}
+                        id="poster-upload"
+                      />
+                      <label htmlFor="poster-upload" className="boton-subir-imagen">
+                        📷 Subir Imagen
+                      </label>
+                      {datosFormulario.poster && (
+                        <div className="vista-previa-imagen">
+                          <img 
+                            src={datosFormulario.poster} 
+                            alt="Vista previa" 
+                            className="imagen-previa"
+                          />
+                          <button 
+                            type="button"
+                            onClick={() => setDatosFormulario(prev => ({...prev, poster: '', posterFile: null}))}
+                            className="boton-remover-imagen"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <small className="ayuda-campo">
+                      Sube una imagen desde tu computadora (máximo 5MB) o se generará una automáticamente
+                    </small>
+                    {errores.poster && <span className="mensaje-error">{errores.poster}</span>}
                   </div>
                 </div>
               </div>
@@ -417,10 +692,14 @@ const CrearResena = () => {
               className="boton-publicar"
               disabled={enviando}
             >
-              {enviando ? 'Publicando...' : 'Publicar Reseña'}
+              {enviando 
+                ? (esEdicion ? 'Actualizando...' : 'Publicando...')
+                : (esEdicion ? 'Actualizar Reseña' : 'Publicar Reseña')
+              }
             </button>
           </div>
         </form>
+        )}
       </div>
     </div>
   );

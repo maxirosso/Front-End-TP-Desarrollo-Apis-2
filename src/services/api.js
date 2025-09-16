@@ -1,8 +1,6 @@
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
-console.log(API_BASE_URL, "ACA")
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
-  console.log(url, "ACA2")
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -61,9 +59,8 @@ export const reviewsAPI = {
 
   // HU-006: Buscar reseñas por usuario
   getByUser: (userId, filters = {}) => {
-    const allFilters = { user_id: userId, ...filters };
-    const queryParams = new URLSearchParams(allFilters).toString();
-    const endpoint = `/reviews${queryParams ? `?${queryParams}` : ''}`;
+    const queryParams = new URLSearchParams(filters).toString();
+    const endpoint = `/users/${userId}/reviews${queryParams ? `?${queryParams}` : ''}`;
     return apiRequest(endpoint);
   },
 
@@ -78,7 +75,7 @@ export const reviewsAPI = {
   getAll: (filters = {}) => {
     const defaultFilters = {
       sort: 'recent',
-      limit: '20',
+      limit: '1000', // ✅ Aumentar límite para obtener todas las reseñas
       offset: '0',
       ...filters
     };

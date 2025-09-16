@@ -22,42 +22,47 @@ const TarjetaResena = ({
   // Mapear datos del backend a formato esperado por el componente
   console.log('🎬 TARJETA RESENA - Datos recibidos:', pelicula);
   
+  // Primero obtenemos el título para usarlo en la imagen de placeholder
+  const titulo = pelicula?.title || pelicula?.titulo || 'Título no disponible';
+  
   const {
     id,
-    titulo = pelicula?.title || pelicula?.titulo || 'Título no disponible',
     año = pelicula?.year || pelicula?.año || 2024,
-    imagenUrl = pelicula?.poster_url || pelicula?.imagenUrl,
+    imagenUrl = pelicula?.poster_url || pelicula?.imagenUrl || `https://via.placeholder.com/120x180/34495e/ecf0f1?text=${encodeURIComponent(titulo)}`,
     calificacion = Number(pelicula?.rating || pelicula?.calificacion || 0),
     usuario = pelicula?.user_name || pelicula?.usuario || 'Usuario desconocido',
     fechaResena = pelicula?.created_at || pelicula?.fechaResena || 'Fecha no disponible',
     textoResena = pelicula?.body || pelicula?.textoResena || '',
     megusta = pelicula?.megusta || false,
-    fechaVisionado = pelicula?.fechaVisionado,
-    likes = Number(pelicula?.likes || 0),
+    fechaVisionado = pelicula?.watch_date || pelicula?.created_at || 'No especificado',
+    likes = Number(pelicula?.likes_count || pelicula?.likes || 0),
     yaLeDiLike = pelicula?.yaLeDiLike || false,
     comentarios = pelicula?.comentarios || [],
     tags = pelicula?.tags || [],
     contieneEspoilers = pelicula?.has_spoilers || pelicula?.contieneEspoilers || false,
     movieTitle = pelicula?.movie_title || pelicula?.titulo || pelicula?.title || 'Título no disponible',
     moviePoster = pelicula?.movie_poster  || pelicula?.imagenUrl,
+    // ✅ NUEVO: Detectar si la reseña fue editada
+    fechaActualizacion = pelicula?.updated_at || null,
   } = pelicula || {};
+
+  // ✅ NUEVO: Determinar si la reseña fue editada
+  const fueEditada = fechaActualizacion && fechaActualizacion !== fechaResena && 
+                     new Date(fechaActualizacion) > new Date(fechaResena);
 
   console.log('🎬 TARJETA RESENA - Datos mapeados:');
   console.log('  - titulo:', titulo, '(de:', pelicula?.titulo, '/', pelicula?.title, ')');
   console.log('  - usuario:', usuario, '(de:', pelicula?.usuario, '/', pelicula?.user_name, ')');
   console.log('  - calificacion:', calificacion, '(de:', pelicula?.calificacion, '/', pelicula?.rating, ')');
   console.log('  - año:', año, '(de:', pelicula?.año, '/', pelicula?.year, ')');
-  console.log('  - imagenUrl:', imagenUrl, '(de:', pelicula?.imagenUrl, '/', pelicula?.poster_url, ')');
+  console.log('  - imagenUrl:', imagenUrl?.substring(0, 50) + '...', '(de poster_url o generada)');
   console.log('  - fechaResena:', fechaResena, '(de:', pelicula?.fechaResena, '/', pelicula?.created_at, ')');
-  console.log('  - textoResena:', textoResena, '(de:', pelicula?.textoResena, '/', pelicula?.body, ')');
-  console.log('  - megusta:', megusta, '(de:', pelicula?.megusta, ')');
+  console.log('  - fechaActualizacion:', fechaActualizacion, '(de:', pelicula?.updated_at, ')');
+  console.log('  - fueEditada:', fueEditada);
+  console.log('  - textoResena:', textoResena?.substring(0, 50) + '...', '(de:', pelicula?.textoResena ? 'textoResena' : 'body', ')');
   console.log('  - fechaVisionado:', fechaVisionado, '(de:', pelicula?.fechaVisionado, ')');
   console.log('  - likes:', likes, '(de:', pelicula?.likes, ')');
-  console.log('  - yaLeDiLike:', yaLeDiLike, '(de:', pelicula?.yaLeDiLike, ')');
   console.log('  - comentarios:', comentarios.length, '(de:', pelicula?.comentarios?.length, ')');
-  console.log('  - tags:', tags, '(de:', pelicula?.tags, ')');
-  console.log('  - contieneEspoilers:', contieneEspoilers, '(de:', pelicula?.contieneEspoilers, '/', pelicula?.has_spoilers, ')');
-  console.log('  - movieTitle:', movieTitle, '(de:', pelicula?.movie_title, '/', pelicula?.titulo, '/', pelicula?.title, ')');
 
 
 
@@ -66,7 +71,32 @@ const TarjetaResena = ({
   const calificacionSegura = isNaN(calificacion) ? 0 : calificacion;
   const añoSeguro = isNaN(año) ? 2024 : año;
 
-  const esPropioDueño = usuario === usuarioActual;
+  // Función para obtener el nombre del usuario por ID
+  const obtenerNombreUsuario = (userId) => {
+    const id = Number(userId);
+    switch (id) {
+      case 1: return 'Admin';
+      case 2: return 'Juan Pérez';
+      case 3: return 'María García';
+      case 4: return 'Carlos López';
+      case 5: return 'Ana Martín';
+      case 6: return 'Luis Rodríguez';
+      default: return `Usuario ${id}`;
+    }
+  };
+
+  // Determinar si es el propietario comparando tanto por ID como por nombre
+  const usuarioActualNombre = obtenerNombreUsuario(usuarioActual);
+  const esPropioDueño = (pelicula?.user_id === usuarioActual) || 
+                        (usuario === usuarioActualNombre) ||
+                        (usuario === `usuario_${usuarioActual}`);
+
+  console.log('🔒 PROPIETARIO CHECK:');
+  console.log('  - usuarioActual (ID):', usuarioActual);
+  console.log('  - usuarioActualNombre:', usuarioActualNombre);
+  console.log('  - pelicula.user_id:', pelicula?.user_id);
+  console.log('  - usuario (nombre):', usuario);
+  console.log('  - esPropioDueño:', esPropioDueño);
 
   // Función auxiliar para truncar texto
   const truncarTexto = (texto, limite = 300) => {
@@ -114,7 +144,9 @@ const TarjetaResena = ({
                 {esPropioDueño && <span className="indicador-propietario">TU RESEÑA</span>}
               </span>
               <div className="fechas-resena">
-                <span className="fecha-visionado">Visto el {fechaVisionado}</span>
+                {fechaVisionado && (
+                  <span className="fecha-visionado">Visto el {fechaVisionado}</span>
+                )}
               </div>
             </div>
           </header>
@@ -180,30 +212,39 @@ const TarjetaResena = ({
 
           {/* Pie de la reseña */}
           <footer className="pie-resena">
-            <span className="fecha-publicacion">Posteado el {fechaResena}</span>
+            <span className="fecha-publicacion">
+              Posteado el {fechaResena}
+              {fueEditada && <span className="indicador-editada"> (editada)</span>}
+            </span>
             
             <div className="acciones-resena">
               {/* Botón de like */}
               <button 
                 className={`boton-like ${yaLeDiLike ? 'activo' : ''}`}
-                onClick={() => onToggleLike && onToggleLike(id)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onToggleLike && onToggleLike(id);
+                }}
                 title={yaLeDiLike ? 'Sacar me gusta' : 'Me gusta'}
               >
                 <span className="icono-like">
                   {yaLeDiLike ? '❤️' : '🤍'}
                 </span>
-                <span className="contador-likes">{likes}</span>
+                <span className="contador-likes">{isNaN(likes) ? 0 : likes}</span>
               </button>
 
               {/* Botón de comentarios */}
               <button 
                 className="boton-comentar"
-                onClick={() => onAbrirComentarios && onAbrirComentarios(id)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onAbrirComentarios && onAbrirComentarios(id);
+                }}
               >
                 💬 Comentarios
-                {comentarios.length > 0 && (
-                  <span className="contador-comentarios">({comentarios.length})</span>
-                )}
+                <span className="contador-comentarios">({comentarios?.length || 0})</span>
               </button>
 
               {/* Menú de acciones del propietario */}

@@ -268,9 +268,20 @@ export const ProveedorResenas = ({ children }) => {
   const [cargando, setCargando] = useState(true);
   const [filtrosActivos, setFiltrosActivos] = useState({});
   const [ordenamientoActual, setOrdenamientoActual] = useState('fecha-desc');
-  const [usuarioActual, setUsuarioActual] = useState(1); // Nuevo estado para usuario actual
+  // ✅ FIX: Inicializar usuario desde localStorage
+  const [usuarioActual, setUsuarioActualState] = useState(() => {
+    const usuarioGuardado = localStorage.getItem('usuarioActual');
+    return usuarioGuardado ? parseInt(usuarioGuardado) : 1;
+  });
   const [usingBackend, setUsingBackend] = useState(false);
   const [error, setError] = useState(null);
+
+  // ✅ FIX: Función wrapper para setUsuarioActual que también guarda en localStorage
+  const setUsuarioActual = (userId) => {
+    setUsuarioActualState(userId);
+    localStorage.setItem('usuarioActual', userId.toString());
+    console.log('✅ Usuario actualizado en localStorage:', userId);
+  };
 
   useEffect(() => {
     const cargarResenas = async () => {
@@ -304,14 +315,48 @@ export const ProveedorResenas = ({ children }) => {
     cargarResenas();
   }, []);
 
+  // ✅ Nueva función para recargar reseñas desde el backend
+  const recargarResenasDesdeBackend = async () => {
+    if (!usingBackend) return;
+    
+    try {
+      console.log('🔄 Recargando reseñas desde el backend...');
+      const response = await reviewsAPI.getAll();
+      console.log('🔍 Respuesta completa del backend:', response);
+      
+      const resenas = response.data || response.rows || [];
+      
+      console.log('📊 Datos recibidos del backend:', {
+        total: resenas.length,
+        peliculasUnicas: new Set(resenas.map(r => r.movie_title || r.titulo)).size,
+        usuariosUnicos: new Set(resenas.map(r => r.user_name || r.usuario)).size,
+        responseTotal: response.total || 'no especificado'
+      });
+      
+      setResenas(resenas);
+      console.log('✅ Reseñas recargadas desde el backend, total:', resenas.length);
+      
+      // 🚀 NUEVO: También notificar a otros componentes que las reseñas cambiaron
+      // Esto forzará que PerfilUsuario y otros componentes recarguen sus datos
+      window.dispatchEvent(new CustomEvent('resenasActualizadas', { 
+        detail: { total: resenas.length, timestamp: Date.now() } 
+      }));
+      
+    } catch (err) {
+      console.error('Error recargando reseñas:', err);
+    }
+  };
+
   const agregarResena = async (nuevaResena) => {
+    console.log('🔥 agregarResena llamada con:', nuevaResena);
     try {
       if (usingBackend) {
         // Validar datos antes de enviar
         // if (!nuevaResena.titulo || nuevaResena.titulo.trim().length < 5) {
         //   throw new Error(`El título debe tener al menos 5 caracteres: ${nuevaResena.titulo}`);
         // }
-        if (!nuevaResena.textoResena || nuevaResena.textoResena.trim().length < 20) {
+        const textoResena = nuevaResena.textoResena || nuevaResena.body || '';
+        if (!textoResena || textoResena.trim().length < 20) {
           throw new Error('La reseña debe tener al menos 20 caracteres');
         }
         if (!nuevaResena.calificacion || nuevaResena.calificacion < 1 || nuevaResena.calificacion > 5) {
@@ -328,7 +373,6 @@ export const ProveedorResenas = ({ children }) => {
           // Buscar película existente por título o crear nueva
           try {
             const existingMovies = await moviesAPI.getAll();
-            debugger
             // Buscar película con título similar
             const tituloLimpio = nuevaResena.titulo.trim().toLowerCase();
             const peliculaExistente = existingMovies.find(movie => 
@@ -366,8 +410,8 @@ export const ProveedorResenas = ({ children }) => {
         const datosParaBackend = {
           movie_id: Number(movieId),
           user_id: Number(usuarioActual),
-          title: nuevaResena.tituloResena.trim(),
-          body: nuevaResena.textoResena.trim(),
+          title: (nuevaResena.tituloResena || nuevaResena.titulo || '').trim(),
+          body: (nuevaResena.textoResena || nuevaResena.body || '').trim(),
           rating: Number(nuevaResena.calificacion),
           has_spoilers: Boolean(nuevaResena.contieneEspoilers),
           tags: Array.isArray(nuevaResena.tags) ? nuevaResena.tags : []
@@ -375,7 +419,22 @@ export const ProveedorResenas = ({ children }) => {
         console.log('Datos para backend:', datosParaBackend);
         
         const response = await reviewsAPI.create(datosParaBackend);
-        setResenas(prev => [response, ...prev]);
+        console.log('✅ Reseña creada en backend:', response);
+        
+        // ✅ FIX: Recargar todas las reseñas desde el backend para asegurar sincronización
+        await recargarResenasDesdeBackend();
+        
+        // ✅ NUEVO: Forzar actualización inmediata con un pequeño delay para asegurar que el backend procese
+        setTimeout(async () => {
+          console.log('🔄 Segunda recarga para asegurar sincronización');
+          await recargarResenasDesdeBackend();
+          
+          // Forzar re-render de componentes
+          window.dispatchEvent(new CustomEvent('forceRerender', { 
+            detail: { reason: 'nueva_resena_creada', timestamp: Date.now() } 
+          }));
+        }, 1000); // Aumentar delay a 1 segundo
+        
         return response;
       } else {
         const fechaActual = new Date();
@@ -431,7 +490,12 @@ export const ProveedorResenas = ({ children }) => {
           genero: nuevaResena.genero || ''
         };
         
-        setResenas(prev => [resenaConId, ...prev]);
+        console.log('✅ Reseña creada en modo offline:', resenaConId);
+        setResenas(prev => {
+          const nuevasResenas = [resenaConId, ...prev];
+          console.log('📝 Resenas actualizadas (offline), total:', nuevasResenas.length);
+          return nuevasResenas;
+        });
         return resenaConId;
       }
     } catch (err) {
@@ -445,9 +509,8 @@ export const ProveedorResenas = ({ children }) => {
     try {
       if (usingBackend) {
         const response = await reviewsAPI.update(id, datosActualizados);
-        setResenas(prev => prev.map(resena => 
-          resena.id === id ? response : resena
-        ));
+        // ✅ FIX: Recargar todas las reseñas desde el backend para asegurar sincronización
+        await recargarResenasDesdeBackend();
         return response;
       } else {
         // Usar lógica mock
@@ -466,9 +529,12 @@ export const ProveedorResenas = ({ children }) => {
     try {
       if (usingBackend) {
         await reviewsAPI.delete(id);
+        // ✅ FIX: Recargar todas las reseñas desde el backend para asegurar sincronización
+        await recargarResenasDesdeBackend();
+      } else {
+        // En modo local, remover de la lista local
+        setResenas(prev => prev.filter(resena => resena.id !== id));
       }
-      // En ambos casos, remover de la lista local
-      setResenas(prev => prev.filter(resena => resena.id !== id));
     } catch (err) {
       console.error('Error eliminando reseña:', err);
       setError(handleApiError(err));
@@ -476,46 +542,145 @@ export const ProveedorResenas = ({ children }) => {
     }
   };
 
-  const toggleLikeResena = (id) => {
-    setResenas(prev => prev.map(resena => {
-      if (resena.id === id) {
-        return {
-          ...resena,
-          yaLeDiLike: !resena.yaLeDiLike,
-          likes: resena.yaLeDiLike ? resena.likes - 1 : resena.likes + 1
-        };
+  const toggleLikeResena = async (id) => {
+    try {
+      // Encontrar la reseña para determinar el estado actual
+      const resenaIndex = resenas.findIndex(r => r.id === id);
+      if (resenaIndex === -1) {
+        console.error('Reseña no encontrada');
+        return;
       }
-      return resena;
-    }));
+
+      const resena = resenas[resenaIndex];
+      const yaLeDiLikeActual = resena.yaLeDiLike || false;
+      
+      if (usingBackend) {
+        if (yaLeDiLikeActual) {
+          await reviewsAPI.removeLike(id, usuarioActual);
+        } else {
+          await reviewsAPI.addLike(id, usuarioActual);
+        }
+      }
+      
+      // Actualizar estado local inmediatamente para UX responsiva
+      setResenas(prev => prev.map(resena => {
+        if (resena.id === id) {
+          const likesActuales = Number(resena.likes_count || resena.likes || 0);
+          const nuevosLikes = yaLeDiLikeActual ? 
+            Math.max(0, likesActuales - 1) : 
+            likesActuales + 1;
+            
+          return {
+            ...resena,
+            yaLeDiLike: !yaLeDiLikeActual,
+            likes: nuevosLikes,
+            likes_count: nuevosLikes
+          };
+        }
+        return resena;
+      }));
+    } catch (err) {
+      console.error('Error toggling like:', err);
+      setError(handleApiError(err));
+      
+      // Revertir cambio en caso de error
+      setResenas(prev => prev.map(resena => {
+        if (resena.id === id) {
+          return {
+            ...resena,
+            yaLeDiLike: resena.yaLeDiLike, // Mantener estado original
+            likes: resena.likes,
+            likes_count: resena.likes_count
+          };
+        }
+        return resena;
+      }));
+    }
   };
 
-  const agregarComentario = (idResena, comentario) => {
-    setResenas(prev => prev.map(resena => {
-      if (resena.id === idResena) {
-        return {
-          ...resena,
-          comentarios: [...resena.comentarios, comentario]
+  const agregarComentario = async (idResena, comentario) => {
+    try {
+      if (usingBackend) {
+        const nuevoComentario = await reviewsAPI.addComment(idResena, usuarioActual, comentario);
+        
+        // Actualizar estado local con el comentario del backend
+        setResenas(prev => prev.map(resena => {
+          if (resena.id === idResena) {
+            return {
+              ...resena,
+              comentarios: [...(resena.comentarios || []), nuevoComentario]
+            };
+          }
+          return resena;
+        }));
+      } else {
+        // Modo local
+        const comentarioLocal = {
+          id: Date.now(),
+          usuario: usuarioActual === 1 ? 'Admin' : 
+                   usuarioActual === 2 ? 'Juan Pérez' :
+                   usuarioActual === 3 ? 'María García' :
+                   usuarioActual === 4 ? 'Carlos López' : `Usuario ${usuarioActual}`,
+          texto: comentario,
+          fecha: new Date().toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })
         };
+        
+        setResenas(prev => prev.map(resena => {
+          if (resena.id === idResena) {
+            return {
+              ...resena,
+              comentarios: [...(resena.comentarios || []), comentarioLocal]
+            };
+          }
+          return resena;
+        }));
       }
-      return resena;
-    }));
+    } catch (err) {
+      console.error('Error agregando comentario:', err);
+      setError(handleApiError(err));
+      throw err;
+    }
   };
 
-  const eliminarComentario = (idResena, idComentario) => {
-    setResenas(prev => prev.map(resena => {
-      if (resena.id === idResena) {
-        return {
-          ...resena,
-          comentarios: resena.comentarios.filter(c => c.id !== idComentario)
-        };
+  const eliminarComentario = async (idResena, idComentario) => {
+    try {
+      if (usingBackend) {
+        await reviewsAPI.deleteComment(idComentario, usuarioActual);
       }
-      return resena;
-    }));
+      
+      // Actualizar estado local
+      setResenas(prev => prev.map(resena => {
+        if (resena.id === idResena) {
+          return {
+            ...resena,
+            comentarios: (resena.comentarios || []).filter(c => c.id !== idComentario)
+          };
+        }
+        return resena;
+      }));
+    } catch (err) {
+      console.error('Error eliminando comentario:', err);
+      setError(handleApiError(err));
+      throw err;
+    }
   };
 
   // Función para obtener reseña por ID
   const obtenerResenaPorId = (id) => {
-    return resenas.find(resena => resena.id === parseInt(id));
+    const idNumerico = parseInt(id);
+    console.log('🔍 obtenerResenaPorId:');
+    console.log('  - ID buscado:', id, '(convertido a:', idNumerico, ')');
+    console.log('  - Total de reseñas:', resenas.length);
+    console.log('  - IDs disponibles:', resenas.map(r => r.id));
+    
+    const resenaEncontrada = resenas.find(resena => resena.id === idNumerico);
+    console.log('  - Reseña encontrada:', resenaEncontrada);
+    
+    return resenaEncontrada;
   };
 
   const obtenerResenasPorPelicula = async (movieId, filtros = {}) => {
@@ -577,18 +742,20 @@ export const ProveedorResenas = ({ children }) => {
   // Función para aplicar filtros (usa backend cuando es necesario)
   const aplicarFiltros = async (filtros = {}) => {
     try {
-      if (usingBackend && (filtros.genero || filtros.calificacion || filtros.usuario || filtros.pelicula)) {
+      if (usingBackend && (filtros.genero || filtros.calificacion || filtros.usuario || filtros.pelicula || filtros.tags?.length > 0 || filtros.fechaPublicacion)) {
         // Usar backend para filtros complejos
         const filtrosBackend = {};
         
         if (filtros.genero) filtrosBackend.genre = filtros.genero;
         if (filtros.calificacion) filtrosBackend.min_rating = parseInt(filtros.calificacion);
         if (filtros.contieneEspoilers !== undefined) filtrosBackend.has_spoilers = filtros.contieneEspoilers;
+        if (filtros.fechaPublicacion) filtrosBackend.date_range = filtros.fechaPublicacion;
+        if (filtros.tags && filtros.tags.length > 0) filtrosBackend.tags = JSON.stringify(filtros.tags);
         
         const response = await reviewsAPI.filter(filtrosBackend);
         let resenasFiltradas = response.data || response.rows || [];
         
-        // Aplicar filtros adicionales que el backend no maneja
+        // Aplicar filtros adicionales que el backend no maneja directamente
         if (filtros.pelicula) {
           resenasFiltradas = resenasFiltradas.filter(resena => {
             const titulo = resena.movie_title || resena.titulo || resena.title || '';
@@ -603,18 +770,13 @@ export const ProveedorResenas = ({ children }) => {
           });
         }
 
-        if (filtros.tags && filtros.tags.length > 0) {
-          resenasFiltradas = resenasFiltradas.filter(resena =>
-            resena.tags && filtros.tags.some(tag => resena.tags.includes(tag))
-          );
-        }
-
         if (filtros.soloMeGusta) {
           resenasFiltradas = resenasFiltradas.filter(resena => resena.megusta);
         }
 
+        // Corregir filtro de spoilers
         if (!filtros.contieneEspoilers) {
-          resenasFiltradas = resenasFiltradas.filter(resena => !resena.contieneEspoilers);
+          resenasFiltradas = resenasFiltradas.filter(resena => !resena.has_spoilers);
         }
         
         return resenasFiltradas;
@@ -684,8 +846,39 @@ export const ProveedorResenas = ({ children }) => {
       resenasFiltradas = resenasFiltradas.filter(resena => resena.megusta);
     }
 
+    // Filtro por fecha de publicación
+    if (filtros.fechaPublicacion) {
+      const now = new Date();
+      let startDate;
+      
+      switch (filtros.fechaPublicacion) {
+        case 'hoy':
+          startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          break;
+        case 'esta-semana':
+          startDate = new Date(now);
+          startDate.setDate(now.getDate() - 7);
+          break;
+        case 'este-mes':
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          break;
+        case 'este-año':
+          startDate = new Date(now.getFullYear(), 0, 1);
+          break;
+        default:
+          startDate = null;
+      }
+      
+      if (startDate) {
+        resenasFiltradas = resenasFiltradas.filter(resena => {
+          const fechaResena = new Date(resena.created_at || resena.fechaResena);
+          return fechaResena >= startDate;
+        });
+      }
+    }
+
     if (!filtros.contieneEspoilers) {
-      resenasFiltradas = resenasFiltradas.filter(resena => !resena.contieneEspoilers);
+      resenasFiltradas = resenasFiltradas.filter(resena => !resena.has_spoilers && !resena.contieneEspoilers);
     }
 
     return resenasFiltradas;
@@ -704,31 +897,52 @@ export const ProveedorResenas = ({ children }) => {
     resenasOrdenadas.sort((a, b) => {
       switch (ordenamiento) {
         case 'fecha-desc':
-          return new Date(b.fechaResena) - new Date(a.fechaResena);
+          const fechaA = new Date(a.created_at || a.fechaResena || 0);
+          const fechaB = new Date(b.created_at || b.fechaResena || 0);
+          return fechaB - fechaA;
         case 'fecha-asc':
-          return new Date(a.fechaResena) - new Date(b.fechaResena);
+          const fechaAsc_A = new Date(a.created_at || a.fechaResena || 0);
+          const fechaAsc_B = new Date(b.created_at || b.fechaResena || 0);
+          return fechaAsc_A - fechaAsc_B;
         case 'calificacion-desc':
-          return b.calificacion - a.calificacion;
+          return (b.rating || b.calificacion || 0) - (a.rating || a.calificacion || 0);
         case 'calificacion-asc':
-          return a.calificacion - b.calificacion;
+          return (a.rating || a.calificacion || 0) - (b.rating || b.calificacion || 0);
         case 'likes-desc':
           return (b.likes_count || b.likes || 0) - (a.likes_count || a.likes || 0);
-          //return b.likes - a.likes;
         case 'likes-asc':
           return (a.likes_count || a.likes || 0) - (b.likes_count || b.likes || 0);
-          //return a.likes - b.likes;
         case 'titulo-asc':
-          return a.titulo.localeCompare(b.titulo);
+          const tituloA = a.movie_title || a.titulo || a.title || '';
+          const tituloB = b.movie_title || b.titulo || b.title || '';
+          return tituloA.localeCompare(tituloB);
         case 'titulo-desc':
-          return b.titulo.localeCompare(a.titulo);
+          const tituloDescA = a.movie_title || a.titulo || a.title || '';
+          const tituloDescB = b.movie_title || b.titulo || b.title || '';
+          return tituloDescB.localeCompare(tituloDescA);
         case 'usuario-asc':
-          return a.usuario.localeCompare(b.usuario);
+          const usuarioA = a.user_name || a.usuario || '';
+          const usuarioB = b.user_name || b.usuario || '';
+          return usuarioA.localeCompare(usuarioB);
         default:
           return 0;
       }
     });
 
     return resenasOrdenadas;
+  };
+
+  // ✅ Función para obtener nombre de usuario por ID
+  const obtenerNombreUsuario = (userId) => {
+    const nombres = {
+      1: 'Admin',
+      2: 'Juan Pérez', 
+      3: 'María García',
+      4: 'Carlos López',
+      5: 'Ana Martín',
+      6: 'Luis Rodríguez'
+    };
+    return nombres[userId] || `Usuario ${userId}`;
   };
 
   // Valor del contexto
@@ -753,6 +967,7 @@ export const ProveedorResenas = ({ children }) => {
     actualizarResena,
     eliminarResena,
     toggleLikeResena,
+    recargarResenasDesdeBackend, // ✅ Nueva función exportada
     
     // Funciones de comentarios
     agregarComentario,
@@ -762,6 +977,7 @@ export const ProveedorResenas = ({ children }) => {
     obtenerResenaPorId,
     obtenerResenasPorPelicula,
     obtenerResenasPorUsuario,
+    obtenerNombreUsuario, // ✅ Nueva función exportada
     
     // Funciones de filtrado y ordenamiento
     aplicarFiltros,

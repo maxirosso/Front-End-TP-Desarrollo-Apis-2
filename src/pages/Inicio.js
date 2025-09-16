@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useResenas } from '../contextos/ContextoResenas';
 import TarjetaResena from '../componentes/TarjetaResena/TarjetaResena';
 import FiltrosResenas from '../componentes/FiltrosResenas/FiltrosResenas';
@@ -8,11 +8,14 @@ import ModalComentarios from '../componentes/ModalComentarios/ModalComentarios';
 import './Inicio.css';
 
 const Inicio = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const {
     resenas,
     cargando,
     filtrosActivos,
     ordenamientoActual,
+    usuarioActual,
     setFiltrosActivos,
     setOrdenamientoActual,
     eliminarResena,
@@ -27,44 +30,129 @@ const Inicio = () => {
   const [mostrarComentarios, setMostrarComentarios] = useState(false);
   const [resenaSeleccionada, setResenaSeleccionada] = useState(null);
 
+  // Manejar búsqueda desde URL
+  useEffect(() => {
+    const terminoBusqueda = searchParams.get('busqueda');
+    if (terminoBusqueda) {
+      console.log('🔍 Búsqueda detectada:', terminoBusqueda);
+      setFiltrosActivos(prev => ({
+        ...prev,
+        pelicula: terminoBusqueda
+      }));
+    }
+  }, [searchParams, setFiltrosActivos]);
+
   // Aplicar filtros y ordenamiento
   useEffect(() => {
+    console.log('🏠 Inicio: resenas cambiaron, total:', resenas.length);
+    console.log('📊 Estadísticas calculadas:', {
+      totalResenas: resenas.length,
+      peliculasUnicas: new Set(resenas.map(r => r.movie_title || r.titulo)).size,
+      usuariosUnicos: new Set(resenas.map(r => r.user_name || r.usuario)).size
+    });
+    
     const aplicarFiltrosYOrdenamiento = async () => {
       try {
         // Verificar si algún filtro requiere backend
-        const requiereBackend = filtrosActivos.genero || 
-                               (usingBackend && (filtrosActivos.calificacion || filtrosActivos.usuario || filtrosActivos.pelicula));
+        const requiereBackend = usingBackend && (
+          filtrosActivos.genero || 
+          filtrosActivos.calificacion || 
+          filtrosActivos.tags?.length > 0 ||
+          filtrosActivos.fechaPublicacion
+        );
         
         let resenasProcesadas;
         if (requiereBackend) {
           // Usar función asíncrona del contexto
           resenasProcesadas = await aplicarFiltros(filtrosActivos);
         } else {
-          // Usar función síncrona local
-          resenasProcesadas = aplicarOrdenamiento(resenas, ordenamientoActual);
-          resenasProcesadas = resenasProcesadas.filter(resena => {
-            // Aplicar filtros simples localmente
-            if (filtrosActivos.pelicula) {
+          // Usar datos locales
+          resenasProcesadas = [...resenas];
+          
+          // Aplicar filtros simples localmente
+          if (filtrosActivos.pelicula) {
+            resenasProcesadas = resenasProcesadas.filter(resena => {
               const titulo = resena.movie_title || resena.titulo || resena.title || '';
-              if (!titulo.toLowerCase().startsWith(filtrosActivos.pelicula.toLowerCase())) {
-                return false;
-              }
-            }
-            if (filtrosActivos.usuario) {
+              return titulo.toLowerCase().includes(filtrosActivos.pelicula.toLowerCase());
+            });
+          }
+          
+          if (filtrosActivos.usuario) {
+            resenasProcesadas = resenasProcesadas.filter(resena => {
               const usuario = resena.user_name || resena.usuario || '';
-              if (!usuario || !usuario.toLowerCase().startsWith(filtrosActivos.usuario.toLowerCase())) {
-                return false;
-              }
+              return usuario && usuario.toLowerCase().startsWith(filtrosActivos.usuario.toLowerCase());
+            });
+          }
+
+          if (filtrosActivos.calificacion) {
+            const calExacta = parseInt(filtrosActivos.calificacion);
+            resenasProcesadas = resenasProcesadas.filter(resena => {
+              const calificacion = resena.calificacion || resena.rating || 0;
+              return Number(calificacion) === calExacta;
+            });
+          }
+
+          if (filtrosActivos.genero) {
+            resenasProcesadas = resenasProcesadas.filter(resena => {
+              const genero = resena.movie_genre || resena.genero || resena.genre || '';
+              return genero === filtrosActivos.genero;
+            });
+          }
+
+          if (filtrosActivos.tags && filtrosActivos.tags.length > 0) {
+            resenasProcesadas = resenasProcesadas.filter(resena =>
+              resena.tags && filtrosActivos.tags.some(tag => resena.tags.includes(tag))
+            );
+          }
+
+          if (filtrosActivos.soloMeGusta) {
+            resenasProcesadas = resenasProcesadas.filter(resena => resena.megusta);
+          }
+
+          if (!filtrosActivos.contieneEspoilers) {
+            resenasProcesadas = resenasProcesadas.filter(resena => 
+              !resena.has_spoilers && !resena.contieneEspoilers
+            );
+          }
+
+          // Filtro por fecha de publicación
+          if (filtrosActivos.fechaPublicacion) {
+            const now = new Date();
+            let startDate;
+            
+            switch (filtrosActivos.fechaPublicacion) {
+              case 'hoy':
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                break;
+              case 'esta-semana':
+                startDate = new Date(now);
+                startDate.setDate(now.getDate() - 7);
+                break;
+              case 'este-mes':
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                break;
+              case 'este-año':
+                startDate = new Date(now.getFullYear(), 0, 1);
+                break;
+              default:
+                startDate = null;
             }
-            return true;
-          });
+            
+            if (startDate) {
+              resenasProcesadas = resenasProcesadas.filter(resena => {
+                const fechaResena = new Date(resena.created_at || resena.fechaResena);
+                return fechaResena >= startDate;
+              });
+            }
+          }
         }
         
+        // Siempre aplicar ordenamiento al final
         const resenasOrdenadas = aplicarOrdenamiento(resenasProcesadas, ordenamientoActual);
         setResenasFiltradas(resenasOrdenadas);
       } catch (error) {
         console.error('Error aplicando filtros:', error);
-        // Fallback: usar las reseñas originales
+        // Fallback: usar las reseñas originales ordenadas
         const resenasOrdenadas = aplicarOrdenamiento(resenas, ordenamientoActual);
         setResenasFiltradas(resenasOrdenadas);
       }
@@ -73,14 +161,51 @@ const Inicio = () => {
     aplicarFiltrosYOrdenamiento();
   }, [resenas, filtrosActivos, ordenamientoActual, aplicarFiltros, aplicarOrdenamiento, usingBackend]);
 
+  // ✅ NUEVO: Escuchar eventos de actualización de reseñas
+  useEffect(() => {
+    const handleResenasUpdate = (event) => {
+      console.log('🔔 Inicio: Recibido evento de reseñas actualizadas:', event.detail);
+      // Los contadores se actualizarán automáticamente porque resenas cambiará
+    };
+
+    const handleForceRerender = (event) => {
+      console.log('🔄 Inicio: Forzando re-render por:', event.detail.reason);
+      // Forzar actualización del estado local si es necesario
+      window.location.reload(); // Como último recurso para asegurar actualización
+    };
+
+    window.addEventListener('resenasActualizadas', handleResenasUpdate);
+    window.addEventListener('forceRerender', handleForceRerender);
+    
+    return () => {
+      window.removeEventListener('resenasActualizadas', handleResenasUpdate);
+      window.removeEventListener('forceRerender', handleForceRerender);
+    };
+  }, []);
+
+  // ✅ NUEVO: Escuchar evento de reseñas actualizadas para recargar automáticamente  
+  useEffect(() => {
+    const manejarResenasActualizadas = () => {
+      console.log('🔔 Inicio: Reseñas actualizadas detectadas');
+      // No necesitamos hacer nada especial aquí porque el contexto ya actualiza `resenas`
+      // y el useEffect anterior se ejecutará automáticamente
+    };
+
+    window.addEventListener('resenasActualizadas', manejarResenasActualizadas);
+    
+    return () => {
+      window.removeEventListener('resenasActualizadas', manejarResenasActualizadas);
+    };
+  }, []);
+
   // Funciones de manejo de eventos
   const manejarEliminarResena = (id) => {
     eliminarResena(id);
   };
 
   const manejarEditarResena = (resena) => {
-    // Navegar a la página de edición
-    window.location.href = `/editar/${resena.id}`;
+    // Navegar a la página de edición con la ruta correcta
+    navigate(`/crear-resena/${resena.id}?editar=true`);
   };
 
   const manejarToggleLike = (id) => {
@@ -162,17 +287,16 @@ const Inicio = () => {
           </span>
           <span className="etiqueta-estadistica">Usuarios copados</span>
         </div>
-        <div className="estadistica">
-          <span className="numero-estadistica">
-            {resenas.reduce((total, r) => total + parseInt(r.likes_count || r.likes || 0), 0)}
-          </span>
-          <span className="etiqueta-estadistica">Me gusta total</span>
-        </div>
       </div>
 
       {/* Controles principales */}
       <div className="controles-principales">
-        <h2 className="titulo-seccion">Las Últimas Reseñas</h2>
+        <h2 className="titulo-seccion">
+          {filtrosActivos.pelicula ? 
+            `Resultados para: "${filtrosActivos.pelicula}"` : 
+            'Las Últimas Reseñas'
+          }
+        </h2>
         
         {/* Filtros */}
         <FiltrosResenas
@@ -215,7 +339,7 @@ const Inicio = () => {
                   onEditar={manejarEditarResena}
                   onToggleLike={manejarToggleLike}
                   onAbrirComentarios={manejarAbrirComentarios}
-                  usuarioActual="usuario_actual"
+                  usuarioActual={usuarioActual}
                 />
               ))}
           </div>

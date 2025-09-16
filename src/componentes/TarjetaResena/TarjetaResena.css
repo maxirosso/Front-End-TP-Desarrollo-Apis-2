@@ -331,6 +331,13 @@
   font-style: italic;
 }
 
+/* ✅ NUEVO: Estilo para indicador de reseña editada */
+.indicador-editada {
+  color: var(--color-acento);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
 .acciones-resena {
   display: flex;
   gap: 1rem;

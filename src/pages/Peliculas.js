@@ -4,52 +4,170 @@ import { useResenas } from '../contextos/ContextoResenas';
 import LoadingSpinner from '../componentes/LoadingSpinner/LoadingSpinner';
 import './Peliculas.css';
 
+// Datos de ejemplo para modo offline
+const peliculasEjemplo = [
+  {
+    id: 1,
+    title: "El Padrino",
+    year: 1972,
+    genre: "Drama",
+    director: "Francis Ford Coppola",
+    poster_url: "https://via.placeholder.com/300x450/2C3E50/ECF0F1?text=El+Padrino",
+    description: "Una saga épica sobre una familia mafiosa italiana en América"
+  },
+  {
+    id: 2,
+    title: "Blade Runner 2049", 
+    year: 2017,
+    genre: "Ciencia Ficción",
+    director: "Denis Villeneuve",
+    poster_url: "https://via.placeholder.com/300x450/E74C3C/ECF0F1?text=Blade+Runner",
+    description: "Una secuela digna del clásico cyberpunk de Ridley Scott"
+  },
+  {
+    id: 3,
+    title: "Parasite",
+    year: 2019,
+    genre: "Thriller",
+    director: "Bong Joon-ho",
+    poster_url: "https://via.placeholder.com/300x450/1ABC9C/ECF0F1?text=Parasite",
+    description: "Una crítica social brillante envuelta en un thriller impredecible"
+  },
+  {
+    id: 4,
+    title: "Mad Max: Fury Road",
+    year: 2015,
+    genre: "Acción",
+    director: "George Miller",
+    poster_url: "https://via.placeholder.com/300x450/F39C12/ECF0F1?text=Mad+Max",
+    description: "Una obra maestra de la acción cinematográfica"
+  },
+  {
+    id: 5,
+    title: "Her",
+    year: 2013,
+    genre: "Romance",
+    director: "Spike Jonze",
+    poster_url: "https://via.placeholder.com/300x450/9B59B6/ECF0F1?text=Her",
+    description: "Una historia de amor única sobre la conexión en la era digital"
+  },
+  {
+    id: 6,
+    title: "El Caballero de la Noche",
+    year: 2008,
+    genre: "Acción",
+    director: "Christopher Nolan",
+    poster_url: "https://via.placeholder.com/300x450/34495E/ECF0F1?text=Batman",
+    description: "La mejor película de superhéroes jamás hecha"
+  },
+  {
+    id: 7,
+    title: "El Señor de los Anillos: La Comunidad del Anillo",
+    year: 2001,
+    genre: "Fantasía",
+    director: "Peter Jackson",
+    poster_url: "https://via.placeholder.com/300x450/27AE60/ECF0F1?text=LOTR",
+    description: "El inicio de una épica aventura en la Tierra Media"
+  },
+  {
+    id: 8,
+    title: "Pulp Fiction",
+    year: 1994,
+    genre: "Drama",
+    director: "Quentin Tarantino",
+    poster_url: "https://via.placeholder.com/300x450/8E44AD/ECF0F1?text=Pulp+Fiction",
+    description: "Una obra maestra del cine postmoderno"
+  }
+];
+
 const Peliculas = () => {
-  const { moviesAPI, usingBackend } = useResenas();
+  const { moviesAPI, usingBackend, checkBackendHealth } = useResenas();
   const [peliculas, setPeliculas] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const cargarPeliculas = async () => {
       setCargando(true);
+      setError(null);
+      
       try {
-        const moviesList = await moviesAPI.getAll();
-        setPeliculas(moviesList);
+        if (usingBackend) {
+          const moviesList = await moviesAPI.getAll();
+          setPeliculas(moviesList || []);
+        } else {
+          // Simular carga de red
+          await new Promise(resolve => setTimeout(resolve, 800));
+          setPeliculas(peliculasEjemplo);
+        }
       } catch (error) {
         console.error('Error cargando películas:', error);
+        setError('Error al cargar las películas');
+        // Usar datos de ejemplo como fallback
+        setPeliculas(peliculasEjemplo);
       } finally {
         setCargando(false);
       }
     };
 
     cargarPeliculas();
-  }, [moviesAPI]);
+  }, [moviesAPI, usingBackend]);
 
   if (cargando) {
     return <LoadingSpinner mensaje="Cargando películas..." />;
   }
 
+  if (error && peliculas.length === 0) {
+    return (
+      <div className="pagina-peliculas">
+        <div className="contenido-peliculas">
+          <div className="error-peliculas">
+            <h2>⚠️ Error cargando películas</h2>
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()}>
+              Intentar de nuevo
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pagina-peliculas">
-      <div className="header-peliculas">
-        <h1>🎬 Catálogo de Películas</h1>
-        <p>Explora nuestro catálogo y lee las reseñas de cada película</p>
-      </div>
+      <div className="contenido-peliculas">
+        <div className="header-peliculas">
+          <h1>🎬 Catálogo de Películas</h1>
+          <p>Explora nuestro catálogo y lee las reseñas de cada película</p>
+          {!usingBackend && (
+            <div className="aviso-offline">
+              📱 Modo offline - Mostrando películas de ejemplo
+            </div>
+          )}
+        </div>
 
-      <div className="grid-peliculas">
+        <div className="grid-peliculas">
         {peliculas.map(pelicula => (
           <div key={pelicula.id} className="tarjeta-pelicula">
-            <img 
-              src={pelicula.poster_url || `https://via.placeholder.com/300x450/34495e/ecf0f1?text=${encodeURIComponent(pelicula.title)}`}
-              alt={`Póster de ${pelicula.title}`}
-              className="poster-pelicula"
-            />
+            <div className="contenedor-poster">
+              <img 
+                src={pelicula.poster_url || `https://via.placeholder.com/300x450/34495e/ecf0f1?text=${encodeURIComponent(pelicula.title)}`}
+                alt={`Póster de ${pelicula.title}`}
+                className="poster-pelicula"
+                onError={(e) => {
+                  e.target.src = `https://via.placeholder.com/300x450/34495e/ecf0f1?text=${encodeURIComponent(pelicula.title)}`;
+                }}
+              />
+            </div>
             <div className="info-pelicula">
               <h3 className="titulo-pelicula">{pelicula.title}</h3>
               <div className="meta-pelicula">
                 <span className="ano-pelicula">{pelicula.year}</span>
                 {pelicula.genre && (
                   <span className="genero-pelicula">{pelicula.genre}</span>
+                )}
+                {pelicula.director && (
+                  <span className="director-pelicula">Dir: {pelicula.director}</span>
                 )}
               </div>
               {pelicula.description && (
@@ -63,7 +181,7 @@ const Peliculas = () => {
                   📖 Ver Reseñas
                 </Link>
                 <Link 
-                  to={`/crear?movieId=${pelicula.id}`}
+                  to={`/crear?movieId=${pelicula.id}&titulo=${encodeURIComponent(pelicula.title)}&year=${pelicula.year}&genre=${encodeURIComponent(pelicula.genre || '')}&director=${encodeURIComponent(pelicula.director || '')}&poster=${encodeURIComponent(pelicula.poster_url || '')}&description=${encodeURIComponent(pelicula.description || '')}`}
                   className="btn-escribir-resena"
                 >
                   ✏️ Escribir Reseña
@@ -74,11 +192,13 @@ const Peliculas = () => {
         ))}
       </div>
 
-      {!usingBackend && (
-        <div className="modo-offline">
-          <p>📱 Modo offline - Mostrando películas de ejemplo</p>
+      {peliculas.length === 0 && !cargando && (
+        <div className="sin-peliculas">
+          <h3>🎬 No hay películas disponibles</h3>
+          <p>Parece que no hay películas en el catálogo en este momento.</p>
         </div>
       )}
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useResenas } from '../contextos/ContextoResenas';
 import TarjetaResena from '../componentes/TarjetaResena/TarjetaResena';
 import LoadingSpinner from '../componentes/LoadingSpinner/LoadingSpinner';
@@ -7,14 +7,17 @@ import './PerfilUsuario.css';
 
 const PerfilUsuario = () => {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const {
+    usuarioActual,
     usingBackend,
     usersAPI,
     obtenerResenasPorUsuario,
     eliminarResena,
     toggleLikeResena,
     error,
-    setError
+    setError,
+    setUsuarioActual  // ✅ Agregar setUsuarioActual del contexto
   } = useResenas();
 
   const [usuario, setUsuario] = useState(null);
@@ -25,6 +28,14 @@ const PerfilUsuario = () => {
     limit: '20',
     offset: '0'
   });
+
+  // ✅ FIX: Sincronizar usuario actual del contexto con userId de la URL
+  useEffect(() => {
+    if (userId && parseInt(userId) !== usuarioActual) {
+      console.log('🔄 Sincronizando usuario del contexto con URL:', userId);
+      setUsuarioActual(parseInt(userId));
+    }
+  }, [userId, usuarioActual, setUsuarioActual]);
 
   useEffect(() => {
     const cargarDatosUsuario = async () => {
@@ -109,6 +120,26 @@ const PerfilUsuario = () => {
     }
   }, [userId, usingBackend, usersAPI, obtenerResenasPorUsuario, filtros, setError]);
 
+  // ✅ NUEVO: Escuchar evento de reseñas actualizadas para recargar automáticamente
+  useEffect(() => {
+    const manejarResenasActualizadas = async (event) => {
+      console.log('🔔 PerfilUsuario: Reseñas actualizadas detectadas, recargando...', event.detail);
+      try {
+        const resenas = await obtenerResenasPorUsuario(userId, filtros);
+        setResenasUsuario(resenas);
+        console.log('✅ PerfilUsuario: Reseñas del usuario recargadas');
+      } catch (err) {
+        console.error('Error recargando reseñas del usuario:', err);
+      }
+    };
+
+    window.addEventListener('resenasActualizadas', manejarResenasActualizadas);
+    
+    return () => {
+      window.removeEventListener('resenasActualizadas', manejarResenasActualizadas);
+    };
+  }, [userId, obtenerResenasPorUsuario, filtros]);
+
   const manejarEliminarResena = async (id) => {
     try {
       await eliminarResena(id);
@@ -119,21 +150,27 @@ const PerfilUsuario = () => {
   };
 
   const manejarEditarResena = (resena) => {
-    window.location.href = `/editar/${resena.id}`;
+    navigate(`/crear-resena/${resena.id}?editar=true`);
   };
 
   const manejarToggleLike = (id) => {
-    toggleLikeResena(id);
     setResenasUsuario(prev => prev.map(resena => {
       if (resena.id === id) {
+        const currentLikes = parseInt(resena.likes_count || resena.likes || 0);
+        const isCurrentlyLiked = resena.yaLeDiLike;
+        
         return {
           ...resena,
-          yaLeDiLike: !resena.yaLeDiLike,
-          likes: resena.yaLeDiLike ? resena.likes - 1 : resena.likes + 1
+          yaLeDiLike: !isCurrentlyLiked,
+          likes: isCurrentlyLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1,
+          likes_count: isCurrentlyLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1
         };
       }
       return resena;
     }));
+    
+    // También actualizar en el contexto global
+    toggleLikeResena(id);
   };
 
   const manejarCambiarOrdenamiento = (nuevoOrden) => {
@@ -186,6 +223,18 @@ const PerfilUsuario = () => {
                 month: 'long'
               })}
             </p>
+            
+            {/* Botón editar perfil - solo visible para el propio usuario */}
+            {parseInt(userId) === usuarioActual && (
+              <div className="perfil-acciones">
+                <Link 
+                  to={`/editar-perfil/${userId}`} 
+                  className="btn-editar-perfil"
+                >
+                  ✏️ Editar Perfil
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
@@ -255,7 +304,7 @@ const PerfilUsuario = () => {
                 onEditar={manejarEditarResena}
                 onToggleLike={manejarToggleLike}
                 onAbrirComentarios={() => {}} // Implementar si es necesario
-                usuarioActual="usuario_actual" // Obtener del contexto de auth
+                usuarioActual={usuarioActual} // Obtener del contexto de auth
                 mostrarAutor={false} // No mostrar autor en perfil del usuario
               />
             ))}

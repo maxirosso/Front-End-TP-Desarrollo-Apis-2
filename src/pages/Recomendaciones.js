@@ -6,7 +6,7 @@ import LoadingSpinner from '../componentes/LoadingSpinner/LoadingSpinner';
 import './Recomendaciones.css';
 
 const Recomendaciones = () => {
-  const { resenas, moviesAPI, cargando } = useResenas();
+  const { usuarioActual, resenas, moviesAPI, cargando } = useResenas();
   const [recomendaciones, setRecomendaciones] = useState([]);
   const [peliculasPopulares, setPeliculasPopulares] = useState([]);
   const [resenasDestacadas, setResenasDestacadas] = useState([]);
@@ -170,7 +170,7 @@ const Recomendaciones = () => {
               onEditar={() => {}}
               onToggleLike={() => {}}
               onAbrirComentarios={() => {}}
-              usuarioActual="usuario_actual"
+              usuarioActual={usuarioActual}
               compacta={true}
             />
           ))}

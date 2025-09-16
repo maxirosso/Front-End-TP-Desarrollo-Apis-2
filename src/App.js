@@ -11,6 +11,7 @@ import ResenasDelicula from './pages/ResenasDelicula';
 import Peliculas from './pages/Peliculas';
 import Recomendaciones from './pages/Recomendaciones';
 import Usuario from './pages/Usuario';
+import EditarPerfil from './pages/EditarPerfil';
 import './App.css';
 
 function App() {
@@ -24,9 +25,12 @@ function App() {
               <Route path="/" element={<Inicio />} />
               <Route path="/crear" element={<CrearResena />} />
               <Route path="/editar/:id" element={<CrearResena />} />
+              <Route path="/crear-resena/:id" element={<CrearResena />} />
               <Route path="/pelicula/:titulo" element={<PeliculaDetalle />} />
               <Route path="/usuario" element={<Usuario />} />
               <Route path="/usuario/:userId" element={<PerfilUsuario />} />
+              <Route path="/editar-perfil" element={<EditarPerfil />} />
+              <Route path="/editar-perfil/:userId" element={<EditarPerfil />} />
               <Route path="/peliculas" element={<Peliculas />} />
               <Route path="/recomendaciones" element={<Recomendaciones />} />
               <Route path="/movie/:movieId/reviews" element={<ResenasDelicula />} />

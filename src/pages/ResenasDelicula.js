@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useResenas } from '../contextos/ContextoResenas';
 import TarjetaResena from '../componentes/TarjetaResena/TarjetaResena';
 import FiltrosResenas from '../componentes/FiltrosResenas/FiltrosResenas';
@@ -9,7 +9,9 @@ import './ResenasDelicula.css';
 
 const ResenasDelicula = () => {
   const { movieId } = useParams();
+  const navigate = useNavigate();
   const {
+    usuarioActual,
     usingBackend,
     moviesAPI,
     obtenerResenasPorPelicula,
@@ -69,7 +71,7 @@ const ResenasDelicula = () => {
   };
 
   const manejarEditarResena = (resena) => {
-    window.location.href = `/editar/${resena.id}`;
+    navigate(`/crear-resena/${resena.id}?editar=true`);
   };
 
   const manejarToggleLike = (id) => {
@@ -262,7 +264,7 @@ const ResenasDelicula = () => {
                 onEditar={manejarEditarResena}
                 onToggleLike={manejarToggleLike}
                 onAbrirComentarios={() => {}} // Implementar si es necesario
-                usuarioActual="usuario_actual" // Obtener del contexto de auth
+                usuarioActual={usuarioActual} // Obtener del contexto de auth
                 mostrarPelicula={false} // No mostrar info de película en esta vista
               />
             ))}

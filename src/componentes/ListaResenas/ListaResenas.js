@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TarjetaResena from '../TarjetaResena/TarjetaResena';
 import FormularioResena from '../FormularioResena/FormularioResena';
 import FiltrosResenas from '../FiltrosResenas/FiltrosResenas';
@@ -7,6 +8,7 @@ import ModalComentarios from '../ModalComentarios/ModalComentarios';
 import './ListaResenas.css';
 
 const ListaResenas = () => {
+  const navigate = useNavigate();
   const [resenas, setResenas] = useState([]);
   const [resenasFiltradas, setResenasFiltradas] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -208,8 +210,7 @@ const ListaResenas = () => {
   };
 
   const manejarEditarResena = (resenaParaEditar) => {
-    setResenaParaEditar(resenaParaEditar);
-    setMostrarFormulario(true);
+    navigate(`/crear-resena/${resenaParaEditar.id}?editar=true`);
   };
 
   const manejarToggleLike = (id) => {

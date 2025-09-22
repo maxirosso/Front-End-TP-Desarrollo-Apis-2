@@ -295,7 +295,7 @@
 
 .tag-resena {
   background-color: var(--color-acento);
-  color: white;
+  color: var(--color-primario);
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.75rem;

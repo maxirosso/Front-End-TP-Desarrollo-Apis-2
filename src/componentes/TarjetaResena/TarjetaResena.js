@@ -151,16 +151,7 @@ const TarjetaResena = ({
             </div>
           </header>
 
-          {/* Título y año de la película */}
-          <div className="titulo-pelicula-contenedor">
-            <Link 
-              to={`/pelicula/${encodeURIComponent(titulo)}`}
-              className="enlace-titulo-pelicula"
-            >
-              <h3 className="titulo-pelicula">{movieTitle}</h3>
-            </Link>
-            <span className="año-pelicula">{añoSeguro}</span>
-          </div>
+         
 
           <div className="titulo-pelicula-contenedor">
             <Link 
@@ -220,11 +211,11 @@ const TarjetaResena = ({
             <div className="acciones-resena">
               {/* Botón de like */}
               <button 
-                className={`boton-like ${yaLeDiLike ? 'activo' : ''}`}
+                className={`boton-like `}
                 onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onToggleLike && onToggleLike(id);
+                  // e.preventDefault();
+                  // e.stopPropagation();
+                  // onToggleLike && onToggleLike(id);
                 }}
                 title={yaLeDiLike ? 'Sacar me gusta' : 'Me gusta'}
               >
@@ -232,19 +223,6 @@ const TarjetaResena = ({
                   {yaLeDiLike ? '❤️' : '🤍'}
                 </span>
                 <span className="contador-likes">{isNaN(likes) ? 0 : likes}</span>
-              </button>
-
-              {/* Botón de comentarios */}
-              <button 
-                className="boton-comentar"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onAbrirComentarios && onAbrirComentarios(id);
-                }}
-              >
-                💬 Comentarios
-                <span className="contador-comentarios">({comentarios?.length || 0})</span>
               </button>
 
               {/* Menú de acciones del propietario */}

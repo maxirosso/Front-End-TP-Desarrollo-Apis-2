@@ -21,30 +21,30 @@ body {
 
 /* Variables CSS para diseño profesional */
 :root {
-  /* Paleta de colores oficial de cineTrack */
-  --color-primario: #121C2E;
-  --color-secundario: #19293F;
-  --color-terciario: #27496D;
-  --color-cuaternario: #9CB4CC;
-  --color-acento: #16E0D4;
-  --color-acento-hover: #12B3A8;
+  /* Paleta de colores oficial de cineTrack - Mejor contraste */
+  --color-primario: #101828;
+  --color-secundario: #23395d;
+  --color-terciario: #2d4a7c;
+  --color-cuaternario: #b3c7e6;
+  --color-acento: #1fffe0;
+  --color-acento-hover: #19c6b3;
   --color-peligro: #FF0035;
   --color-exito: #51cf66;
   --color-advertencia: #ffd43b;
-  
+
   /* Glassmorphism y efectos */
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-bg-hover: rgba(255, 255, 255, 0.08);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
   --glass-backdrop: blur(8px);
-  
+
   /* Colores de texto ajustados */
   --texto-principal: #FFFFFF;
-  --texto-secundario: #9CB4CC;
-  --texto-terciario: #9CB4CC;
-  --texto-silenciado: #9CB4CC;
-  --texto-deshabilitado: #5f6368;
+  --texto-secundario: #b3c7e6;
+  --texto-terciario: #b3c7e6;
+  --texto-silenciado: #b3c7e6;
+  --texto-deshabilitado: #7a869a;
   
   /* Espaciado con sistema de 8px */
   --espaciado-xs: 0.25rem;   /* 4px */

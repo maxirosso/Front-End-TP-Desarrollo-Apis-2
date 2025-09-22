@@ -407,7 +407,21 @@ const CrearResena = () => {
         </button>
       );
     }
-    return estrellas;
+    return [
+       <button
+          key={0}
+          type="button"
+          className={`estrella-tachada estrella-seleccionable ${
+            0 == (calificacionHover || datosFormulario.calificacion) ? 'activa ' : 'estrella-tachada-opaca'
+          }`}
+          onClick={() => manejarCambioEntrada('calificacion', 0)}
+          onMouseEnter={() => setCalificacionHover(0)}
+          onMouseLeave={() => setCalificacionHover(0)}
+        >
+          ★
+        </button>,
+      ...estrellas
+    ];
   };
 
   if (cargandoDatos) {
@@ -581,7 +595,7 @@ const CrearResena = () => {
             <div className="contenedor-estrellas">
               {generarEstrellas()}
               <span className="texto-calificacion">
-                {datosFormulario.calificacion > 0 ? `${datosFormulario.calificacion}/5 estrellas` : 'Selecciona tu calificación'}
+                {datosFormulario.calificacion > 0 ? `${datosFormulario.calificacion}/5 estrellas` : 'Sin estrellas'}
               </span>
             </div>
             {errores.calificacion && <span className="mensaje-error">{errores.calificacion}</span>}

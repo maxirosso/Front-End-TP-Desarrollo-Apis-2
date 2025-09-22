@@ -1,3 +1,4 @@
+
 /* Estilos para Página Crear Reseña - cineTrack */
 
 .pagina-crear-resena {
@@ -264,6 +265,35 @@
   transform: scale(1.2);
   text-shadow: 0 2px 8px rgba(243, 156, 18, 0.5);
 }
+
+/* Estrella tachada en diagonal */
+.estrella-tachada {
+  position: relative;
+}
+.estrella-tachada::after {
+  content: '';
+  position: absolute;
+  left: 10%;
+  top: 54%;
+  width: 80%;
+  height: 4px;
+  background: #c0392b;
+  transform: rotate(-45deg);
+  pointer-events: none;
+}
+.estrella-tachada::before {
+  content: '';
+  position: absolute;
+  left: 10%;
+  top: 54%;
+  width: 80%;
+  height: 4px;
+  background: #c0392b;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+
 
 .texto-calificacion {
   color: #ECF0F1;

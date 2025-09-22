@@ -267,28 +267,7 @@ const Inicio = () => {
         </div>
       </div>
 
-      {/* Estadísticas rápidas */}
-      <div className="seccion-estadisticas">
-        <div className="estadistica">
-          <span className="numero-estadistica">{resenas.length}</span>
-          <span className="etiqueta-estadistica">Reseñas en total</span>
-        </div>
-        <div className="estadistica">
-          <span className="numero-estadistica">
-            {/* {new Set(resenas.map(r => r.titulo)).size} */}
-            {new Set(resenas.map(r => r.movie_title || r.titulo)).size}
-          </span>
-          <span className="etiqueta-estadistica">Pelis reseñadas</span>
-        </div>
-        <div className="estadistica">
-          <span className="numero-estadistica">
-            {new Set(resenas.map(r => r.user_name || r.usuario)).size}
-            {/* {new Set(resenas.map(r => r.usuario)).size} */}
-          </span>
-          <span className="etiqueta-estadistica">Usuarios copados</span>
-        </div>
-      </div>
-
+      
       {/* Controles principales */}
       <div className="controles-principales">
         <h2 className="titulo-seccion">

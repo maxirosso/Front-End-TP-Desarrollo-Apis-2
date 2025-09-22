@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react'; import { Link } from 'react-router-dom';
 import { useResenas } from '../contextos/ContextoResenas';
 import TarjetaResena from '../componentes/TarjetaResena/TarjetaResena';
 import LoadingSpinner from '../componentes/LoadingSpinner/LoadingSpinner';
@@ -16,7 +15,7 @@ const Recomendaciones = () => {
       try {
         // Obtener todas las películas
         const todasLasPeliculas = await moviesAPI.getAll();
-        
+
         // Calcular popularidad por número de reseñas
         const popularidad = {};
         resenas.forEach(resena => {
@@ -60,15 +59,22 @@ const Recomendaciones = () => {
     if (!cargando) {
       generarRecomendaciones();
     }
-  }, [resenas, cargando, moviesAPI]);
+  }, [resenas, cargando, moviesAPI, calcularRatingPromedio]);
 
-  const calcularRatingPromedio = (movieId) => {
+  // const calcularRatingPromedio = (movieId) => {
+  //   const resenasDeEstaPelicula = resenas.filter(r => (r.movie_id || r.id) === movieId);
+  //   if (resenasDeEstaPelicula.length === 0) return 0;
+
+  //   const suma = resenasDeEstaPelicula.reduce((total, resena) => total + resena.rating, 0);
+  //   return (suma / resenasDeEstaPelicula.length).toFixed(1);
+  // };
+
+  const calcularRatingPromedio = useCallback((movieId) => {
     const resenasDeEstaPelicula = resenas.filter(r => (r.movie_id || r.id) === movieId);
     if (resenasDeEstaPelicula.length === 0) return 0;
-    
     const suma = resenasDeEstaPelicula.reduce((total, resena) => total + resena.rating, 0);
     return (suma / resenasDeEstaPelicula.length).toFixed(1);
-  };
+  }, [resenas]);
 
   const generarRecomendacionesPorGenero = (peliculas) => {
     const generos = ['drama', 'accion', 'ciencia-ficcion', 'thriller', 'romance'];
@@ -78,7 +84,7 @@ const Recomendaciones = () => {
       const peliculasDelGenero = peliculas
         .filter(p => p.genre === genero && p.ratingPromedio >= 3.5)
         .slice(0, 2);
-      
+
       if (peliculasDelGenero.length > 0) {
         recomendaciones.push({
           genero: genero,
@@ -130,11 +136,11 @@ const Recomendaciones = () => {
       <section className="seccion-recomendaciones">
         <h2>🔥 Más Populares</h2>
         <p className="descripcion-seccion">Las películas con más reseñas de nuestra comunidad</p>
-        
+
         <div className="grid-peliculas-populares">
           {peliculasPopulares.map(pelicula => (
             <div key={pelicula.id} className="tarjeta-pelicula-popular">
-              <img 
+              <img
                 src={pelicula.poster_url || `https://via.placeholder.com/200x300/34495e/ecf0f1?text=${encodeURIComponent(pelicula.title)}`}
                 alt={`Póster de ${pelicula.title}`}
                 className="poster-popular"
@@ -160,16 +166,16 @@ const Recomendaciones = () => {
       <section className="seccion-recomendaciones">
         <h2>⭐ Reseñas Destacadas</h2>
         <p className="descripcion-seccion">Las mejores reseñas recientes de nuestra comunidad</p>
-        
+
         <div className="lista-resenas-destacadas">
           {resenasDestacadas.map(resena => (
-            <TarjetaResena 
+            <TarjetaResena
               key={resena.id}
               pelicula={resena}
-              onEliminar={() => {}}
-              onEditar={() => {}}
-              onToggleLike={() => {}}
-              onAbrirComentarios={() => {}}
+              onEliminar={() => { }}
+              onEditar={() => { }}
+              onToggleLike={() => { }}
+              onAbrirComentarios={() => { }}
               usuarioActual={usuarioActual}
               compacta={true}
             />
@@ -181,7 +187,7 @@ const Recomendaciones = () => {
       <section className="seccion-recomendaciones">
         <h2>🎬 Recomendaciones por Género</h2>
         <p className="descripcion-seccion">Películas bien valoradas organizadas por género</p>
-        
+
         {recomendaciones.map(categoria => (
           <div key={categoria.genero} className="categoria-genero">
             <h3 className="titulo-genero">
@@ -190,7 +196,7 @@ const Recomendaciones = () => {
             <div className="peliculas-genero">
               {categoria.peliculas.map(pelicula => (
                 <div key={pelicula.id} className="mini-tarjeta-pelicula">
-                  <img 
+                  <img
                     src={pelicula.poster_url || `https://via.placeholder.com/150x225/34495e/ecf0f1?text=${encodeURIComponent(pelicula.title)}`}
                     alt={`Póster de ${pelicula.title}`}
                     className="mini-poster"

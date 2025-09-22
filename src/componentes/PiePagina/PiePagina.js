@@ -9,9 +9,9 @@ const PiePagina = () => {
       <div className="contenedor-pie">
         {/* Enlaces de navegación */}
         <div className="seccion-enlaces">
-          <a href="#" className="enlace-pie">Sobre nosotros</a>
-          <a href="#" className="enlace-pie">Términos y condiciones</a>
-          <a href="#" className="enlace-pie">Ayuda</a>
+          <button className="enlace-pie" type="button">Sobre nosotros</button>
+          <button className="enlace-pie" type="button">Términos y condiciones</button>
+          <button className="enlace-pie" type="button">Ayuda</button>
         </div>
 
         {/* Información de copyright */}

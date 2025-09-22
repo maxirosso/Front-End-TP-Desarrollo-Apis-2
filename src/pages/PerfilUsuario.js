@@ -224,17 +224,7 @@ const PerfilUsuario = () => {
               })}
             </p>
             
-            {/* Botón editar perfil - solo visible para el propio usuario */}
-            {parseInt(userId) === usuarioActual && (
-              <div className="perfil-acciones">
-                <Link 
-                  to={`/editar-perfil/${userId}`} 
-                  className="btn-editar-perfil"
-                >
-                  ✏️ Editar Perfil
-                </Link>
-              </div>
-            )}
+         
           </div>
         </div>
 
@@ -249,15 +239,6 @@ const PerfilUsuario = () => {
               {resenasUsuario.reduce((total, r) => total + parseInt(r.likes_count || r.likes || 0), 0)}
             </span>
             <span className="etiqueta">LIKES RECIBIDOS</span>
-          </div>
-          <div className="estadistica">
-            <span className="numero">
-              {resenasUsuario.length > 0 
-                ? (resenasUsuario.reduce((total, r) => total + (r.rating || r.calificacion || 0), 0) / resenasUsuario.length).toFixed(1)
-                : '0'
-              }
-            </span>
-            <span className="etiqueta">RATING PROMEDIO</span>
           </div>
         </div>
       </div>

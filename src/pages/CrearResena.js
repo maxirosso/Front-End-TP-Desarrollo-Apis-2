@@ -7,29 +7,29 @@ import './CrearResena.css';
 
 const CrearResena = () => {
   console.log('🚀 CrearResena component mounting...');
-  
+
   const navigate = useNavigate();
   const { id } = useParams(); // Para edición
   const [searchParams] = useSearchParams(); // Para crear nueva con datos de película
-  
+
   console.log('🔍 Component params:', { id, esEdicion: !!id });
-  
-  const { 
-    agregarResena, 
+
+  const {
+    agregarResena,
     actualizarResena, // ✅ Cambiar de editarResena a actualizarResena
     // obtenerResenaPorId,
-    usuarioActual, 
+    usuarioActual,
     // obtenerNombreUsuario,
     resenas,
     usingBackend,
     reviewsAPI // ✅ Agregar reviewsAPI para carga directa
   } = useContext(ContextoResenas);
 
-  console.log('🔍 Context values:', { 
-    usuarioActual, 
-    resenasCount: resenas?.length || 0, 
-    usingBackend, 
-    reviewsAPIAvailable: !!reviewsAPI 
+  console.log('🔍 Context values:', {
+    usuarioActual,
+    resenasCount: resenas?.length || 0,
+    usingBackend,
+    reviewsAPIAvailable: !!reviewsAPI
   });
 
   const esEdicion = !!id;
@@ -76,34 +76,34 @@ const CrearResena = () => {
   // Cargar datos para edición - VERSION SIMPLIFICADA PARA DEBUG
   useEffect(() => {
     console.log('🔄 useEffect ejecutándose:', { esEdicion, id });
-    
+
     if (esEdicion && id) {
       console.log('✅ Condiciones cumplidas, iniciando carga...');
-      
+
       const cargarDatosResena = async () => {
         console.log('📥 Función cargarDatosResena iniciada');
         setCargandoDatos(true);
-        
+
         try {
           const resenaId = parseInt(id, 10);
           console.log('🆔 ID convertido:', resenaId);
-          
+
           // PRUEBA DIRECTA: Solo intentar backend
           console.log('🌐 Haciendo llamada directa al backend...');
           const response = await fetch(`http://localhost:8080/reviews/${resenaId}`);
-          
+
           console.log('📡 Response status:', response.status);
-          
+
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
           }
-          
+
           const resena = await response.json();
           console.log('� Reseña recibida:', resena);
-          
+
           if (resena) {
             console.log('📝 Cargando datos al formulario...');
-            
+
             // Convertir fecha ISO a formato YYYY-MM-DD para el input
             let fechaFormateada = '';
             if (resena.created_at) {
@@ -111,7 +111,7 @@ const CrearResena = () => {
               fechaFormateada = fecha.toISOString().split('T')[0];
             }
             console.log('📅 Fecha convertida:', { original: resena.created_at, formateada: fechaFormateada });
-            
+
             setDatosFormulario({
               tituloResenia: resena.title || '',
               titulo: resena.movie_title || '',
@@ -138,16 +138,16 @@ const CrearResena = () => {
                 poster_url: resena.movie_poster || resena.poster_url,
                 description: resena.movie_description
               });
-              console.log('🎬 Película establecida:', { 
-                id: resena.movie_id, 
+              console.log('🎬 Película establecida:', {
+                id: resena.movie_id,
                 title: resena.movie_title,
                 genre: resena.movie_genre || resena.genre
               });
             }
-            
+
             console.log('✅ Datos cargados exitosamente');
           }
-          
+
         } catch (error) {
           console.error('💥 Error en carga directa:', error);
           alert('Error al cargar la reseña: ' + error.message);
@@ -171,7 +171,7 @@ const CrearResena = () => {
       ...prev,
       [campo]: valor
     }));
-    
+
     // Limpiar error específico cuando el usuario empiece a corregir
     if (errores[campo]) {
       setErrores(prev => ({ ...prev, [campo]: null }));
@@ -183,11 +183,11 @@ const CrearResena = () => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       const img = new Image();
-      
+
       img.onload = () => {
         // Calcular nuevas dimensiones manteniendo aspecto
         let { width, height } = img;
-        
+
         if (width > height) {
           if (width > maxWidth) {
             height = (height * maxWidth) / width;
@@ -199,18 +199,18 @@ const CrearResena = () => {
             height = maxHeight;
           }
         }
-        
+
         canvas.width = width;
         canvas.height = height;
-        
+
         // Dibujar imagen redimensionada
         ctx.drawImage(img, 0, 0, width, height);
-        
+
         // Convertir a base64 con compresión
         const dataURL = canvas.toDataURL('image/jpeg', quality);
         resolve(dataURL);
       };
-      
+
       img.src = URL.createObjectURL(file);
     });
   };
@@ -223,17 +223,17 @@ const CrearResena = () => {
         alert('Por favor selecciona un archivo de imagen válido');
         return;
       }
-      
+
       // Validar tamaño (máximo 5MB)
       if (archivo.size > 5 * 1024 * 1024) {
         alert('La imagen es demasiado grande. Máximo 5MB');
         return;
       }
-      
+
       try {
         // Redimensionar y comprimir imagen
         const imagenComprimida = await redimensionarImagen(archivo);
-        
+
         setDatosFormulario(prev => ({
           ...prev,
           poster: imagenComprimida,
@@ -249,7 +249,7 @@ const CrearResena = () => {
   const manejarCambioTag = (tag) => {
     setDatosFormulario(prev => ({
       ...prev,
-      tags: prev.tags.includes(tag) 
+      tags: prev.tags.includes(tag)
         ? prev.tags.filter(t => t !== tag)
         : [...prev.tags, tag]
     }));
@@ -258,7 +258,7 @@ const CrearResena = () => {
   const manejarSeleccionPelicula = (pelicula) => {
     setPeliculaSeleccionada(pelicula);
     setModoCrearNueva(false);
-    
+
     if (pelicula) {
       // Auto-llenar datos del formulario con info de la película
       setDatosFormulario(prev => ({
@@ -295,7 +295,7 @@ const CrearResena = () => {
       nuevosErrores.año = 'Ingresa un año válido';
     }
 
-    if (datosFormulario.calificacion === 0) {
+    if (datosFormulario.calificacion == !undefined) {
       nuevosErrores.calificacion = 'Debes dar una calificación a la película';
     }
 
@@ -322,7 +322,7 @@ const CrearResena = () => {
 
   const manejarEnvio = async (evento) => {
     evento.preventDefault();
-    
+
     if (!validarFormulario()) {
       return;
     }
@@ -335,20 +335,20 @@ const CrearResena = () => {
         // Usar datos de película seleccionada o del formulario
         titulo: peliculaSeleccionada ? peliculaSeleccionada.title : datosFormulario.titulo,
         año: peliculaSeleccionada ? peliculaSeleccionada.year : parseInt(datosFormulario.año),
-        imagenUrl: peliculaSeleccionada ? 
-          peliculaSeleccionada.poster_url : 
+        imagenUrl: peliculaSeleccionada ?
+          peliculaSeleccionada.poster_url :
           (datosFormulario.poster || `https://via.placeholder.com/120x180/2C3E50/ECF0F1?text=${encodeURIComponent(datosFormulario.titulo)}`),
         calificacion: datosFormulario.calificacion,
         usuario: `usuario_${usuarioActual}`, // Usar usuario actual del contexto
         user_id: usuarioActual, // Para el backend
-        fechaVisionado: datosFormulario.fechaVisionado ? new Date(datosFormulario.fechaVisionado).toLocaleDateString('es-ES', { 
-          day: 'numeric', 
-          month: 'long', 
-          year: 'numeric' 
-        }) : new Date().toLocaleDateString('es-ES', { 
-          day: 'numeric', 
-          month: 'long', 
-          year: 'numeric' 
+        fechaVisionado: datosFormulario.fechaVisionado ? new Date(datosFormulario.fechaVisionado).toLocaleDateString('es-ES', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        }) : new Date().toLocaleDateString('es-ES', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
         }),
         textoResena: datosFormulario.textoResena,
         megusta: datosFormulario.megusta,
@@ -369,10 +369,10 @@ const CrearResena = () => {
       } else {
         // Modo creación
         datosResena.id = Date.now();
-        datosResena.fechaResena = new Date().toLocaleDateString('es-ES', { 
-          day: 'numeric', 
-          month: 'long', 
-          year: 'numeric' 
+        datosResena.fechaResena = new Date().toLocaleDateString('es-ES', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
         });
         await agregarResena(datosResena);
         alert('¡Reseña creada exitosamente! 🎉');
@@ -380,7 +380,7 @@ const CrearResena = () => {
 
       // Redirigir al inicio
       navigate('/');
-      
+
     } catch (error) {
       console.error('Error al crear reseña:', error);
       alert('Uh, hubo un problema al crear la reseña. Probá de nuevo.');
@@ -396,10 +396,17 @@ const CrearResena = () => {
         <button
           key={i}
           type="button"
-          className={`estrella-seleccionable ${
-            i <= (calificacionHover || datosFormulario.calificacion) ? 'activa' : ''
-          }`}
-          onClick={() => manejarCambioEntrada('calificacion', i)}
+          className={`estrella-seleccionable ${i <= (calificacionHover || datosFormulario.calificacion) ? 'activa' : ''
+            }`}
+          onClick={() => {
+            if (datosFormulario.calificacion === i) {
+              setCalificacionHover(0)
+              manejarCambioEntrada('calificacion', 0)
+            } else {
+              manejarCambioEntrada('calificacion', i)
+            }
+
+          }}
           onMouseEnter={() => setCalificacionHover(i)}
           onMouseLeave={() => setCalificacionHover(0)}
         >
@@ -408,18 +415,6 @@ const CrearResena = () => {
       );
     }
     return [
-       <button
-          key={0}
-          type="button"
-          className={`estrella-tachada estrella-seleccionable ${
-            0 == (calificacionHover || datosFormulario.calificacion) ? 'activa ' : 'estrella-tachada-opaca'
-          }`}
-          onClick={() => manejarCambioEntrada('calificacion', 0)}
-          onMouseEnter={() => setCalificacionHover(0)}
-          onMouseLeave={() => setCalificacionHover(0)}
-        >
-          ★
-        </button>,
       ...estrellas
     ];
   };
@@ -442,14 +437,14 @@ const CrearResena = () => {
       <div className="contenedor-crear-resena">
         <header className="encabezado-crear-resena">
           <h1 className="titulo-crear-resena">
-            {cargandoDatos ? 'Cargando datos de la reseña...' : 
-             esEdicion ? 'Editar mi Reseña' : 'Escribir mi Reseña'}
+            {cargandoDatos ? 'Cargando datos de la reseña...' :
+              esEdicion ? 'Editar mi Reseña' : 'Escribir mi Reseña'}
           </h1>
           <p className="subtitulo-crear-resena">
             {cargandoDatos ? 'Por favor espera mientras cargamos los datos de tu reseña' :
-             esEdicion 
-              ? 'Modificá tu reseña para mejorarla o corregir algún detalle'
-              : 'Compartí tu opinión sobre una peli y ayudá a otros cinéfilos a descubrir nuevas joyitas'
+              esEdicion
+                ? 'Modificá tu reseña para mejorarla o corregir algún detalle'
+                : 'Compartí tu opinión sobre una peli y ayudá a otros cinéfilos a descubrir nuevas joyitas'
             }
           </p>
         </header>
@@ -461,258 +456,258 @@ const CrearResena = () => {
           </div>
         ) : (
           <form className="formulario-crear-resena" onSubmit={manejarEnvio}>
-          {/* Titulo de la reseña */}
-          <h2 className="subtitulo-formulario">Detalles de la Reseña</h2>
-           {/* Fecha de visionado */}
-          <section className="seccion-fecha">
-            <div className="campo-formulario">
-              <label className="etiqueta-campo">Titulo de reseña</label>
-              <input
-                type="text"
-                value={datosFormulario.tituloResenia}
-                onChange={(e) => manejarCambioEntrada('tituloResenia', e.target.value)}
-                className={`entrada-fecha ${errores.tituloResenia ? 'error' : ''}`}
-                disabled={enviando}
-              />
-              {errores.tituloResenia && <span className="mensaje-error">{errores.tituloResenia}</span>}
-            </div>
-          </section>
+            {/* Titulo de la reseña */}
+            <h2 className="subtitulo-formulario">Detalles de la Reseña</h2>
+            {/* Fecha de visionado */}
+            <section className="seccion-fecha">
+              <div className="campo-formulario">
+                <label className="etiqueta-campo">Titulo de reseña</label>
+                <input
+                  type="text"
+                  value={datosFormulario.tituloResenia}
+                  onChange={(e) => manejarCambioEntrada('tituloResenia', e.target.value)}
+                  className={`entrada-fecha ${errores.tituloResenia ? 'error' : ''}`}
+                  disabled={enviando}
+                />
+                {errores.tituloResenia && <span className="mensaje-error">{errores.tituloResenia}</span>}
+              </div>
+            </section>
 
-          {/* Información de la película */}
-          <section className="seccion-pelicula">
-            <h3 className="subtitulo-seccion">Seleccionar Película</h3>
-            
-            <div className="campo-formulario">
-              <label className="etiqueta-campo">Película *</label>
-              <SelectorPelicula
-                peliculaSeleccionada={peliculaSeleccionada}
-                onSeleccionarPelicula={manejarSeleccionPelicula}
-                onCrearNueva={manejarCrearNueva}
-                disabled={enviando}
-              />
-              {errores.titulo && <span className="mensaje-error">{errores.titulo}</span>}
-            </div>
+            {/* Información de la película */}
+            <section className="seccion-pelicula">
+              <h3 className="subtitulo-seccion">Seleccionar Película</h3>
 
-            {/* Mostrar campos manuales solo si está en modo crear nueva */}
-            {(modoCrearNueva || !peliculaSeleccionada) && (
-              <div className="formulario-pelicula-nueva">
-                <h4 className="subtitulo-menor">Información de la nueva película</h4>
-                <div className="grupo-campos">
-                  <div className="campo-formulario">
-                    <label className="etiqueta-campo">Título de la Peli *</label>
-                    <input
-                      type="text"
-                      value={datosFormulario.titulo}
-                      onChange={(e) => manejarCambioEntrada('titulo', e.target.value)}
-                      className={`entrada-texto ${errores.titulo ? 'error' : ''}`}
-                      placeholder="Ej: El Padrino, Relatos Salvajes, etc."
-                      disabled={enviando}
-                    />
-                  </div>
+              <div className="campo-formulario">
+                <label className="etiqueta-campo">Película *</label>
+                <SelectorPelicula
+                  peliculaSeleccionada={peliculaSeleccionada}
+                  onSeleccionarPelicula={manejarSeleccionPelicula}
+                  onCrearNueva={manejarCrearNueva}
+                  disabled={enviando}
+                />
+                {errores.titulo && <span className="mensaje-error">{errores.titulo}</span>}
+              </div>
 
-                  <div className="campo-formulario">
-                    <label className="etiqueta-campo">Año *</label>
-                    <input
-                      type="number"
-                      value={datosFormulario.año}
-                      onChange={(e) => manejarCambioEntrada('año', e.target.value)}
-                      className={`entrada-numero ${errores.año ? 'error' : ''}`}
-                      placeholder="2024"
-                      min="1900"
-                      max={new Date().getFullYear() + 5}
-                      disabled={enviando}
-                    />
-                    {errores.año && <span className="mensaje-error">{errores.año}</span>}
-                  </div>
-
-                  <div className="campo-formulario">
-                    <label className="etiqueta-campo">Póster de la Película</label>
-                    <div className="contenedor-imagen">
+              {/* Mostrar campos manuales solo si está en modo crear nueva */}
+              {(modoCrearNueva || !peliculaSeleccionada) && (
+                <div className="formulario-pelicula-nueva">
+                  <h4 className="subtitulo-menor">Información de la nueva película</h4>
+                  <div className="grupo-campos">
+                    <div className="campo-formulario">
+                      <label className="etiqueta-campo">Título de la Peli *</label>
                       <input
-                        type="file"
-                        accept="image/*"
-                        onChange={manejarCambioImagen}
-                        className="entrada-archivo"
+                        type="text"
+                        value={datosFormulario.titulo}
+                        onChange={(e) => manejarCambioEntrada('titulo', e.target.value)}
+                        className={`entrada-texto ${errores.titulo ? 'error' : ''}`}
+                        placeholder="Ej: El Padrino, Relatos Salvajes, etc."
                         disabled={enviando}
-                        id="poster-upload"
                       />
-                      <label htmlFor="poster-upload" className="boton-subir-imagen">
-                        📷 Subir Imagen
-                      </label>
-                      {datosFormulario.poster && (
-                        <div className="vista-previa-imagen">
-                          <img 
-                            src={datosFormulario.poster} 
-                            alt="Vista previa" 
-                            className="imagen-previa"
-                          />
-                          <button 
-                            type="button"
-                            onClick={() => setDatosFormulario(prev => ({...prev, poster: '', posterFile: null}))}
-                            className="boton-remover-imagen"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      )}
                     </div>
-                    <small className="ayuda-campo">
-                      Sube una imagen desde tu computadora (máximo 5MB) o se generará una automáticamente
-                    </small>
-                    {errores.poster && <span className="mensaje-error">{errores.poster}</span>}
+
+                    <div className="campo-formulario">
+                      <label className="etiqueta-campo">Año *</label>
+                      <input
+                        type="number"
+                        value={datosFormulario.año}
+                        onChange={(e) => manejarCambioEntrada('año', e.target.value)}
+                        className={`entrada-numero ${errores.año ? 'error' : ''}`}
+                        placeholder="2024"
+                        min="1900"
+                        max={new Date().getFullYear() + 5}
+                        disabled={enviando}
+                      />
+                      {errores.año && <span className="mensaje-error">{errores.año}</span>}
+                    </div>
+
+                    <div className="campo-formulario">
+                      <label className="etiqueta-campo">Póster de la Película</label>
+                      <div className="contenedor-imagen">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={manejarCambioImagen}
+                          className="entrada-archivo"
+                          disabled={enviando}
+                          id="poster-upload"
+                        />
+                        <label htmlFor="poster-upload" className="boton-subir-imagen">
+                          📷 Subir Imagen
+                        </label>
+                        {datosFormulario.poster && (
+                          <div className="vista-previa-imagen">
+                            <img
+                              src={datosFormulario.poster}
+                              alt="Vista previa"
+                              className="imagen-previa"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setDatosFormulario(prev => ({ ...prev, poster: '', posterFile: null }))}
+                              className="boton-remover-imagen"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      <small className="ayuda-campo">
+                        Sube una imagen desde tu computadora (máximo 5MB) o se generará una automáticamente
+                      </small>
+                      {errores.poster && <span className="mensaje-error">{errores.poster}</span>}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <div className="campo-formulario">
-              <label className="etiqueta-campo">Género</label>
-              <select
-                value={datosFormulario.genero}
-                onChange={(e) => manejarCambioEntrada('genero', e.target.value)}
-                className="entrada-select"
-                disabled={enviando}
-              >
-                <option value="">Seleccionar género</option>
-                <option value="Acción">Acción</option>
-                <option value="Drama">Drama</option>
-                <option value="Comedia">Comedia</option>
-                <option value="Terror">Terror</option>
-                <option value="Romance">Romance</option>
-                <option value="Ciencia Ficción">Ciencia Ficción</option>
-                <option value="Thriller">Thriller</option>
-                <option value="Animación">Animación</option>
-                <option value="Fantasía">Fantasía</option>
-                <option value="Musical">Musical</option>
-                <option value="Crimen">Crimen</option>
-              </select>
-            </div>
-          </section>
-
-          {/* Calificación */}
-          <section className="seccion-calificacion">
-            <h3 className="subtitulo-seccion">Tu Calificación *</h3>
-            <div className="contenedor-estrellas">
-              {generarEstrellas()}
-              <span className="texto-calificacion">
-                {datosFormulario.calificacion > 0 ? `${datosFormulario.calificacion}/5 estrellas` : 'Sin estrellas'}
-              </span>
-            </div>
-            {errores.calificacion && <span className="mensaje-error">{errores.calificacion}</span>}
-          </section>
-
-          {/* Fecha de visionado */}
-          <section className="seccion-fecha">
-            <div className="campo-formulario">
-              <label className="etiqueta-campo">¿Cuándo la viste? *</label>
-              <input
-                type="date"
-                value={datosFormulario.fechaVisionado}
-                onChange={(e) => manejarCambioEntrada('fechaVisionado', e.target.value)}
-                className={`entrada-fecha ${errores.fechaVisionado ? 'error' : ''}`}
-                max={new Date().toISOString().split('T')[0]}
-                disabled={enviando}
-              />
-              {errores.fechaVisionado && <span className="mensaje-error">{errores.fechaVisionado}</span>}
-            </div>
-          </section>
-
-          {/* Reseña */}
-          <section className="seccion-resena">
-            <h3 className="subtitulo-seccion">Tu Reseña *</h3>
-            <div className="campo-formulario">
-              <textarea
-                value={datosFormulario.textoResena}
-                onChange={(e) => manejarCambioEntrada('textoResena', e.target.value)}
-                className={`entrada-textarea ${errores.textoResena ? 'error' : ''}`}
-                placeholder="Comparte tu opinión sobre la película..."
-                rows={8}
-                maxLength={1000}
-                disabled={enviando}
-              />
-              <div className="info-textarea">
-                <span className={`contador-caracteres ${datosFormulario.textoResena.length > 900 ? 'cerca-limite' : ''}`}>
-                  {datosFormulario.textoResena.length}/1000 caracteres
-                </span>
-              </div>
-              {errores.textoResena && <span className="mensaje-error">{errores.textoResena}</span>}
-            </div>
-          </section>
-
-          {/* Tags */}
-          <section className="seccion-tags">
-            <h3 className="subtitulo-seccion">Tags</h3>
-            <div className="contenedor-tags">
-              {tagsDisponibles.map(tag => (
-                <button
-                  key={tag}
-                  type="button"
-                  className={`tag-boton ${datosFormulario.tags.includes(tag) ? 'activo' : ''}`}
-                  onClick={() => manejarCambioTag(tag)}
+              <div className="campo-formulario">
+                <label className="etiqueta-campo">Género</label>
+                <select
+                  value={datosFormulario.genero}
+                  onChange={(e) => manejarCambioEntrada('genero', e.target.value)}
+                  className="entrada-select"
                   disabled={enviando}
                 >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </section>
+                  <option value="">Seleccionar género</option>
+                  <option value="Acción">Acción</option>
+                  <option value="Drama">Drama</option>
+                  <option value="Comedia">Comedia</option>
+                  <option value="Terror">Terror</option>
+                  <option value="Romance">Romance</option>
+                  <option value="Ciencia Ficción">Ciencia Ficción</option>
+                  <option value="Thriller">Thriller</option>
+                  <option value="Animación">Animación</option>
+                  <option value="Fantasía">Fantasía</option>
+                  <option value="Musical">Musical</option>
+                  <option value="Crimen">Crimen</option>
+                </select>
+              </div>
+            </section>
 
-          {/* Opciones adicionales */}
-          <section className="seccion-opciones">
-            <div className="campo-checkbox">
-              <label className="etiqueta-checkbox">
+            {/* Calificación */}
+            <section className="seccion-calificacion">
+              <h3 className="subtitulo-seccion">Tu Calificación *</h3>
+              <div className="contenedor-estrellas">
+                {generarEstrellas()}
+                <span className="texto-calificacion">
+                  {datosFormulario.calificacion > 0 ? `${datosFormulario.calificacion}/5 estrellas` : 'Sin estrellas'}
+                </span>
+              </div>
+              {errores.calificacion && <span className="mensaje-error">{errores.calificacion}</span>}
+            </section>
+
+            {/* Fecha de visionado */}
+            <section className="seccion-fecha">
+              <div className="campo-formulario">
+                <label className="etiqueta-campo">¿Cuándo la viste? *</label>
                 <input
-                  type="checkbox"
-                  checked={datosFormulario.megusta}
-                  onChange={(e) => manejarCambioEntrada('megusta', e.target.checked)}
+                  type="date"
+                  value={datosFormulario.fechaVisionado}
+                  onChange={(e) => manejarCambioEntrada('fechaVisionado', e.target.value)}
+                  className={`entrada-fecha ${errores.fechaVisionado ? 'error' : ''}`}
+                  max={new Date().toISOString().split('T')[0]}
                   disabled={enviando}
                 />
-                <span className="checkbox-personalizado"></span>
-                Me gustó esta película ❤️
-              </label>
-            </div>
+                {errores.fechaVisionado && <span className="mensaje-error">{errores.fechaVisionado}</span>}
+              </div>
+            </section>
 
-            <div className="campo-checkbox">
-              <label className="etiqueta-checkbox">
-                <input
-                  type="checkbox"
-                  checked={datosFormulario.contieneEspoilers}
-                  onChange={(e) => {
-                    manejarCambioEntrada('contieneEspoilers', e.target.checked);
-                    if (e.target.checked) {
-                      manejarCambioEntrada('esSpoilerFree', false);
-                    }
-                  }}
+            {/* Reseña */}
+            <section className="seccion-resena">
+              <h3 className="subtitulo-seccion">Tu Reseña *</h3>
+              <div className="campo-formulario">
+                <textarea
+                  value={datosFormulario.textoResena}
+                  onChange={(e) => manejarCambioEntrada('textoResena', e.target.value)}
+                  className={`entrada-textarea ${errores.textoResena ? 'error' : ''}`}
+                  placeholder="Comparte tu opinión sobre la película..."
+                  rows={8}
+                  maxLength={1000}
                   disabled={enviando}
                 />
-                <span className="checkbox-personalizado"></span>
-                Esta reseña contiene spoilers ⚠️
-              </label>
-            </div>
-          </section>
+                <div className="info-textarea">
+                  <span className={`contador-caracteres ${datosFormulario.textoResena.length > 900 ? 'cerca-limite' : ''}`}>
+                    {datosFormulario.textoResena.length}/1000 caracteres
+                  </span>
+                </div>
+                {errores.textoResena && <span className="mensaje-error">{errores.textoResena}</span>}
+              </div>
+            </section>
 
-          {/* Botones de acción */}
-          <div className="botones-crear-resena">
-            <button 
-              type="button" 
-              className="boton-cancelar"
-              onClick={() => navigate('/')}
-              disabled={enviando}
-            >
-              Cancelar
-            </button>
-            <button 
-              type="submit" 
-              className="boton-publicar"
-              disabled={enviando}
-            >
-              {enviando 
-                ? (esEdicion ? 'Actualizando...' : 'Publicando...')
-                : (esEdicion ? 'Actualizar Reseña' : 'Publicar Reseña')
-              }
-            </button>
-          </div>
-        </form>
+            {/* Tags */}
+            <section className="seccion-tags">
+              <h3 className="subtitulo-seccion">Tags</h3>
+              <div className="contenedor-tags">
+                {tagsDisponibles.map(tag => (
+                  <button
+                    key={tag}
+                    type="button"
+                    className={`tag-boton ${datosFormulario.tags.includes(tag) ? 'activo' : ''}`}
+                    onClick={() => manejarCambioTag(tag)}
+                    disabled={enviando}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            {/* Opciones adicionales */}
+            <section className="seccion-opciones">
+              <div className="campo-checkbox">
+                <label className="etiqueta-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={datosFormulario.megusta}
+                    onChange={(e) => manejarCambioEntrada('megusta', e.target.checked)}
+                    disabled={enviando}
+                  />
+                  <span className="checkbox-personalizado"></span>
+                  Me gustó esta película ❤️
+                </label>
+              </div>
+
+              <div className="campo-checkbox">
+                <label className="etiqueta-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={datosFormulario.contieneEspoilers}
+                    onChange={(e) => {
+                      manejarCambioEntrada('contieneEspoilers', e.target.checked);
+                      if (e.target.checked) {
+                        manejarCambioEntrada('esSpoilerFree', false);
+                      }
+                    }}
+                    disabled={enviando}
+                  />
+                  <span className="checkbox-personalizado"></span>
+                  Esta reseña contiene spoilers ⚠️
+                </label>
+              </div>
+            </section>
+
+            {/* Botones de acción */}
+            <div className="botones-crear-resena">
+              <button
+                type="button"
+                className="boton-cancelar"
+                onClick={() => navigate('/')}
+                disabled={enviando}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="boton-publicar"
+                disabled={enviando}
+              >
+                {enviando
+                  ? (esEdicion ? 'Actualizando...' : 'Publicando...')
+                  : (esEdicion ? 'Actualizar Reseña' : 'Publicar Reseña')
+                }
+              </button>
+            </div>
+          </form>
         )}
       </div>
     </div>

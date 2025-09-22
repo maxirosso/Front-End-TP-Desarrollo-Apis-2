@@ -1,4 +1,3 @@
-
 /* Estilos para Página Crear Reseña - cineTrack */
 
 .pagina-crear-resena {
@@ -49,8 +48,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .estado-carga h2 {
@@ -70,8 +74,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Encabezado */
@@ -120,7 +129,7 @@
 }
 
 .subtitulo-seccion {
-  color: #1ABC9C;
+  color: #1ABC9C !important;
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0;
@@ -154,7 +163,7 @@
 }
 
 .etiqueta-campo {
-  color: #ECF0F1;
+  color: #ECF0F1 !important;
   font-weight: 600;
   font-size: 1rem;
   display: flex;
@@ -165,11 +174,21 @@
 .entrada-texto,
 .entrada-numero,
 .entrada-select,
-.entrada-fecha,
-.entrada-textarea {
+.entrada-fecha {
   background-color: #2C3E50;
   border: 2px solid #7F8C8D;
   color: #ECF0F1;
+  padding: 1rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.entrada-textarea {
+  background-color: #2C3E50;
+  border: 2px solid #7F8C8D;
+  color: var(--color-secundario);
   padding: 1rem;
   border-radius: 10px;
   font-size: 1rem;
@@ -270,6 +289,7 @@
 .estrella-tachada {
   position: relative;
 }
+
 .estrella-tachada::after {
   content: '';
   position: absolute;
@@ -281,6 +301,7 @@
   transform: rotate(-45deg);
   pointer-events: none;
 }
+
 .estrella-tachada::before {
   content: '';
   position: absolute;
@@ -376,13 +397,13 @@
   flex-shrink: 0;
 }
 
-.etiqueta-checkbox input[type="checkbox"]:checked + .checkbox-personalizado {
+.etiqueta-checkbox input[type="checkbox"]:checked+.checkbox-personalizado {
   background: linear-gradient(135deg, #1ABC9C 0%, #16A085 100%);
   border-color: #1ABC9C;
   transform: scale(1.1);
 }
 
-.etiqueta-checkbox input[type="checkbox"]:checked + .checkbox-personalizado::after {
+.etiqueta-checkbox input[type="checkbox"]:checked+.checkbox-personalizado::after {
   content: '✓';
   color: white;
   font-weight: bold;
@@ -448,6 +469,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -455,14 +477,31 @@
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 @keyframes pulso {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }
 
 /* Responsivo */
@@ -470,39 +509,39 @@
   .pagina-crear-resena {
     padding: 1rem 0.5rem;
   }
-  
+
   .encabezado-crear-resena {
     padding: 2rem 1.5rem;
   }
-  
+
   .titulo-crear-resena {
     font-size: 2rem;
   }
-  
+
   .subtitulo-crear-resena {
     font-size: 1rem;
   }
-  
+
   .formulario-crear-resena {
     padding: 2rem 1.5rem;
     gap: 2rem;
   }
-  
+
   .grupo-campos {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .contenedor-estrellas {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .botones-crear-resena {
     flex-direction: column;
   }
-  
+
   .boton-cancelar,
   .boton-publicar {
     width: 100%;
@@ -513,19 +552,19 @@
   .formulario-crear-resena {
     padding: 1.5rem 1rem;
   }
-  
+
   .encabezado-crear-resena {
     padding: 1.5rem 1rem;
   }
-  
+
   .titulo-crear-resena {
     font-size: 1.8rem;
   }
-  
+
   .estrella-seleccionable {
     font-size: 2rem;
   }
-  
+
   .contenedor-tags {
     justify-content: center;
   }

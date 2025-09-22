@@ -2,7 +2,7 @@ import React from 'react';
 import './PiePagina.css';
 
 const PiePagina = () => {
-  const añoActual = new Date().getFullYear();
+  // const añoActual = new Date().getFullYear();
 
   return (
     <footer className="pie-pagina">

@@ -35,7 +35,6 @@ const BarraNavegacion = () => {
         <ul className="menu-navegacion">
           <li><Link to="/usuario" className="enlace-navegacion">USUARIO</Link></li>
           <li><Link to="/peliculas" className="enlace-navegacion">FILMS</Link></li>
-          <li><Link to="/recomendaciones" className="enlace-navegacion">¿QUÉ VEO HOY?</Link></li>
         </ul>
 
         {/* Buscador */}

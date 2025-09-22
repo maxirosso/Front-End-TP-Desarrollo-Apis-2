@@ -17,9 +17,9 @@ const CrearResena = () => {
   const { 
     agregarResena, 
     actualizarResena, // ✅ Cambiar de editarResena a actualizarResena
-    obtenerResenaPorId,
+    // obtenerResenaPorId,
     usuarioActual, 
-    obtenerNombreUsuario,
+    // obtenerNombreUsuario,
     resenas,
     usingBackend,
     reviewsAPI // ✅ Agregar reviewsAPI para carga directa

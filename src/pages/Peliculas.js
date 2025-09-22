@@ -81,7 +81,7 @@ const peliculasEjemplo = [
 ];
 
 const Peliculas = () => {
-  const { moviesAPI, usingBackend, checkBackendHealth } = useResenas();
+  const { moviesAPI, usingBackend, /* checkBackendHealth */ } = useResenas();
   const [peliculas, setPeliculas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);

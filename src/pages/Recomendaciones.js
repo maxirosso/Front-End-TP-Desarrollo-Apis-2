@@ -10,6 +10,13 @@ const Recomendaciones = () => {
   const [peliculasPopulares, setPeliculasPopulares] = useState([]);
   const [resenasDestacadas, setResenasDestacadas] = useState([]);
 
+  const calcularRatingPromedio = useCallback((movieId) => {
+    const resenasDeEstaPelicula = resenas.filter(r => (r.movie_id || r.id) === movieId);
+    if (resenasDeEstaPelicula.length === 0) return 0;
+    const suma = resenasDeEstaPelicula.reduce((total, resena) => total + resena.rating, 0);
+    return (suma / resenasDeEstaPelicula.length).toFixed(1);
+  }, [resenas]);
+
   useEffect(() => {
     const generarRecomendaciones = async () => {
       try {
@@ -69,12 +76,7 @@ const Recomendaciones = () => {
   //   return (suma / resenasDeEstaPelicula.length).toFixed(1);
   // };
 
-  const calcularRatingPromedio = useCallback((movieId) => {
-    const resenasDeEstaPelicula = resenas.filter(r => (r.movie_id || r.id) === movieId);
-    if (resenasDeEstaPelicula.length === 0) return 0;
-    const suma = resenasDeEstaPelicula.reduce((total, resena) => total + resena.rating, 0);
-    return (suma / resenasDeEstaPelicula.length).toFixed(1);
-  }, [resenas]);
+
 
   const generarRecomendacionesPorGenero = (peliculas) => {
     const generos = ['drama', 'accion', 'ciencia-ficcion', 'thriller', 'romance'];

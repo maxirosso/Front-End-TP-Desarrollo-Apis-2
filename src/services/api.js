@@ -219,10 +219,12 @@ export const checkBackendHealth = async () => {
   }
 };
 
-export default {
+const apiService = {
   reviewsAPI,
   usersAPI,
   moviesAPI,
   handleApiError,
   checkBackendHealth,
 };
+
+export default apiService;

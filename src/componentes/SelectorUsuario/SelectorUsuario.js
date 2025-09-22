@@ -5,7 +5,7 @@ import './SelectorUsuario.css';
 
 const SelectorUsuario = () => {
   const [mostrarSelector, setMostrarSelector] = useState(false);
-  const { usersAPI, setUsuarioActual, usuarioActual } = useResenas();
+  const { setUsuarioActual, usuarioActual } = useResenas();
   const navigate = useNavigate();
 
   const usuarios = [

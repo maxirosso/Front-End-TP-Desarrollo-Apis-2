@@ -40,7 +40,7 @@ const TarjetaResena = ({
     comentarios = pelicula?.comentarios || [],
     tags = pelicula?.tags || [],
     contieneEspoilers = pelicula?.has_spoilers || pelicula?.contieneEspoilers || false,
-    movieTitle = pelicula?.movie_title || pelicula?.titulo || pelicula?.title || 'Título no disponible',
+    // movieTitle = pelicula?.movie_title || pelicula?.titulo || pelicula?.title || 'Título no disponible',
     moviePoster = pelicula?.movie_poster  || pelicula?.imagenUrl,
     // ✅ NUEVO: Detectar si la reseña fue editada
     fechaActualizacion = pelicula?.updated_at || null,
@@ -69,7 +69,7 @@ const TarjetaResena = ({
 
   // Validar que los números sean válidos
   const calificacionSegura = isNaN(calificacion) ? 0 : calificacion;
-  const añoSeguro = isNaN(año) ? 2024 : año;
+  // const añoSeguro = isNaN(año) ? 2024 : año;
 
   // Función para obtener el nombre del usuario por ID
   const obtenerNombreUsuario = (userId) => {

@@ -174,21 +174,11 @@
 .entrada-texto,
 .entrada-numero,
 .entrada-select,
-.entrada-fecha {
-  background-color: #2C3E50;
+.entrada-fecha,
+.entrada-textarea {
+  background-color: #2C3E50 !important;
   border: 2px solid #7F8C8D;
   color: #ECF0F1;
-  padding: 1rem;
-  border-radius: 10px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  font-family: inherit;
-}
-
-.entrada-textarea {
-  background-color: #2C3E50;
-  border: 2px solid #7F8C8D;
-  color: var(--color-secundario);
   padding: 1rem;
   border-radius: 10px;
   font-size: 1rem;

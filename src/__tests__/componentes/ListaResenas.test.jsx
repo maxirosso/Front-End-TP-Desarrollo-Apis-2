@@ -5,7 +5,7 @@ import FiltrosResenas from '../../componentes/FiltrosResenas/FiltrosResenas';
 
 describe('FiltrosResenas', () => {
   const baseProps = {
-    filtros: {},
+    filtrosActivos: {}, // ✅ nombre correcto
     onAplicarFiltros: vi.fn(),
     onLimpiarFiltros: vi.fn(),
   };
@@ -41,7 +41,7 @@ describe('FiltrosResenas', () => {
     render(
       <FiltrosResenas
         {...baseProps}
-        filtros={{
+        filtrosActivos={{ // ✅ corregido
           pelicula: 'Matrix',
           usuario: 'Neo',
           calificacion: '5',

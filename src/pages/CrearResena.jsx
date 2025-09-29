@@ -66,7 +66,7 @@ const CrearResena = () => {
     poster_url: posterFromUrl,
     description: descriptionFromUrl
   } : null);
-  const [modoCrearNueva, setModoCrearNueva] = useState(false);
+  // const [modoCrearNueva, setModoCrearNueva] = useState(false);
   const [cargandoDatos, setCargandoDatos] = useState(esEdicion);
 
   const [calificacionHover, setCalificacionHover] = useState(0);
@@ -178,73 +178,73 @@ const CrearResena = () => {
     }
   };
 
-  const redimensionarImagen = (file, maxWidth = 300, maxHeight = 450, quality = 0.8) => {
-    return new Promise((resolve) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
+  // const redimensionarImagen = (file, maxWidth = 300, maxHeight = 450, quality = 0.8) => {
+  //   return new Promise((resolve) => {
+  //     const canvas = document.createElement('canvas');
+  //     const ctx = canvas.getContext('2d');
+  //     const img = new Image();
 
-      img.onload = () => {
-        // Calcular nuevas dimensiones manteniendo aspecto
-        let { width, height } = img;
+  //     img.onload = () => {
+  //       // Calcular nuevas dimensiones manteniendo aspecto
+  //       let { width, height } = img;
 
-        if (width > height) {
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width;
-            width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
-            width = (width * maxHeight) / height;
-            height = maxHeight;
-          }
-        }
+  //       if (width > height) {
+  //         if (width > maxWidth) {
+  //           height = (height * maxWidth) / width;
+  //           width = maxWidth;
+  //         }
+  //       } else {
+  //         if (height > maxHeight) {
+  //           width = (width * maxHeight) / height;
+  //           height = maxHeight;
+  //         }
+  //       }
 
-        canvas.width = width;
-        canvas.height = height;
+  //       canvas.width = width;
+  //       canvas.height = height;
 
-        // Dibujar imagen redimensionada
-        ctx.drawImage(img, 0, 0, width, height);
+  //       // Dibujar imagen redimensionada
+  //       ctx.drawImage(img, 0, 0, width, height);
 
-        // Convertir a base64 con compresión
-        const dataURL = canvas.toDataURL('image/jpeg', quality);
-        resolve(dataURL);
-      };
+  //       // Convertir a base64 con compresión
+  //       const dataURL = canvas.toDataURL('image/jpeg', quality);
+  //       resolve(dataURL);
+  //     };
 
-      img.src = URL.createObjectURL(file);
-    });
-  };
+  //     img.src = URL.createObjectURL(file);
+  //   });
+  // };
 
-  const manejarCambioImagen = async (evento) => {
-    const archivo = evento.target.files[0];
-    if (archivo) {
-      // Validar que sea una imagen
-      if (!archivo.type.startsWith('image/')) {
-        alert('Por favor selecciona un archivo de imagen válido');
-        return;
-      }
+  // const manejarCambioImagen = async (evento) => {
+  //   const archivo = evento.target.files[0];
+  //   if (archivo) {
+  //     // Validar que sea una imagen
+  //     if (!archivo.type.startsWith('image/')) {
+  //       alert('Por favor selecciona un archivo de imagen válido');
+  //       return;
+  //     }
 
-      // Validar tamaño (máximo 5MB)
-      if (archivo.size > 5 * 1024 * 1024) {
-        alert('La imagen es demasiado grande. Máximo 5MB');
-        return;
-      }
+  //     // Validar tamaño (máximo 5MB)
+  //     if (archivo.size > 5 * 1024 * 1024) {
+  //       alert('La imagen es demasiado grande. Máximo 5MB');
+  //       return;
+  //     }
 
-      try {
-        // Redimensionar y comprimir imagen
-        const imagenComprimida = await redimensionarImagen(archivo);
+  //     try {
+  //       // Redimensionar y comprimir imagen
+  //       const imagenComprimida = await redimensionarImagen(archivo);
 
-        setDatosFormulario(prev => ({
-          ...prev,
-          poster: imagenComprimida,
-          posterFile: archivo
-        }));
-      } catch (error) {
-        console.error('Error procesando imagen:', error);
-        alert('Error al procesar la imagen. Inténtalo de nuevo.');
-      }
-    }
-  };
+  //       setDatosFormulario(prev => ({
+  //         ...prev,
+  //         poster: imagenComprimida,
+  //         posterFile: archivo
+  //       }));
+  //     } catch (error) {
+  //       console.error('Error procesando imagen:', error);
+  //       alert('Error al procesar la imagen. Inténtalo de nuevo.');
+  //     }
+  //   }
+  // };
 
   const manejarCambioTag = (tag) => {
     setDatosFormulario(prev => ({
@@ -257,7 +257,7 @@ const CrearResena = () => {
 
   const manejarSeleccionPelicula = (pelicula) => {
     setPeliculaSeleccionada(pelicula);
-    setModoCrearNueva(false);
+    // setModoCrearNueva(false);
 
     if (pelicula) {
       // Auto-llenar datos del formulario con info de la película
@@ -271,7 +271,7 @@ const CrearResena = () => {
   };
 
   const manejarCrearNueva = () => {
-    setModoCrearNueva(true);
+    // setModoCrearNueva(true);
     setPeliculaSeleccionada(null);
     // Limpiar campos auto-llenados
     setDatosFormulario(prev => ({
@@ -295,9 +295,9 @@ const CrearResena = () => {
       nuevosErrores.año = 'Ingresa un año válido';
     }
 
-    if (datosFormulario.calificacion == !undefined) {
-      nuevosErrores.calificacion = 'Debes dar una calificación a la película';
-    }
+    // if (datosFormulario.calificacion == !undefined) {
+    //   nuevosErrores.calificacion = 'Debes dar una calificación a la película';
+    // }
 
     if (!datosFormulario.fechaVisionado) {
       nuevosErrores.fechaVisionado = 'Indica cuándo viste la película';

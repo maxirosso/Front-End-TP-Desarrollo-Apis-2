@@ -1,11 +1,12 @@
-// vitest.config.js
-import { defineConfig } from 'vitest/config';
+const { defineConfig } = require("cypress");
+const viteConfig = require("./vite.config");
 
-export default defineConfig({
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: './src/setupTests.js',
-
+module.exports = defineConfig({
+  component: {
+    devServer: {
+      framework: "react",
+      bundler: "vite",
+      viteConfig,
+    },
   },
 });

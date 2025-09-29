@@ -488,77 +488,6 @@ const CrearResena = () => {
                 {errores.titulo && <span className="mensaje-error">{errores.titulo}</span>}
               </div>
 
-              {/* Mostrar campos manuales solo si está en modo crear nueva */}
-              {(modoCrearNueva || !peliculaSeleccionada) && (
-                <div className="formulario-pelicula-nueva">
-                  <h4 className="subtitulo-menor">Información de la nueva película</h4>
-                  <div className="grupo-campos">
-                    <div className="campo-formulario">
-                      <label className="etiqueta-campo">Título de la Peli *</label>
-                      <input
-                        type="text"
-                        value={datosFormulario.titulo}
-                        onChange={(e) => manejarCambioEntrada('titulo', e.target.value)}
-                        className={`entrada-texto ${errores.titulo ? 'error' : ''}`}
-                        placeholder="Ej: El Padrino, Relatos Salvajes, etc."
-                        disabled={enviando}
-                      />
-                    </div>
-
-                    <div className="campo-formulario">
-                      <label className="etiqueta-campo">Año *</label>
-                      <input
-                        type="number"
-                        value={datosFormulario.año}
-                        onChange={(e) => manejarCambioEntrada('año', e.target.value)}
-                        className={`entrada-numero ${errores.año ? 'error' : ''}`}
-                        placeholder="2024"
-                        min="1900"
-                        max={new Date().getFullYear() + 5}
-                        disabled={enviando}
-                      />
-                      {errores.año && <span className="mensaje-error">{errores.año}</span>}
-                    </div>
-
-                    <div className="campo-formulario">
-                      <label className="etiqueta-campo">Póster de la Película</label>
-                      <div className="contenedor-imagen">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={manejarCambioImagen}
-                          className="entrada-archivo"
-                          disabled={enviando}
-                          id="poster-upload"
-                        />
-                        <label htmlFor="poster-upload" className="boton-subir-imagen">
-                          📷 Subir Imagen
-                        </label>
-                        {datosFormulario.poster && (
-                          <div className="vista-previa-imagen">
-                            <img
-                              src={datosFormulario.poster}
-                              alt="Vista previa"
-                              className="imagen-previa"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setDatosFormulario(prev => ({ ...prev, poster: '', posterFile: null }))}
-                              className="boton-remover-imagen"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                      <small className="ayuda-campo">
-                        Sube una imagen desde tu computadora (máximo 5MB) o se generará una automáticamente
-                      </small>
-                      {errores.poster && <span className="mensaje-error">{errores.poster}</span>}
-                    </div>
-                  </div>
-                </div>
-              )}
 
               <div className="campo-formulario">
                 <label className="etiqueta-campo">Género</label>
@@ -596,21 +525,6 @@ const CrearResena = () => {
               {errores.calificacion && <span className="mensaje-error">{errores.calificacion}</span>}
             </section>
 
-            {/* Fecha de visionado */}
-            <section className="seccion-fecha">
-              <div className="campo-formulario">
-                <label className="etiqueta-campo">¿Cuándo la viste? *</label>
-                <input
-                  type="date"
-                  value={datosFormulario.fechaVisionado}
-                  onChange={(e) => manejarCambioEntrada('fechaVisionado', e.target.value)}
-                  className={`entrada-fecha ${errores.fechaVisionado ? 'error' : ''}`}
-                  max={new Date().toISOString().split('T')[0]}
-                  disabled={enviando}
-                />
-                {errores.fechaVisionado && <span className="mensaje-error">{errores.fechaVisionado}</span>}
-              </div>
-            </section>
 
             {/* Reseña */}
             <section className="seccion-resena">
@@ -654,18 +568,6 @@ const CrearResena = () => {
 
             {/* Opciones adicionales */}
             <section className="seccion-opciones">
-              <div className="campo-checkbox">
-                <label className="etiqueta-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={datosFormulario.megusta}
-                    onChange={(e) => manejarCambioEntrada('megusta', e.target.checked)}
-                    disabled={enviando}
-                  />
-                  <span className="checkbox-personalizado"></span>
-                  Me gustó esta película ❤️
-                </label>
-              </div>
 
               <div className="campo-checkbox">
                 <label className="etiqueta-checkbox">

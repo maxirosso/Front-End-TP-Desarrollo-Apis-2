@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+import { usePermissions } from '../../hooks/usePermissions';
 import './TarjetaResena.css';
 
 const TarjetaResena = ({ 
@@ -13,6 +15,10 @@ const TarjetaResena = ({
   // Los hooks SIEMPRE deben llamarse primero
   const [mostrarAcciones, setMostrarAcciones] = useState(false);
   const [textoCompleto, setTextoCompleto] = useState(false);
+  
+  // Hooks de autenticación y permisos
+  const { usuario: usuarioAuth } = useAuth();
+  const { puedeEditarComentario, puedeEliminarComentario } = usePermissions();
 
   // Verificación de seguridad después de los hooks
   if (!pelicula || !pelicula.id) {
@@ -85,18 +91,23 @@ const TarjetaResena = ({
     }
   };
 
-  // Determinar si es el propietario comparando tanto por ID como por nombre
-  const usuarioActualNombre = obtenerNombreUsuario(usuarioActual);
-  const esPropioDueño = (pelicula?.user_id === usuarioActual) || 
-                        (usuario === usuarioActualNombre) ||
-                        (usuario === `usuario_${usuarioActual}`);
+  // ✅ MEJORADO: Determinar si puede editar/eliminar la reseña
+  // El usuario puede editar/eliminar si:
+  // 1. Es el propietario de la reseña (user_id coincide con el usuario autenticado)
+  // 2. Tiene permisos de admin/moderador (puedeEditarComentario / puedeEliminarComentario)
+  const userId = pelicula?.user_id;
+  const esPropioDueño = usuarioAuth?.user_id === userId;
+  const puedeEditar = esPropioDueño || puedeEditarComentario;
+  const puedeEliminar = esPropioDueño || puedeEliminarComentario;
 
-  console.log('🔒 PROPIETARIO CHECK:');
-  console.log('  - usuarioActual (ID):', usuarioActual);
-  console.log('  - usuarioActualNombre:', usuarioActualNombre);
-  console.log('  - pelicula.user_id:', pelicula?.user_id);
-  console.log('  - usuario (nombre):', usuario);
+  console.log('🔒 PERMISOS CHECK:');
+  console.log('  - usuarioAuth.user_id:', usuarioAuth?.user_id);
+  console.log('  - pelicula.user_id:', userId);
   console.log('  - esPropioDueño:', esPropioDueño);
+  console.log('  - puedeEditarComentario (permiso):', puedeEditarComentario);
+  console.log('  - puedeEliminarComentario (permiso):', puedeEliminarComentario);
+  console.log('  - puedeEditar (final):', puedeEditar);
+  console.log('  - puedeEliminar (final):', puedeEliminar);
 
   // Función auxiliar para truncar texto
   const truncarTexto = (texto, limite = 300) => {
@@ -225,8 +236,8 @@ const TarjetaResena = ({
                 <span className="contador-likes">{isNaN(likes) ? 0 : likes}</span>
               </button>
 
-              {/* Menú de acciones del propietario */}
-              {esPropioDueño && (
+              {/* Menú de acciones del propietario o moderador */}
+              {(puedeEditar || puedeEliminar) && (
                 <div className="menu-acciones-dueno">
                   <button 
                     className="boton-menu-acciones"
@@ -234,6 +245,7 @@ const TarjetaResena = ({
                       e.stopPropagation();
                       setMostrarAcciones(!mostrarAcciones);
                     }}
+                    title={esPropioDueño ? 'Acciones' : 'Acciones de moderación'}
                   >
                     ⋮
                   </button>
@@ -249,32 +261,39 @@ const TarjetaResena = ({
                         }}
                       />
                       <div className="opciones-acciones">
-                        <button 
-                          className="opcion-editar"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            console.log('Editar clicked!', pelicula);
-                            onEditar && onEditar(pelicula);
-                            setMostrarAcciones(false);
-                          }}
-                        >
-                          ✏️ Editar
-                        </button>
-                        <button 
-                          className="opcion-eliminar"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            console.log('Eliminar clicked!', id);
-                            if (window.confirm('¿Estás seguro de que quieres eliminar esta reseña?')) {
-                              onEliminar && onEliminar(id);
-                            }
-                            setMostrarAcciones(false);
-                          }}
-                        >
-                          🗑️ Eliminar
-                        </button>
+                        {puedeEditar && (
+                          <button 
+                            className="opcion-editar"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              console.log('Editar clicked!', pelicula);
+                              onEditar && onEditar(pelicula);
+                              setMostrarAcciones(false);
+                            }}
+                          >
+                            ✏️ Editar {!esPropioDueño && '(Moderador)'}
+                          </button>
+                        )}
+                        {puedeEliminar && (
+                          <button 
+                            className="opcion-eliminar"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              console.log('Eliminar clicked!', id);
+                              const mensaje = esPropioDueño 
+                                ? '¿Estás seguro de que quieres eliminar esta reseña?'
+                                : '¿Estás seguro de que quieres eliminar esta reseña? (Acción de moderador)';
+                              if (window.confirm(mensaje)) {
+                                onEliminar && onEliminar(id);
+                              }
+                              setMostrarAcciones(false);
+                            }}
+                          >
+                            🗑️ Eliminar {!esPropioDueño && '(Moderador)'}
+                          </button>
+                        )}
                       </div>
                     </>
                   )}

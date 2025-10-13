@@ -31,8 +31,8 @@ const TarjetaResena = ({
   
   const {
     id,
-    año = pelicula?.year || pelicula?.año || 2024,
-    imagenUrl = pelicula?.poster_url || pelicula?.imagenUrl || `https://via.placeholder.com/120x180/34495e/ecf0f1?text=${encodeURIComponent(titulo)}`,
+    // año = pelicula?.year || pelicula?.año || 2024,
+    // imagenUrl = pelicula?.poster_url || pelicula?.imagenUrl || `https://via.placeholder.com/120x180/34495e/ecf0f1?text=${encodeURIComponent(titulo)}`,
     calificacion = Number(pelicula?.rating || pelicula?.calificacion || 0),
     usuario = pelicula?.user_name || pelicula?.usuario || 'Usuario desconocido',
     fechaResena = pelicula?.created_at || pelicula?.fechaResena || 'Fecha no disponible',
@@ -41,7 +41,7 @@ const TarjetaResena = ({
     fechaVisionado = pelicula?.watch_date || pelicula?.created_at || 'No especificado',
     likes = Number(pelicula?.likes_count || pelicula?.likes || 0),
     yaLeDiLike = pelicula?.yaLeDiLike || false,
-    comentarios = pelicula?.comentarios || [],
+    // comentarios = pelicula?.comentarios || [],
     tags = pelicula?.tags || [],
     contieneEspoilers = pelicula?.has_spoilers || pelicula?.contieneEspoilers || false,
     moviePoster = pelicula?.movie_poster  || pelicula?.imagenUrl,
@@ -57,18 +57,18 @@ const TarjetaResena = ({
   const calificacionSegura = isNaN(calificacion) ? 0 : calificacion;
 
   // Función para obtener el nombre del usuario por ID
-  const obtenerNombreUsuario = (userId) => {
-    const id = Number(userId);
-    switch (id) {
-      case 1: return 'Admin';
-      case 2: return 'Juan Pérez';
-      case 3: return 'María García';
-      case 4: return 'Carlos López';
-      case 5: return 'Ana Martín';
-      case 6: return 'Luis Rodríguez';
-      default: return `Usuario ${id}`;
-    }
-  };
+  // const obtenerNombreUsuario = (userId) => {
+  //   const id = Number(userId);
+  //   switch (id) {
+  //     case 1: return 'Admin';
+  //     case 2: return 'Juan Pérez';
+  //     case 3: return 'María García';
+  //     case 4: return 'Carlos López';
+  //     case 5: return 'Ana Martín';
+  //     case 6: return 'Luis Rodríguez';
+  //     default: return `Usuario ${id}`;
+  //   }
+  // };
 
   // ✅ MEJORADO: Determinar si puede editar/eliminar la reseña
   // El usuario puede editar/eliminar si:

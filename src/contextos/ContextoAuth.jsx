@@ -3,10 +3,10 @@ import { authAPI } from '../services/api';
 import {
   saveToken,
   getToken,
-  removeToken,
+  // removeToken,
   saveUser,
   getUser,
-  removeUser,
+  // removeUser,
   clearAuth,
   isTokenExpired,
   decodeJWT,

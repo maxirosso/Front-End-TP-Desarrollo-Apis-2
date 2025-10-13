@@ -58,7 +58,7 @@ export const authAPI = {
     formData.append('client_id', '');
     formData.append('client_secret', '');
     
-    return apiRequest('/api/v1/auth/login', {
+    return apiRequest('/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -69,18 +69,18 @@ export const authAPI = {
 
   // Obtener perfil del usuario autenticado
   getMe: () => 
-    apiRequest('/api/v1/auth/me'),
+    apiRequest('/auth/me'),
 
   // Refrescar token JWT
   refresh: (refreshToken) => 
-    apiRequest('/api/v1/auth/refresh', {
+    apiRequest('/auth/refresh', {
       method: 'POST',
       body: JSON.stringify({ refresh_token: refreshToken }),
     }),
 
   // Logout (si el backend tiene endpoint de logout)
   logout: () => 
-    apiRequest('/api/v1/auth/logout', {
+    apiRequest('/auth/logout', {
       method: 'POST',
     }),
 };
@@ -89,24 +89,24 @@ export const authAPI = {
 export const reviewsAPI = {
   // HU-001: Crear reseña
   create: (reviewData) => 
-    apiRequest('/api/v1/reviews', {
+    apiRequest('/reviews', {
       method: 'POST',
       body: JSON.stringify(reviewData),
     }),
 
   // HU-002: Ver reseña específica
   getById: (id) => 
-    apiRequest(`/api/v1/reviews/${id}`),
+    apiRequest(`/reviews/${id}`),
 
   // HU-003: Eliminar reseña
   delete: (id) => 
-    apiRequest(`/api/v1/reviews/${id}`, {
+    apiRequest(`/reviews/${id}`, {
       method: 'DELETE',
     }),
 
   // HU-004: Editar reseña
   update: (id, reviewData) => 
-    apiRequest(`/api/v1/reviews/${id}`, {
+    apiRequest(`/reviews/${id}`, {
       method: 'PUT',
       body: JSON.stringify(reviewData),
     }),
@@ -114,21 +114,21 @@ export const reviewsAPI = {
   // HU-005: Obtener reseñas por película
   getByMovie: (movieId, filters = {}) => {
     const queryParams = new URLSearchParams(filters).toString();
-    const endpoint = `/api/v1/movies/${movieId}/reviews${queryParams ? `?${queryParams}` : ''}`;
+    const endpoint = `/movies/${movieId}/reviews${queryParams ? `?${queryParams}` : ''}`;
     return apiRequest(endpoint);
   },
 
   // HU-006: Buscar reseñas por usuario
   getByUser: (userId, filters = {}) => {
     const queryParams = new URLSearchParams(filters).toString();
-    const endpoint = `/api/v1/users/${userId}/reviews${queryParams ? `?${queryParams}` : ''}`;
+    const endpoint = `/users/${userId}/reviews${queryParams ? `?${queryParams}` : ''}`;
     return apiRequest(endpoint);
   },
 
   // HU-007 y HU-008: Filtrar y ordenar reseñas
   filter: (filters = {}) => {
     const queryParams = new URLSearchParams(filters).toString();
-    const endpoint = `/api/v1/reviews/filter${queryParams ? `?${queryParams}` : ''}`;
+    const endpoint = `/reviews/filter${queryParams ? `?${queryParams}` : ''}`;
     return apiRequest(endpoint);
   },
 
@@ -145,32 +145,32 @@ export const reviewsAPI = {
 
   // Likes
   getLikes: (reviewId) => 
-    apiRequest(`/api/v1/reviews/${reviewId}/likes`),
+    apiRequest(`/reviews/${reviewId}/likes`),
 
   addLike: (reviewId, userId) => 
-    apiRequest(`/api/v1/reviews/${reviewId}/likes`, {
+    apiRequest(`/reviews/${reviewId}/likes`, {
       method: 'POST',
       body: JSON.stringify({ user_id: userId }),
     }),
 
   removeLike: (reviewId, userId) => 
-    apiRequest(`/api/v1/reviews/${reviewId}/likes`, {
+    apiRequest(`/reviews/${reviewId}/likes`, {
       method: 'DELETE',
       body: JSON.stringify({ user_id: userId }),
     }),
 
   // Comentarios
   getComments: (reviewId) => 
-    apiRequest(`/api/v1/reviews/${reviewId}/comments`),
+    apiRequest(`/reviews/${reviewId}/comments`),
 
   addComment: (reviewId, userId, comment) => 
-    apiRequest(`/api/v1/reviews/${reviewId}/comments`, {
+    apiRequest(`/reviews/${reviewId}/comments`, {
       method: 'POST',
       body: JSON.stringify({ user_id: userId, comment }),
     }),
 
   deleteComment: (commentId, userId) => 
-    apiRequest(`/api/v1/reviews/comments/${commentId}`, {
+    apiRequest(`/reviews/comments/${commentId}`, {
       method: 'DELETE',
       body: JSON.stringify({ user_id: userId }),
     }),
@@ -180,33 +180,33 @@ export const reviewsAPI = {
 export const usersAPI = {
   // Crear usuario
   create: (userData) => 
-    apiRequest('/api/v1/users', {
+    apiRequest('/users', {
       method: 'POST',
       body: JSON.stringify(userData),
     }),
 
   // Obtener usuario por ID (con estadísticas)
   getById: (id) => 
-    apiRequest(`/api/v1/users/${id}`),
+    apiRequest(`/users/${id}`),
 
   // Obtener todos los usuarios
   getAll: () => 
-    apiRequest('/api/v1/users'),
+    apiRequest('/users'),
 
   // Buscar usuario por email
   getByEmail: (email) => 
-    apiRequest(`/api/v1/users/search?email=${encodeURIComponent(email)}`),
+    apiRequest(`/users/search?email=${encodeURIComponent(email)}`),
 
   // Actualizar usuario
   update: (id, userData) => 
-    apiRequest(`/api/v1/users/${id}`, {
+    apiRequest(`/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(userData),
     }),
 
   // Eliminar usuario
   delete: (id) => 
-    apiRequest(`/api/v1/users/${id}`, {
+    apiRequest(`/users/${id}`, {
       method: 'DELETE',
     }),
 };
@@ -215,37 +215,37 @@ export const usersAPI = {
 export const moviesAPI = {
   // Obtener película por ID
   getById: (id) => 
-    apiRequest(`/api/v1/movies/${id}`),
+    apiRequest(`/movies/${id}`),
 
   // Obtener todas las películas
   getAll: () => 
-    apiRequest('/api/v1/movies'),
+    apiRequest('/movies'),
 
   // Buscar películas
   search: (searchTerm) => 
-    apiRequest(`/api/v1/movies/search?q=${encodeURIComponent(searchTerm)}`),
+    apiRequest(`/movies/search?q=${encodeURIComponent(searchTerm)}`),
 
   // Obtener películas por género
   getByGenre: (genre) => 
-    apiRequest(`/api/v1/movies/genre/${encodeURIComponent(genre)}`),
+    apiRequest(`/movies/genre/${encodeURIComponent(genre)}`),
 
   // Crear película (admin)
   create: (movieData) => 
-    apiRequest('/api/v1/movies', {
+    apiRequest('/movies', {
       method: 'POST',
       body: JSON.stringify(movieData),
     }),
 
   // Actualizar película (admin)
   update: (id, movieData) => 
-    apiRequest(`/api/v1/movies/${id}`, {
+    apiRequest(`/movies/${id}`, {
       method: 'PUT',
       body: JSON.stringify(movieData),
     }),
 
   // Eliminar película (admin)
   delete: (id) => 
-    apiRequest(`/api/v1/movies/${id}`, {
+    apiRequest(`/movies/${id}`, {
       method: 'DELETE',
     }),
 };

@@ -90,7 +90,7 @@ const CrearResena = () => {
 
           // PRUEBA DIRECTA: Solo intentar backend
           console.log('🌐 Haciendo llamada directa al backend...');
-          const response = await fetch(`http://localhost:8080/reviews/${resenaId}`);
+          const response = await fetch(`http://localhost:8080/api/v1/reviews/${resenaId}`);
 
           console.log('📡 Response status:', response.status);
 

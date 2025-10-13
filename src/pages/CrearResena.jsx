@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import ContextoResenas from '../contextos/ContextoResenas';
 import SelectorPelicula from '../componentes/SelectorPelicula/SelectorPelicula';
@@ -6,31 +6,41 @@ import { TAGS_DISPONIBLES } from '../constants/tags'; // ✅ Importar tags compa
 import './CrearResena.css';
 
 const CrearResena = () => {
-  console.log('🚀 CrearResena component mounting...');
-
   const navigate = useNavigate();
   const { id } = useParams(); // Para edición
   const [searchParams] = useSearchParams(); // Para crear nueva con datos de película
 
-  console.log('🔍 Component params:', { id, esEdicion: !!id });
-
-  const {
-    agregarResena,
-    actualizarResena, // ✅ Cambiar de editarResena a actualizarResena
-    // obtenerResenaPorId,
-    usuarioActual,
-    // obtenerNombreUsuario,
-    resenas,
-    usingBackend,
-    reviewsAPI // ✅ Agregar reviewsAPI para carga directa
-  } = useContext(ContextoResenas);
-
-  console.log('🔍 Context values:', {
-    usuarioActual,
-    resenasCount: resenas?.length || 0,
-    usingBackend,
-    reviewsAPIAvailable: !!reviewsAPI
+  // ✅ SOLUCION: Extraer TODO el contexto pero guardar funciones en useRef para evitar re-renders
+  const contextoCompleto = useContext(ContextoResenas);
+  
+  console.log('🔍 CrearResena - Contexto completo:', {
+    contextoCompleto: !!contextoCompleto,
+    agregarResena: !!contextoCompleto?.agregarResena,
+    actualizarResena: !!contextoCompleto?.actualizarResena,
+    usuarioActual: contextoCompleto?.usuarioActual
   });
+  
+  // Guardar funciones en refs (no causan re-renders)
+  const funcionesRef = useRef({});
+  funcionesRef.current = {
+    agregarResena: contextoCompleto.agregarResena,
+    actualizarResena: contextoCompleto.actualizarResena,
+    reviewsAPI: contextoCompleto.reviewsAPI
+  };
+  
+  // Extraer solo valores primitivos (sí causan re-renders pero solo cuando cambian de verdad)
+  const { usuarioActual, usingBackend } = contextoCompleto;
+  
+  // Usar las funciones desde el ref
+  const agregarResena = (...args) => {
+    console.log('🚀 agregarResena wrapper llamada con:', args);
+    return funcionesRef.current.agregarResena(...args);
+  };
+  const actualizarResena = (...args) => {
+    console.log('🚀 actualizarResena wrapper llamada con:', args);
+    return funcionesRef.current.actualizarResena(...args);
+  };
+  const reviewsAPI = funcionesRef.current.reviewsAPI;
 
   const esEdicion = !!id;
   const movieIdFromUrl = searchParams.get('movieId');
@@ -75,42 +85,27 @@ const CrearResena = () => {
 
   // Cargar datos para edición - VERSION SIMPLIFICADA PARA DEBUG
   useEffect(() => {
-    console.log('🔄 useEffect ejecutándose:', { esEdicion, id });
-
     if (esEdicion && id) {
-      console.log('✅ Condiciones cumplidas, iniciando carga...');
-
       const cargarDatosResena = async () => {
-        console.log('📥 Función cargarDatosResena iniciada');
         setCargandoDatos(true);
 
         try {
           const resenaId = parseInt(id, 10);
-          console.log('🆔 ID convertido:', resenaId);
-
-          // PRUEBA DIRECTA: Solo intentar backend
-          console.log('🌐 Haciendo llamada directa al backend...');
           const response = await fetch(`http://localhost:8080/api/v1/reviews/${resenaId}`);
-
-          console.log('📡 Response status:', response.status);
 
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
           }
 
           const resena = await response.json();
-          console.log('� Reseña recibida:', resena);
 
           if (resena) {
-            console.log('📝 Cargando datos al formulario...');
-
             // Convertir fecha ISO a formato YYYY-MM-DD para el input
             let fechaFormateada = '';
             if (resena.created_at) {
               const fecha = new Date(resena.created_at);
               fechaFormateada = fecha.toISOString().split('T')[0];
             }
-            console.log('📅 Fecha convertida:', { original: resena.created_at, formateada: fechaFormateada });
 
             setDatosFormulario({
               tituloResenia: resena.title || '',
@@ -138,28 +133,18 @@ const CrearResena = () => {
                 poster_url: resena.movie_poster || resena.poster_url,
                 description: resena.movie_description
               });
-              console.log('🎬 Película establecida:', {
-                id: resena.movie_id,
-                title: resena.movie_title,
-                genre: resena.movie_genre || resena.genre
-              });
             }
-
-            console.log('✅ Datos cargados exitosamente');
           }
 
         } catch (error) {
-          console.error('💥 Error en carga directa:', error);
+          console.error('Error al cargar la reseña:', error);
           alert('Error al cargar la reseña: ' + error.message);
         } finally {
           setCargandoDatos(false);
-          console.log('🏁 Carga finalizada');
         }
       };
 
       cargarDatosResena();
-    } else {
-      console.log('ℹ️ No es edición o no hay ID:', { esEdicion, id });
     }
   }, [id, esEdicion]);
 
@@ -285,48 +270,63 @@ const CrearResena = () => {
   };
 
   const validarFormulario = () => {
+    console.log('🔍 Validando formulario con datos:', datosFormulario);
     const nuevosErrores = {};
 
     if (!datosFormulario.titulo.trim()) {
       nuevosErrores.titulo = 'El título de la película es obligatorio';
+      console.log('❌ Error: título vacío');
     }
 
     if (!datosFormulario.año || datosFormulario.año < 1900 || datosFormulario.año > new Date().getFullYear() + 5) {
       nuevosErrores.año = 'Ingresa un año válido';
+      console.log('❌ Error: año inválido', datosFormulario.año);
     }
 
-    // if (datosFormulario.calificacion == !undefined) {
-    //   nuevosErrores.calificacion = 'Debes dar una calificación a la película';
+    // ✅ VALIDACIÓN: La calificación debe ser entre 1 y 5
+    if (!datosFormulario.calificacion || datosFormulario.calificacion < 1 || datosFormulario.calificacion > 5) {
+      nuevosErrores.calificacion = 'Debes dar una calificación entre 1 y 5 estrellas';
+      console.log('❌ Error: calificación inválida', datosFormulario.calificacion);
+    }
+
+    // ✅ FIX: Hacer la fecha de visionado opcional
+    // if (!datosFormulario.fechaVisionado) {
+    //   nuevosErrores.fechaVisionado = 'Indica cuándo viste la película';
     // }
-
-    if (!datosFormulario.fechaVisionado) {
-      nuevosErrores.fechaVisionado = 'Indica cuándo viste la película';
-    }
 
     if (!datosFormulario.textoResena.trim() || datosFormulario.textoResena.length < 10) {
       nuevosErrores.textoResena = 'La reseña debe tener al menos 10 caracteres';
+      console.log('❌ Error: reseña muy corta', datosFormulario.textoResena.length);
     }
 
     if (datosFormulario.textoResena.length > 1000) {
       nuevosErrores.textoResena = 'La reseña no puede exceder 1000 caracteres';
+      console.log('❌ Error: reseña muy larga', datosFormulario.textoResena.length);
     }
 
     // Validar que la imagen no sea demasiado grande para la base de datos
     if (datosFormulario.poster && datosFormulario.poster.length > 50000) {
       nuevosErrores.poster = 'La imagen es demasiado grande. Intenta con una imagen más pequeña.';
+      console.log('❌ Error: imagen muy grande');
     }
 
     setErrores(nuevosErrores);
-    return Object.keys(nuevosErrores).length === 0;
+    const esValido = Object.keys(nuevosErrores).length === 0;
+    console.log(esValido ? '✅ Formulario válido' : '❌ Formulario inválido', nuevosErrores);
+    return esValido;
   };
 
   const manejarEnvio = async (evento) => {
+    console.log('🎯 manejarEnvio - Iniciando...', { evento });
     evento.preventDefault();
 
+    console.log('📝 Validando formulario...');
     if (!validarFormulario()) {
+      console.log('❌ Validación falló');
       return;
     }
 
+    console.log('✅ Validación exitosa, enviando...');
     setEnviando(true);
 
     try {
@@ -362,12 +362,21 @@ const CrearResena = () => {
         movie_id: peliculaSeleccionada ? peliculaSeleccionada.id : null
       };
 
+      console.log('📦 Datos de reseña preparados:', datosResena);
+      console.log('🔍 Verificando funciones:', {
+        agregarResenaExists: !!agregarResena,
+        actualizarResenaExists: !!actualizarResena,
+        esEdicion
+      });
+
       if (esEdicion) {
         // Modo edición
+        console.log('📝 Modo edición, llamando actualizarResena...');
         await actualizarResena(id, datosResena); // ✅ Cambiar de editarResena a actualizarResena
         alert('¡Reseña actualizada exitosamente! 🎉');
       } else {
         // Modo creación
+        console.log('➕ Modo creación, llamando agregarResena...');
         datosResena.id = Date.now();
         datosResena.fechaResena = new Date().toLocaleDateString('es-ES', {
           day: 'numeric',
@@ -378,14 +387,16 @@ const CrearResena = () => {
         alert('¡Reseña creada exitosamente! 🎉');
       }
 
+      console.log('✅ Reseña guardada, redirigiendo...');
       // Redirigir al inicio
       navigate('/');
 
     } catch (error) {
-      console.error('Error al crear reseña:', error);
+      console.error('💥 Error al crear reseña:', error);
       alert('Uh, hubo un problema al crear la reseña. Probá de nuevo.');
     } finally {
       setEnviando(false);
+      console.log('🏁 manejarEnvio - Finalizado');
     }
   };
 

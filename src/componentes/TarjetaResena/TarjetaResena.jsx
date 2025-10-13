@@ -26,8 +26,6 @@ const TarjetaResena = ({
   }
   
   // Mapear datos del backend a formato esperado por el componente
-  console.log('🎬 TARJETA RESENA - Datos recibidos:', pelicula);
-  
   // Primero obtenemos el título para usarlo en la imagen de placeholder
   const titulo = pelicula?.title || pelicula?.titulo || 'Título no disponible';
   
@@ -46,7 +44,6 @@ const TarjetaResena = ({
     comentarios = pelicula?.comentarios || [],
     tags = pelicula?.tags || [],
     contieneEspoilers = pelicula?.has_spoilers || pelicula?.contieneEspoilers || false,
-    // movieTitle = pelicula?.movie_title || pelicula?.titulo || pelicula?.title || 'Título no disponible',
     moviePoster = pelicula?.movie_poster  || pelicula?.imagenUrl,
     // ✅ NUEVO: Detectar si la reseña fue editada
     fechaActualizacion = pelicula?.updated_at || null,
@@ -56,26 +53,8 @@ const TarjetaResena = ({
   const fueEditada = fechaActualizacion && fechaActualizacion !== fechaResena && 
                      new Date(fechaActualizacion) > new Date(fechaResena);
 
-  console.log('🎬 TARJETA RESENA - Datos mapeados:');
-  console.log('  - titulo:', titulo, '(de:', pelicula?.titulo, '/', pelicula?.title, ')');
-  console.log('  - usuario:', usuario, '(de:', pelicula?.usuario, '/', pelicula?.user_name, ')');
-  console.log('  - calificacion:', calificacion, '(de:', pelicula?.calificacion, '/', pelicula?.rating, ')');
-  console.log('  - año:', año, '(de:', pelicula?.año, '/', pelicula?.year, ')');
-  console.log('  - imagenUrl:', imagenUrl?.substring(0, 50) + '...', '(de poster_url o generada)');
-  console.log('  - fechaResena:', fechaResena, '(de:', pelicula?.fechaResena, '/', pelicula?.created_at, ')');
-  console.log('  - fechaActualizacion:', fechaActualizacion, '(de:', pelicula?.updated_at, ')');
-  console.log('  - fueEditada:', fueEditada);
-  console.log('  - textoResena:', textoResena?.substring(0, 50) + '...', '(de:', pelicula?.textoResena ? 'textoResena' : 'body', ')');
-  console.log('  - fechaVisionado:', fechaVisionado, '(de:', pelicula?.fechaVisionado, ')');
-  console.log('  - likes:', likes, '(de:', pelicula?.likes, ')');
-  console.log('  - comentarios:', comentarios.length, '(de:', pelicula?.comentarios?.length, ')');
-
-
-
-
   // Validar que los números sean válidos
   const calificacionSegura = isNaN(calificacion) ? 0 : calificacion;
-  // const añoSeguro = isNaN(año) ? 2024 : año;
 
   // Función para obtener el nombre del usuario por ID
   const obtenerNombreUsuario = (userId) => {
@@ -99,15 +78,6 @@ const TarjetaResena = ({
   const esPropioDueño = usuarioAuth?.user_id === userId;
   const puedeEditar = esPropioDueño || puedeEditarComentario;
   const puedeEliminar = esPropioDueño || puedeEliminarComentario;
-
-  console.log('🔒 PERMISOS CHECK:');
-  console.log('  - usuarioAuth.user_id:', usuarioAuth?.user_id);
-  console.log('  - pelicula.user_id:', userId);
-  console.log('  - esPropioDueño:', esPropioDueño);
-  console.log('  - puedeEditarComentario (permiso):', puedeEditarComentario);
-  console.log('  - puedeEliminarComentario (permiso):', puedeEliminarComentario);
-  console.log('  - puedeEditar (final):', puedeEditar);
-  console.log('  - puedeEliminar (final):', puedeEliminar);
 
   // Función auxiliar para truncar texto
   const truncarTexto = (texto, limite = 300) => {

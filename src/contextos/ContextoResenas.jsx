@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { reviewsAPI, usersAPI, moviesAPI, handleApiError, checkBackendHealth } from '../services/api';
+import { useAuth } from './ContextoAuth';
 
 // Crear el contexto
 const ContextoResenas = createContext();
@@ -264,11 +265,15 @@ const datosPeliculasEjemplo = [
 
 // Proveedor del contexto
 export const ProveedorResenas = ({ children }) => {
+  // ✅ Obtener usuario autenticado desde ContextoAuth
+  const { usuario: usuarioAutenticado } = useAuth();
+  
   const [resenas, setResenas] = useState([]);
   const [cargando, setCargando] = useState(true);
-  const [filtrosActivos, setFiltrosActivos] = useState({});
+  const [filtrosActivos, setFiltrosActivos] = useState(() => ({})); // Función inicializadora para referencia estable
   const [ordenamientoActual, setOrdenamientoActual] = useState('fecha-desc');
-  // ✅ FIX: Inicializar usuario desde localStorage
+  
+  // ✅ FIX: Inicializar usuario desde localStorage como fallback
   const [usuarioActual, setUsuarioActualState] = useState(() => {
     const usuarioGuardado = localStorage.getItem('usuarioActual');
     return usuarioGuardado ? parseInt(usuarioGuardado) : 1;
@@ -282,6 +287,22 @@ export const ProveedorResenas = ({ children }) => {
     localStorage.setItem('usuarioActual', userId.toString());
     console.log('✅ Usuario actualizado en localStorage:', userId);
   };
+
+  // ✅ Sincronizar usuarioActual cuando cambia el usuario autenticado
+  // IMPORTANTE: Usar useRef para evitar loop infinito
+  const prevUserIdRef = useRef();
+  
+  useEffect(() => {
+    const currentUserId = usuarioAutenticado?.id;
+    
+    // Solo actualizar si realmente cambió
+    if (currentUserId && currentUserId !== prevUserIdRef.current) {
+      console.log('🔄 Sincronizando usuarioActual con usuario autenticado:', currentUserId);
+      setUsuarioActualState(currentUserId);
+      localStorage.setItem('usuarioActual', currentUserId.toString());
+      prevUserIdRef.current = currentUserId;
+    }
+  }, [usuarioAutenticado?.id]); // ✅ Solo dependencia del ID, no del objeto completo
 
   useEffect(() => {
     const cargarResenas = async () => {
@@ -945,8 +966,46 @@ export const ProveedorResenas = ({ children }) => {
     return nombres[userId] || `Usuario ${userId}`;
   };
 
-  // Valor del contexto
-  const valor = {
+  // ✅ FIX DEFINITIVO: Crear un objeto de valor estable que solo cambie cuando sea absolutamente necesario
+  // Usamos useRef para mantener las funciones actualizadas sin causar re-renders
+  const funcionesRef = useRef({});
+  
+  // Actualizar el ref con las funciones actuales (no causa re-render)
+  funcionesRef.current = {
+    agregarResena,
+    actualizarResena,
+    eliminarResena,
+    toggleLikeResena,
+    recargarResenasDesdeBackend,
+    agregarComentario,
+    eliminarComentario,
+    obtenerResenaPorId,
+    obtenerResenasPorPelicula,
+    obtenerResenasPorUsuario,
+    obtenerNombreUsuario,
+    aplicarFiltros,
+    aplicarOrdenamiento,
+  };
+  
+  // Crear funciones estables que deleguen al ref
+  const funcionesEstables = useMemo(() => ({
+    agregarResena: (...args) => funcionesRef.current.agregarResena(...args),
+    actualizarResena: (...args) => funcionesRef.current.actualizarResena(...args),
+    eliminarResena: (...args) => funcionesRef.current.eliminarResena(...args),
+    toggleLikeResena: (...args) => funcionesRef.current.toggleLikeResena(...args),
+    recargarResenasDesdeBackend: (...args) => funcionesRef.current.recargarResenasDesdeBackend(...args),
+    agregarComentario: (...args) => funcionesRef.current.agregarComentario(...args),
+    eliminarComentario: (...args) => funcionesRef.current.eliminarComentario(...args),
+    obtenerResenaPorId: (...args) => funcionesRef.current.obtenerResenaPorId(...args),
+    obtenerResenasPorPelicula: (...args) => funcionesRef.current.obtenerResenasPorPelicula(...args),
+    obtenerResenasPorUsuario: (...args) => funcionesRef.current.obtenerResenasPorUsuario(...args),
+    obtenerNombreUsuario: (...args) => funcionesRef.current.obtenerNombreUsuario(...args),
+    aplicarFiltros: (...args) => funcionesRef.current.aplicarFiltros(...args),
+    aplicarOrdenamiento: (...args) => funcionesRef.current.aplicarOrdenamiento(...args),
+  }), []); // ✅ Array vacío = se crea una sola vez
+
+  // ✅ FIX: Memorizar el valor del contexto con useMemo
+  const valor = useMemo(() => ({
     // Estado
     resenas,
     cargando,
@@ -956,38 +1015,39 @@ export const ProveedorResenas = ({ children }) => {
     usingBackend,
     error,
     
-    // Setters
+    // Setters (estos son estables de por sí por ser de useState)
     setFiltrosActivos,
     setOrdenamientoActual,
     setUsuarioActual,
     setError,
     
-    // Funciones de reseñas
-    agregarResena,
-    actualizarResena,
-    eliminarResena,
-    toggleLikeResena,
-    recargarResenasDesdeBackend, // ✅ Nueva función exportada
-    
-    // Funciones de comentarios
-    agregarComentario,
-    eliminarComentario,
-    
-    // Funciones de búsqueda
-    obtenerResenaPorId,
-    obtenerResenasPorPelicula,
-    obtenerResenasPorUsuario,
-    obtenerNombreUsuario, // ✅ Nueva función exportada
-    
-    // Funciones de filtrado y ordenamiento
-    aplicarFiltros,
-    aplicarOrdenamiento,
+    // Funciones estables (se crean una sola vez)
+    ...funcionesEstables,
     
     // APIs directas para casos especiales
     reviewsAPI,
     usersAPI,
     moviesAPI
-  };
+  }), [
+    // Solo incluir valores primitivos que realmente necesitan causar re-render
+    resenas.length, // ✅ Usar length en lugar del array completo
+    cargando,
+    ordenamientoActual,
+    usuarioActual,
+    usingBackend,
+    error,
+    funcionesEstables, // ✅ Objeto estable de funciones
+  ]);
+
+  // 🔍 DEBUG: Log para ver renders del Provider (reducido)
+  useEffect(() => {
+    console.log('🔄 ContextoResenas Provider valor actualizado:', {
+      resenasLength: resenas.length,
+      cargando,
+      usuarioActual,
+      usingBackend
+    });
+  }, [resenas.length, cargando, usuarioActual, usingBackend]);
 
   return (
     <ContextoResenas.Provider value={valor}>

@@ -1,14 +1,15 @@
 import { getToken } from '../utils/auth';
 import eventsAPI from './eventsAPI';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+const USER_API_URL = process.env.REACT_APP_USER_URL;
 
-const apiRequest = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
-  
+
+const apiRequestUser = async (endpoint, options = {}) => {
+  const url = `${USER_API_URL}${endpoint}`;
+
   // Obtener el token de autenticación
   const token = getToken();
-  
+
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -16,7 +17,7 @@ const apiRequest = async (endpoint, options = {}) => {
     },
     ...options,
   };
-  
+
   // Agregar el token de autenticación si existe
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`;
@@ -24,10 +25,10 @@ const apiRequest = async (endpoint, options = {}) => {
 
   try {
     const response = await fetch(url, config);
-    
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      
+
       // Si el token expiró o es inválido (401), lanzar error específico
       if (response.status === 401) {
         const error = new Error(errorData.error || 'No autorizado');
@@ -35,10 +36,10 @@ const apiRequest = async (endpoint, options = {}) => {
         error.data = errorData;
         throw error;
       }
-      
+
       throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     console.error(`API Error on ${endpoint}:`, error);
@@ -46,10 +47,70 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 };
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+
+const apiRequest = async (endpoint, options = {}) => {
+  const url = `${API_BASE_URL}${endpoint}`;
+
+  // Obtener el token de autenticación
+  const token = getToken();
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  // Agregar el token de autenticación si existe
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  try {
+    const response = await fetch(url, config);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      // Si el token expiró o es inválido (401), lanzar error específico
+      if (response.status === 401) {
+        const error = new Error(errorData.error || 'No autorizado');
+        error.status = 401;
+        error.data = errorData;
+        throw error;
+      }
+
+      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`API Error on ${endpoint}:`, error);
+    throw error;
+  }
+};
+
+
 // Servicios de autenticación
 export const authAPI = {
   // Login - Autenticar usuario con credenciales (OAuth2 format)
   login: (credentials) => {
+
+  let token = null;
+    fetch(USER_API_URL + '/.well-known/jwks.json')
+      .then(res => res.json())
+      .then(jwks => {
+        // Aquí tienes el JSON con las claves públicas
+        token = jwks.key[0].n;
+        console.log(jwks);
+        // Puedes usar una librería como jose o jwt-decode para trabajar con JWT y JWKS
+      })
+      .catch(err => {
+        console.error('Error obteniendo JWKS:', err);
+      });
+
     const formData = new URLSearchParams();
     formData.append('grant_type', 'password');
     formData.append('username', credentials.username);
@@ -57,29 +118,30 @@ export const authAPI = {
     formData.append('scope', '');
     formData.append('client_id', '');
     formData.append('client_secret', '');
-    
-    return apiRequest('/auth/login', {
+
+    return apiRequestUser('/api/v1/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Bearer ${token}`
       },
       body: formData.toString(),
     });
   },
 
   // Obtener perfil del usuario autenticado
-  getMe: () => 
+  getMe: () =>
     apiRequest('/auth/me'),
 
   // Refrescar token JWT
-  refresh: (refreshToken) => 
+  refresh: (refreshToken) =>
     apiRequest('/auth/refresh', {
       method: 'POST',
       body: JSON.stringify({ refresh_token: refreshToken }),
     }),
 
   // Logout (si el backend tiene endpoint de logout)
-  logout: () => 
+  logout: () =>
     apiRequest('/auth/logout', {
       method: 'POST',
     }),
@@ -88,24 +150,24 @@ export const authAPI = {
 // Servicios de reseñas
 export const reviewsAPI = {
   // HU-001: Crear reseña
-  create: (reviewData) => 
+  create: (reviewData) =>
     apiRequest('/reviews', {
       method: 'POST',
       body: JSON.stringify(reviewData),
     }),
 
   // HU-002: Ver reseña específica
-  getById: (id) => 
+  getById: (id) =>
     apiRequest(`/reviews/${id}`),
 
   // HU-003: Eliminar reseña
-  delete: (id) => 
+  delete: (id) =>
     apiRequest(`/reviews/${id}`, {
       method: 'DELETE',
     }),
 
   // HU-004: Editar reseña
-  update: (id, reviewData) => 
+  update: (id, reviewData) =>
     apiRequest(`/reviews/${id}`, {
       method: 'PUT',
       body: JSON.stringify(reviewData),
@@ -144,32 +206,32 @@ export const reviewsAPI = {
   },
 
   // Likes
-  getLikes: (reviewId) => 
+  getLikes: (reviewId) =>
     apiRequest(`/reviews/${reviewId}/likes`),
 
-  addLike: (reviewId, userId) => 
+  addLike: (reviewId, userId) =>
     apiRequest(`/reviews/${reviewId}/likes`, {
       method: 'POST',
       body: JSON.stringify({ user_id: userId }),
     }),
 
-  removeLike: (reviewId, userId) => 
+  removeLike: (reviewId, userId) =>
     apiRequest(`/reviews/${reviewId}/likes`, {
       method: 'DELETE',
       body: JSON.stringify({ user_id: userId }),
     }),
 
   // Comentarios
-  getComments: (reviewId) => 
+  getComments: (reviewId) =>
     apiRequest(`/reviews/${reviewId}/comments`),
 
-  addComment: (reviewId, userId, comment) => 
+  addComment: (reviewId, userId, comment) =>
     apiRequest(`/reviews/${reviewId}/comments`, {
       method: 'POST',
       body: JSON.stringify({ user_id: userId, comment }),
     }),
 
-  deleteComment: (commentId, userId) => 
+  deleteComment: (commentId, userId) =>
     apiRequest(`/reviews/comments/${commentId}`, {
       method: 'DELETE',
       body: JSON.stringify({ user_id: userId }),
@@ -179,33 +241,33 @@ export const reviewsAPI = {
 // Servicios de usuarios
 export const usersAPI = {
   // Crear usuario
-  create: (userData) => 
+  create: (userData) =>
     apiRequest('/users', {
       method: 'POST',
       body: JSON.stringify(userData),
     }),
 
   // Obtener usuario por ID (con estadísticas)
-  getById: (id) => 
+  getById: (id) =>
     apiRequest(`/users/${id}`),
 
   // Obtener todos los usuarios
-  getAll: () => 
+  getAll: () =>
     apiRequest('/users'),
 
   // Buscar usuario por email
-  getByEmail: (email) => 
+  getByEmail: (email) =>
     apiRequest(`/users/search?email=${encodeURIComponent(email)}`),
 
   // Actualizar usuario
-  update: (id, userData) => 
+  update: (id, userData) =>
     apiRequest(`/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(userData),
     }),
 
   // Eliminar usuario
-  delete: (id) => 
+  delete: (id) =>
     apiRequest(`/users/${id}`, {
       method: 'DELETE',
     }),
@@ -214,37 +276,37 @@ export const usersAPI = {
 // Servicios de películas
 export const moviesAPI = {
   // Obtener película por ID
-  getById: (id) => 
+  getById: (id) =>
     apiRequest(`/movies/${id}`),
 
   // Obtener todas las películas
-  getAll: () => 
+  getAll: () =>
     apiRequest('/movies'),
 
   // Buscar películas
-  search: (searchTerm) => 
+  search: (searchTerm) =>
     apiRequest(`/movies/search?q=${encodeURIComponent(searchTerm)}`),
 
   // Obtener películas por género
-  getByGenre: (genre) => 
+  getByGenre: (genre) =>
     apiRequest(`/movies/genre/${encodeURIComponent(genre)}`),
 
   // Crear película (admin)
-  create: (movieData) => 
+  create: (movieData) =>
     apiRequest('/movies', {
       method: 'POST',
       body: JSON.stringify(movieData),
     }),
 
   // Actualizar película (admin)
-  update: (id, movieData) => 
+  update: (id, movieData) =>
     apiRequest(`/movies/${id}`, {
       method: 'PUT',
       body: JSON.stringify(movieData),
     }),
 
   // Eliminar película (admin)
-  delete: (id) => 
+  delete: (id) =>
     apiRequest(`/movies/${id}`, {
       method: 'DELETE',
     }),
@@ -253,19 +315,19 @@ export const moviesAPI = {
 // Utilidades para manejo de errores
 export const handleApiError = (error) => {
   console.error('API Error:', error);
-  
+
   if (error.message.includes('Failed to fetch')) {
     return 'Error de conexión. Verifica que el servidor esté ejecutándose.';
   }
-  
+
   if (error.message.includes('404')) {
     return 'Recurso no encontrado.';
   }
-  
+
   if (error.message.includes('500')) {
     return 'Error interno del servidor.';
   }
-  
+
   return error.message || 'Ha ocurrido un error inesperado.';
 };
 

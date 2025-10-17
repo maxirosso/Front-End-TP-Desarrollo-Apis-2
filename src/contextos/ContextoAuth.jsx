@@ -49,7 +49,7 @@ export const ProveedorAuth = ({ children }) => {
   useEffect(() => {
     const inicializarAuth = async () => {
       try {
-        const tokenGuardado = getToken();
+        const tokenGuardado = await getToken();
         const usuarioGuardado = getUser();
 
         if (!tokenGuardado || !usuarioGuardado) {

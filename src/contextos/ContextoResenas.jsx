@@ -1030,8 +1030,9 @@ export const ProveedorResenas = ({ children }) => {
     moviesAPI
   }), [
     // Solo incluir valores primitivos que realmente necesitan causar re-render
-    resenas.length, // ✅ Usar length en lugar del array completo
+    resenas, // Incluye el array completo para cumplir con la regla
     cargando,
+    filtrosActivos,
     ordenamientoActual,
     usuarioActual,
     usingBackend,

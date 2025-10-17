@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useMemo } from 'react';
 import { reviewsAPI, usersAPI, moviesAPI, handleApiError, checkBackendHealth } from '../services/api';
 import { useAuth } from './ContextoAuth';
 

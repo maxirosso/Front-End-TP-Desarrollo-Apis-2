@@ -336,7 +336,7 @@ export const getRoleBadgeClass = (role) => {
   return badgeClasses[role] || 'badge-default';
 };
 
-export default {
+const authUtils = {
   ROLES,
   PERMISSIONS,
   saveToken,
@@ -371,3 +371,5 @@ export default {
   formatRole,
   getRoleBadgeClass
 };
+
+export default authUtils;

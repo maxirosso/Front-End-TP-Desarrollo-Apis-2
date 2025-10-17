@@ -29,7 +29,7 @@ const CrearResena = () => {
   };
   
   // Extraer solo valores primitivos (sí causan re-renders pero solo cuando cambian de verdad)
-  const { usuarioActual, usingBackend } = contextoCompleto;
+  const { usuarioActual, /* usingBackend */ } = contextoCompleto;
   
   // Usar las funciones desde el ref
   const agregarResena = (...args) => {
@@ -40,7 +40,7 @@ const CrearResena = () => {
     console.log('🚀 actualizarResena wrapper llamada con:', args);
     return funcionesRef.current.actualizarResena(...args);
   };
-  const reviewsAPI = funcionesRef.current.reviewsAPI;
+  // const reviewsAPI = funcionesRef.current.reviewsAPI;
 
   const esEdicion = !!id;
   const movieIdFromUrl = searchParams.get('movieId');

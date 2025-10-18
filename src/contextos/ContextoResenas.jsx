@@ -308,21 +308,21 @@ export const ProveedorResenas = ({ children }) => {
     const cargarResenas = async () => {
       setCargando(true);
       setError(null);
-      
+      debugger
       try {
         const backendAvailable = await checkBackendHealth();
         setUsingBackend(backendAvailable);
         
-        if (backendAvailable) {
-          const response = await reviewsAPI.getAll();
-          const resenas = response.data || response.rows || [];
+        // if (backendAvailable) {
+        //   const response = await reviewsAPI.getAll();
+        //   const resenas = response.data || response.rows || [];
           
-          // IMPORTANTE: Solo usar datos reales cuando el backend esté disponible
-          setResenas(resenas); // Solo datos de la base de datos, NO mock data
-        } else {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          setResenas(datosPeliculasEjemplo);
-        }
+        //   // IMPORTANTE: Solo usar datos reales cuando el backend esté disponible
+        //   setResenas(resenas); // Solo datos de la base de datos, NO mock data
+        // } else {
+        //   await new Promise(resolve => setTimeout(resolve, 1000));
+        //   setResenas(datosPeliculasEjemplo);
+        // }
       } catch (err) {
         console.error('Error cargando reseñas:', err);
         setError(handleApiError(err));

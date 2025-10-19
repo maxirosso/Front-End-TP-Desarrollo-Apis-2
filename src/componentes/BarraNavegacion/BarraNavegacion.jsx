@@ -122,23 +122,7 @@ const BarraNavegacion = () => {
                     
                     <div className="dropdown-divider"></div>
                     
-                    <Link
-                      to={`/usuario/${usuario?.user_id}`}
-                      className="dropdown-item"
-                      onClick={() => setMostrarMenuUsuario(false)}
-                    >
-                      <span className="dropdown-icon">👤</span>
-                      Mi Perfil
-                    </Link>
-                    
-                    <Link
-                      to={`/editar-perfil/${usuario?.user_id}`}
-                      className="dropdown-item"
-                      onClick={() => setMostrarMenuUsuario(false)}
-                    >
-                      <span className="dropdown-icon">⚙️</span>
-                      Configuración
-                    </Link>
+                  
                     
                     <div className="dropdown-divider"></div>
                     

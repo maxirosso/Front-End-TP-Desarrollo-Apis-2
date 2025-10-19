@@ -284,10 +284,10 @@ const CrearResena = () => {
     }
 
     // ✅ VALIDACIÓN: La calificación debe ser entre 1 y 5
-    if (!datosFormulario.calificacion || datosFormulario.calificacion < 1 || datosFormulario.calificacion > 5) {
-      nuevosErrores.calificacion = 'Debes dar una calificación entre 1 y 5 estrellas';
-      console.log('❌ Error: calificación inválida', datosFormulario.calificacion);
-    }
+    // if (!datosFormulario.calificacion || datosFormulario.calificacion < 1 || datosFormulario.calificacion > 5) {
+    //   nuevosErrores.calificacion = 'Debes dar una calificación entre 1 y 5 estrellas';
+    //   console.log('❌ Error: calificación inválida', datosFormulario.calificacion);
+    // }
 
     // ✅ FIX: Hacer la fecha de visionado opcional
     // if (!datosFormulario.fechaVisionado) {

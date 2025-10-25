@@ -1,343 +1,251 @@
-import { getToken } from '../utils/auth';
-import eventsAPI from './eventsAPI';
+// services/api.js
+import { getToken } from "../utils/auth";
 
-const USER_API_URL = process.env.REACT_APP_USER_URL;
+const USER_API_URL = process.env.REACT_APP_USER_URL; // módulo de usuarios (login)
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080"; // back (movies/reviews)
 
+const jsonHeaders = { "Content-Type": "application/json" };
+
+const buildQuery = (o = {}) => {
+  const params = new URLSearchParams();
+  Object.entries(o).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== "") params.set(k, v);
+  });
+  const qs = params.toString();
+  return qs ? `?${qs}` : "";
+};
+
+const parseMaybeJson = async (response) => {
+  if (response.status === 204) return null;
+  const ct = response.headers.get("content-type") || "";
+  if (!ct.includes("application/json")) {
+    const txt = await response.text();
+    return txt || null;
+  }
+  return response.json();
+};
 
 const apiRequestUser = async (endpoint, options = {}) => {
   const url = `${USER_API_URL}${endpoint}`;
-
-  // Obtener el token de autenticación
   const token = getToken();
 
   const config = {
+    method: options.method || "GET",
     headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
+      ...(options.headers || {}),
+      // NO seteamos Content-Type por defecto: lo define cada variante (JSON o form)
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    ...options,
+    body: options.body,
   };
 
-  // Agregar el token de autenticación si existe
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(url, config);
+  const payload = await parseMaybeJson(res).catch(() => null);
+
+  if (!res.ok) {
+    // Log claro para ver el motivo del 422
+    console.error(`[users-api] ${res.status} ${url}`, payload);
+    const err = new Error(
+      (payload && (payload.error || payload.message)) || `HTTP ${res.status}`
+    );
+    err.status = res.status;
+    err.data = payload;
+    throw err;
   }
-
-  try {
-    const response = await fetch(url, config);
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-
-      // Si el token expiró o es inválido (401), lanzar error específico
-      if (response.status === 401) {
-        const error = new Error(errorData.error || 'No autorizado');
-        error.status = 401;
-        error.data = errorData;
-        throw error;
-      }
-
-      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error(`API Error on ${endpoint}:`, error);
-    throw error;
-  }
+  return payload;
 };
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+// --- helpers de envío para login ---
+const postJsonUser = (path, obj) =>
+  apiRequestUser(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(obj),
+  });
+
+const postFormUser = (path, obj) => {
+  const form = new URLSearchParams();
+  Object.entries(obj).forEach(([k, v]) => form.append(k, v ?? ""));
+  return apiRequestUser(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: form.toString(),
+  });
+};
 
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
-
-  // Obtener el token de autenticación
   const token = getToken();
 
   const config = {
+    method: options.method || "GET",
     headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    ...options,
+    body: options.body,
   };
 
-  // Agregar el token de autenticación si existe
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(url, config);
+  if (!res.ok) {
+    const errData = await parseMaybeJson(res);
+    const err = new Error((errData && errData.error) || `HTTP ${res.status}`);
+    err.status = res.status;
+    err.data = errData;
+    throw err;
   }
-
-  try {
-    const response = await fetch(url, config);
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-
-      // Si el token expiró o es inválido (401), lanzar error específico
-      if (response.status === 401) {
-        const error = new Error(errorData.error || 'No autorizado');
-        error.status = 401;
-        error.data = errorData;
-        throw error;
-      }
-
-      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error(`API Error on ${endpoint}:`, error);
-    throw error;
-  }
+  return parseMaybeJson(res);
 };
 
-
-// Servicios de autenticación
+// -------- Auth (solo login contra el módulo de usuarios) --------
 export const authAPI = {
-  // Login - Autenticar usuario con credenciales (OAuth2 format)
-  login: (credentials) => {
+  /**
+   * Intenta varios formatos comunes:
+   * 1) JSON { email, password }
+   * 2) JSON { username, password }
+   * 3) x-www-form-urlencoded (OAuth2 Resource Owner Password) con grant_type=password
+   *
+   * Si tu user-service exige client_id/client_secret o scope, setealos en .env y se envían.
+   */
+  login: async (credentials) => {
+    const { username, email, password } = credentials;
 
-  let token = null;
-    fetch(USER_API_URL + '/.well-known/jwks.json')
-      .then(res => res.json())
-      .then(jwks => {
-        // Aquí tienes el JSON con las claves públicas
-        token = jwks.key[0].n;
-        console.log(jwks);
-        // Puedes usar una librería como jose o jwt-decode para trabajar con JWT y JWKS
-      })
-      .catch(err => {
-        console.error('Error obteniendo JWKS:', err);
-      });
+    // Opcionales por si tu user-service los pide (OAuth2)
+    const CLIENT_ID = process.env.REACT_APP_CLIENT_ID || "";
+    const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET || "";
+    const SCOPE = process.env.REACT_APP_OAUTH_SCOPE || "";
 
-    const formData = new URLSearchParams();
-    formData.append('grant_type', 'password');
-    formData.append('username', credentials.username);
-    formData.append('password', credentials.password);
-    formData.append('scope', '');
-    formData.append('client_id', '');
-    formData.append('client_secret', '');
+    const attempts = [
+      // 1) JSON con email
+      () => postJsonUser("/api/v1/auth/login", { email, password }),
+      // 2) JSON con username
+      () => postJsonUser("/api/v1/auth/login", { username, password }),
+      // 3) FORM oauth2
+      () =>
+        postFormUser("/api/v1/auth/login", {
+          grant_type: "password",
+          username: email || username || "",
+          password: password || "",
+          scope: SCOPE,
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+        }),
+    ];
 
-    return apiRequestUser('/api/v1/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`
-      },
-      body: formData.toString(),
-    });
+    let lastErr;
+    for (const run of attempts) {
+      try {
+        const res = await run();
+        // Normalizamos el nombre del campo token
+        const token =
+          res?.access_token || res?.token || res?.jwt || res?.id_token || null;
+        if (!token) {
+          // si vino un body que aclara por qué, lo mostramos
+          console.warn("Login respondió sin token. Body:", res);
+          throw new Error("No se recibió token del servidor");
+        }
+        return { token, raw: res };
+      } catch (e) {
+        lastErr = e;
+        // 422/400 seguimos intentando la siguiente variante
+        if (e.status !== 400 && e.status !== 422) break;
+      }
+    }
+    throw lastErr || new Error("No se pudo iniciar sesión");
   },
-
-  // Obtener perfil del usuario autenticado
-  getMe: () =>
-    apiRequest('/auth/me'),
-
-  // Refrescar token JWT
-  refresh: (refreshToken) =>
-    apiRequest('/auth/refresh', {
-      method: 'POST',
-      body: JSON.stringify({ refresh_token: refreshToken }),
-    }),
-
-  // Logout (si el backend tiene endpoint de logout)
-  logout: () =>
-    apiRequest('/auth/logout', {
-      method: 'POST',
-    }),
 };
 
-// Servicios de reseñas
+// -------- Reviews --------
 export const reviewsAPI = {
-  // HU-001: Crear reseña
   create: (reviewData) =>
-    apiRequest('/reviews', {
-      method: 'POST',
+    apiRequest("/reviews", {
+      method: "POST",
+      headers: { ...jsonHeaders },
       body: JSON.stringify(reviewData),
     }),
 
-  // HU-002: Ver reseña específica
-  getById: (id) =>
-    apiRequest(`/reviews/${id}`),
+  getById: (id) => apiRequest(`/reviews/${id}`),
 
-  // HU-003: Eliminar reseña
   delete: (id) =>
     apiRequest(`/reviews/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     }),
 
-  // HU-004: Editar reseña
   update: (id, reviewData) =>
     apiRequest(`/reviews/${id}`, {
-      method: 'PUT',
+      method: "PUT",
+      headers: { ...jsonHeaders },
       body: JSON.stringify(reviewData),
     }),
 
-  // HU-005: Obtener reseñas por película
-  getByMovie: (movieId, filters = {}) => {
-    const queryParams = new URLSearchParams(filters).toString();
-    const endpoint = `/movies/${movieId}/reviews${queryParams ? `?${queryParams}` : ''}`;
-    return apiRequest(endpoint);
-  },
+  getByUser: (userId, filters = {}) =>
+    apiRequest(`/users/${userId}/reviews${buildQuery(filters)}`),
 
-  // HU-006: Buscar reseñas por usuario
-  getByUser: (userId, filters = {}) => {
-    const queryParams = new URLSearchParams(filters).toString();
-    const endpoint = `/users/${userId}/reviews${queryParams ? `?${queryParams}` : ''}`;
-    return apiRequest(endpoint);
-  },
-
-  // HU-007 y HU-008: Filtrar y ordenar reseñas
   filter: (filters = {}) => {
-    const queryParams = new URLSearchParams(filters).toString();
-    const endpoint = `/reviews/filter${queryParams ? `?${queryParams}` : ''}`;
-    return apiRequest(endpoint);
+    const f = { ...filters };
+    if (f.movie_id !== undefined && f.movie_id === null && f.movie_id !== "") {
+      const n = Number(f.movie_id);
+      if (!Number.isInteger(n) || n <= 0){
+        delete f.movie_id;
+      } else {
+        f.movie_id = n;
+      }
+    }
+    return apiRequest(`/reviews/filter${buildQuery(f)}`);
   },
 
-  // Obtener todas las reseñas con filtros opcionales
+  // “todas” usa /reviews/filter con defaults
   getAll: (filters = {}) => {
-    const defaultFilters = {
-      sort: 'recent',
-      limit: '1000', // ✅ Aumentar límite para obtener todas las reseñas
-      offset: '0',
-      ...filters
-    };
-    return reviewsAPI.filter(defaultFilters);
+    const defaults = { sort: "recent", limit: "1000", offset: "0", ...filters };
+    return reviewsAPI.filter(defaults);
   },
-
-  // Likes
-  getLikes: (reviewId) =>
-    apiRequest(`/reviews/${reviewId}/likes`),
-
-  addLike: (reviewId, userId) =>
-    apiRequest(`/reviews/${reviewId}/likes`, {
-      method: 'POST',
-      body: JSON.stringify({ user_id: userId }),
-    }),
-
-  removeLike: (reviewId, userId) =>
-    apiRequest(`/reviews/${reviewId}/likes`, {
-      method: 'DELETE',
-      body: JSON.stringify({ user_id: userId }),
-    }),
-
-  // Comentarios
-  getComments: (reviewId) =>
-    apiRequest(`/reviews/${reviewId}/comments`),
-
-  addComment: (reviewId, userId, comment) =>
-    apiRequest(`/reviews/${reviewId}/comments`, {
-      method: 'POST',
-      body: JSON.stringify({ user_id: userId, comment }),
-    }),
-
-  deleteComment: (commentId, userId) =>
-    apiRequest(`/reviews/comments/${commentId}`, {
-      method: 'DELETE',
-      body: JSON.stringify({ user_id: userId }),
-    }),
 };
 
-// Servicios de usuarios
+// -------- Users --------
 export const usersAPI = {
-  // Crear usuario
-  create: (userData) =>
-    apiRequest('/users', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-    }),
-
-  // Obtener usuario por ID (con estadísticas)
-  getById: (id) =>
-    apiRequest(`/users/${id}`),
-
-  // Obtener todos los usuarios
-  getAll: () =>
-    apiRequest('/users'),
-
-  // Buscar usuario por email
-  getByEmail: (email) =>
-    apiRequest(`/users/search?email=${encodeURIComponent(email)}`),
-
-  // Actualizar usuario
-  update: (id, userData) =>
-    apiRequest(`/users/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(userData),
-    }),
-
-  // Eliminar usuario
-  delete: (id) =>
-    apiRequest(`/users/${id}`, {
-      method: 'DELETE',
-    }),
+  getById: (id) => apiRequest(`/users/${id}`),
+  getAll: () => apiRequest("/users"),
+  getReviews: (userId, filters = {}) =>
+    apiRequest(`/users/${userId}/reviews${buildQuery(filters)}`),
 };
 
-// Servicios de películas
+// -------- Movies --------
 export const moviesAPI = {
-  // Obtener película por ID
-  getById: (id) =>
-    apiRequest(`/movies/${id}`),
-
-  // Obtener todas las películas
-  getAll: () =>
-    apiRequest('/movies'),
-
-  // Buscar películas
+  getById: (id) => apiRequest(`/movies/${id}`),
+  getAll: () => apiRequest("/movies"),
   search: (searchTerm) =>
-    apiRequest(`/movies/search?q=${encodeURIComponent(searchTerm)}`),
-
-  // Obtener películas por género
+    apiRequest(`/movies/search${buildQuery({ query: searchTerm })}`),
   getByGenre: (genre) =>
     apiRequest(`/movies/genre/${encodeURIComponent(genre)}`),
-
-  // Crear película (admin)
-  create: (movieData) =>
-    apiRequest('/movies', {
-      method: 'POST',
-      body: JSON.stringify(movieData),
-    }),
-
-  // Actualizar película (admin)
-  update: (id, movieData) =>
-    apiRequest(`/movies/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(movieData),
-    }),
-
-  // Eliminar película (admin)
-  delete: (id) =>
-    apiRequest(`/movies/${id}`, {
-      method: 'DELETE',
-    }),
 };
 
-// Utilidades para manejo de errores
+// -------- Social (solo endpoints existentes) --------
+export const socialAPI = {
+  getAllLikes: () => apiRequest("/social/likes"),
+  getLikesByReview: (reviewId) =>
+    apiRequest(`/social/likes/review/${reviewId}`),
+};
+
+// -------- Utilidades --------
 export const handleApiError = (error) => {
-  console.error('API Error:', error);
+  console.error("API Error:", error);
 
-  if (error.message.includes('Failed to fetch')) {
-    return 'Error de conexión. Verifica que el servidor esté ejecutándose.';
-  }
+  if (error.status === 401) return "No autorizado. Iniciá sesión nuevamente.";
+  if (error.status === 404) return "Recurso no encontrado.";
+  if (error.status === 500) return "Error interno del servidor.";
+  if ((error.message || "").includes("Failed to fetch"))
+    return "Error de conexión. Verificá que el servidor esté ejecutándose.";
 
-  if (error.message.includes('404')) {
-    return 'Recurso no encontrado.';
-  }
-
-  if (error.message.includes('500')) {
-    return 'Error interno del servidor.';
-  }
-
-  return error.message || 'Ha ocurrido un error inesperado.';
+  return error.message || "Ha ocurrido un error inesperado.";
 };
 
-// Función para verificar si el backend está disponible
+// Simple health: usa /movies (existe) como ping
 export const checkBackendHealth = async () => {
   try {
-    await apiRequest('/health');
+    await apiRequest("/movies");
     return true;
-  } catch (error) {
-    console.warn('Backend not available:', error.message);
+  } catch {
     return false;
   }
 };
@@ -347,7 +255,7 @@ const apiService = {
   reviewsAPI,
   usersAPI,
   moviesAPI,
-  eventsAPI,
+  socialAPI,
   handleApiError,
   checkBackendHealth,
 };

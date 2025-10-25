@@ -1,5 +1,5 @@
 import { useAuth } from './useAuth';
-import { ROLES, PERMISSIONS } from '../utils/auth';
+import { ROLES } from '../utils/auth';
 
 /**
  * Hook personalizado para verificar permisos del usuario
@@ -17,23 +17,6 @@ export const usePermissions = () => {
     esUsuario: tieneRol(ROLES.USER),
     esAdminOModerador: tieneRol([ROLES.ADMIN, ROLES.MODERATOR]),
 
-    // Verificación de permisos de películas
-    puedeCrearPelicula: tienePermiso(PERMISSIONS.CREATE_MOVIE),
-    puedeEditarPelicula: tienePermiso(PERMISSIONS.EDIT_MOVIE),
-    puedeEliminarPelicula: tienePermiso(PERMISSIONS.DELETE_MOVIE),
-
-    // Verificación de permisos de comentarios
-    puedeEditarComentario: tienePermiso(PERMISSIONS.EDIT_COMMENT),
-    puedeEliminarComentario: tienePermiso(PERMISSIONS.DELETE_COMMENT),
-
-    // Verificación de permisos de usuarios
-    puedeCrearUsuario: tienePermiso(PERMISSIONS.CREATE_USER),
-    puedeEditarUsuario: tienePermiso(PERMISSIONS.EDIT_USER),
-    puedeEliminarUsuario: tienePermiso(PERMISSIONS.DELETE_USER),
-    puedeVerUsuario: tienePermiso(PERMISSIONS.VIEW_USER),
-    puedeAsignarPermiso: tienePermiso(PERMISSIONS.ASSIGN_PERMISSION),
-    puedeAsignarRol: tienePermiso(PERMISSIONS.ASSIGN_ROLE),
-
     // Verificación de permisos sobre recursos específicos
     puedeEditarRecurso,
     puedeEliminarRecurso,
@@ -43,25 +26,8 @@ export const usePermissions = () => {
     tieneRol,
 
     // Constantes
-    ROLES,
-    PERMISSIONS
+    ROLES
   };
-};
-
-/**
- * Hook para verificar si el usuario puede editar un recurso específico
- */
-export const useCanEdit = (resourceUserId) => {
-  const { puedeEditarRecurso } = usePermissions();
-  return puedeEditarRecurso(resourceUserId);
-};
-
-/**
- * Hook para verificar si el usuario puede eliminar un recurso específico
- */
-export const useCanDelete = (resourceUserId) => {
-  const { puedeEliminarRecurso } = usePermissions();
-  return puedeEliminarRecurso(resourceUserId);
 };
 
 /**

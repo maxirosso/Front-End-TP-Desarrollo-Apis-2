@@ -9,26 +9,6 @@ export const ROLES = {
   USER: 'user'
 };
 
-// Permisos del sistema
-export const PERMISSIONS = {
-  // Permisos de películas
-  CREATE_MOVIE: 'create_movie',
-  EDIT_MOVIE: 'edit_movie',
-  DELETE_MOVIE: 'delete_movie',
-  
-  // Permisos de comentarios
-  EDIT_COMMENT: 'edit_comment',
-  DELETE_COMMENT: 'delete_comment',
-  
-  // Permisos de usuarios
-  CREATE_USER: 'create_user',
-  EDIT_USER: 'edit_user',
-  DELETE_USER: 'delete_user',
-  VIEW_USER: 'view_user',
-  ASSIGN_PERMISSION: 'assign_permission',
-  ASSIGN_ROLE: 'assign_role'
-};
-
 // Claves de localStorage
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'auth_user';
@@ -191,76 +171,6 @@ export const hasPermission = (user, permission) => {
 };
 
 /**
- * Verifica si el usuario puede crear películas
- */
-export const canCreateMovie = (user) => {
-  return hasPermission(user, PERMISSIONS.CREATE_MOVIE);
-};
-
-/**
- * Verifica si el usuario puede editar películas
- */
-export const canEditMovie = (user) => {
-  return hasPermission(user, PERMISSIONS.EDIT_MOVIE);
-};
-
-/**
- * Verifica si el usuario puede eliminar películas
- */
-export const canDeleteMovie = (user) => {
-  return hasPermission(user, PERMISSIONS.DELETE_MOVIE);
-};
-
-/**
- * Verifica si el usuario puede editar comentarios de otros
- */
-export const canEditComment = (user) => {
-  return hasPermission(user, PERMISSIONS.EDIT_COMMENT);
-};
-
-/**
- * Verifica si el usuario puede eliminar comentarios de otros
- */
-export const canDeleteComment = (user) => {
-  return hasPermission(user, PERMISSIONS.DELETE_COMMENT);
-};
-
-/**
- * Verifica si el usuario puede editar usuarios
- */
-export const canEditUser = (user) => {
-  return hasPermission(user, PERMISSIONS.EDIT_USER);
-};
-
-/**
- * Verifica si el usuario puede eliminar usuarios
- */
-export const canDeleteUser = (user) => {
-  return hasPermission(user, PERMISSIONS.DELETE_USER);
-};
-
-/**
- * Verifica si el usuario puede ver información de otros usuarios
- */
-export const canViewUser = (user) => {
-  return hasPermission(user, PERMISSIONS.VIEW_USER);
-};
-
-/**
- * Verifica si el usuario puede asignar permisos
- */
-export const canAssignPermission = (user) => {
-  return hasPermission(user, PERMISSIONS.ASSIGN_PERMISSION);
-};
-
-/**
- * Verifica si el usuario puede asignar roles
- */
-export const canAssignRole = (user) => {
-  return hasPermission(user, PERMISSIONS.ASSIGN_ROLE);
-};
-
-/**
  * Verifica si el usuario puede editar un recurso específico
  * (es el propietario del recurso o tiene permisos de administrador)
  */
@@ -338,7 +248,6 @@ export const getRoleBadgeClass = (role) => {
 
 const authUtils = {
   ROLES,
-  PERMISSIONS,
   saveToken,
   getToken,
   removeToken,
@@ -354,16 +263,6 @@ const authUtils = {
   isModerator,
   isAdminOrModerator,
   hasPermission,
-  canCreateMovie,
-  canEditMovie,
-  canDeleteMovie,
-  canEditComment,
-  canDeleteComment,
-  canEditUser,
-  canDeleteUser,
-  canViewUser,
-  canAssignPermission,
-  canAssignRole,
   canEditResource,
   canDeleteResource,
   getFullName,

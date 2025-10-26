@@ -62,90 +62,91 @@ const Inicio = () => {
         );
         
         let resenasProcesadas;
-        if (requiereBackend) {
+        debugger
+        // if (requiereBackend) {
           // Usar función asíncrona del contexto
           resenasProcesadas = await aplicarFiltros(filtrosActivos);
-        } else {
-          // Usar datos locales
-          resenasProcesadas = [...resenas];
+        // } else {
+        //   // Usar datos locales
+        //   resenasProcesadas = [...resenas];
           
-          // Aplicar filtros simples localmente
-          if (filtrosActivos.pelicula) {
-            resenasProcesadas = resenasProcesadas.filter(resena => {
-              const titulo = resena.movie_title || resena.titulo || resena.title || '';
-              return titulo.toLowerCase().includes(filtrosActivos.pelicula.toLowerCase());
-            });
-          }
+        //   // Aplicar filtros simples localmente
+        //   if (filtrosActivos.pelicula) {
+        //     resenasProcesadas = resenasProcesadas.filter(resena => {
+        //       const titulo = resena.movie_title || resena.titulo || resena.title || '';
+        //       return titulo.toLowerCase().includes(filtrosActivos.pelicula.toLowerCase());
+        //     });
+        //   }
           
-          if (filtrosActivos.usuario) {
-            resenasProcesadas = resenasProcesadas.filter(resena => {
-              const usuario = resena.user_name || resena.usuario || '';
-              return usuario && usuario.toLowerCase().startsWith(filtrosActivos.usuario.toLowerCase());
-            });
-          }
+        //   if (filtrosActivos.usuario) {
+        //     resenasProcesadas = resenasProcesadas.filter(resena => {
+        //       const usuario = resena.user_name || resena.usuario || '';
+        //       return usuario && usuario.toLowerCase().startsWith(filtrosActivos.usuario.toLowerCase());
+        //     });
+        //   }
 
-          if (filtrosActivos.calificacion) {
-            const calExacta = parseInt(filtrosActivos.calificacion);
-            resenasProcesadas = resenasProcesadas.filter(resena => {
-              const calificacion = resena.calificacion || resena.rating || 0;
-              return Number(calificacion) === calExacta;
-            });
-          }
+        //   if (filtrosActivos.calificacion) {
+        //     const calExacta = parseInt(filtrosActivos.calificacion);
+        //     resenasProcesadas = resenasProcesadas.filter(resena => {
+        //       const calificacion = resena.calificacion || resena.rating || 0;
+        //       return Number(calificacion) === calExacta;
+        //     });
+        //   }
 
-          if (filtrosActivos.genero) {
-            resenasProcesadas = resenasProcesadas.filter(resena => {
-              const genero = resena.movie_genre || resena.genero || resena.genre || '';
-              return genero === filtrosActivos.genero;
-            });
-          }
+        //   if (filtrosActivos.genero) {
+        //     resenasProcesadas = resenasProcesadas.filter(resena => {
+        //       const genero = resena.movie_genre || resena.genero || resena.genre || '';
+        //       return genero === filtrosActivos.genero;
+        //     });
+        //   }
 
-          if (filtrosActivos.tags && filtrosActivos.tags.length > 0) {
-            resenasProcesadas = resenasProcesadas.filter(resena =>
-              resena.tags && filtrosActivos.tags.some(tag => resena.tags.includes(tag))
-            );
-          }
+        //   if (filtrosActivos.tags && filtrosActivos.tags.length > 0) {
+        //     resenasProcesadas = resenasProcesadas.filter(resena =>
+        //       resena.tags && filtrosActivos.tags.some(tag => resena.tags.includes(tag))
+        //     );
+        //   }
 
-          if (filtrosActivos.soloMeGusta) {
-            resenasProcesadas = resenasProcesadas.filter(resena => resena.megusta);
-          }
+        //   if (filtrosActivos.soloMeGusta) {
+        //     resenasProcesadas = resenasProcesadas.filter(resena => resena.megusta);
+        //   }
 
-          if (!filtrosActivos.contieneEspoilers) {
-            resenasProcesadas = resenasProcesadas.filter(resena => 
-              !resena.has_spoilers && !resena.contieneEspoilers
-            );
-          }
+        //   if (!filtrosActivos.contieneEspoilers) {
+        //     resenasProcesadas = resenasProcesadas.filter(resena => 
+        //       !resena.has_spoilers && !resena.contieneEspoilers
+        //     );
+        //   }
 
-          // Filtro por fecha de publicación
-          if (filtrosActivos.fechaPublicacion) {
-            const now = new Date();
-            let startDate;
+        //   // Filtro por fecha de publicación
+        //   if (filtrosActivos.fechaPublicacion) {
+        //     const now = new Date();
+        //     let startDate;
             
-            switch (filtrosActivos.fechaPublicacion) {
-              case 'hoy':
-                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                break;
-              case 'esta-semana':
-                startDate = new Date(now);
-                startDate.setDate(now.getDate() - 7);
-                break;
-              case 'este-mes':
-                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-                break;
-              case 'este-año':
-                startDate = new Date(now.getFullYear(), 0, 1);
-                break;
-              default:
-                startDate = null;
-            }
+        //     switch (filtrosActivos.fechaPublicacion) {
+        //       case 'hoy':
+        //         startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        //         break;
+        //       case 'esta-semana':
+        //         startDate = new Date(now);
+        //         startDate.setDate(now.getDate() - 7);
+        //         break;
+        //       case 'este-mes':
+        //         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        //         break;
+        //       case 'este-año':
+        //         startDate = new Date(now.getFullYear(), 0, 1);
+        //         break;
+        //       default:
+        //         startDate = null;
+        //     }
             
-            if (startDate) {
-              resenasProcesadas = resenasProcesadas.filter(resena => {
-                const fechaResena = new Date(resena.created_at || resena.fechaResena);
-                return fechaResena >= startDate;
-              });
-            }
-          }
-        }
+        //     if (startDate) {
+        //       resenasProcesadas = resenasProcesadas.filter(resena => {
+        //         const fechaResena = new Date(resena.created_at || resena.fechaResena);
+        //         return fechaResena >= startDate;
+        //       });
+        //     }
+        //   }
+        // }
         
         // Siempre aplicar ordenamiento al final
         const resenasOrdenadas = aplicarOrdenamiento(resenasProcesadas, ordenamientoActual);

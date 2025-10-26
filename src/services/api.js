@@ -189,6 +189,8 @@ export const reviewsAPI = {
 
   // HU-007 y HU-008: Filtrar y ordenar reseñas
   filter: (filters = {}) => {
+    debugger
+    console.log('LLegue al endpoint', filters);
     const queryParams = new URLSearchParams(filters).toString();
     const endpoint = `/reviews/filter${queryParams ? `?${queryParams}` : ''}`;
     return apiRequest(endpoint);

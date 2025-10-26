@@ -762,8 +762,9 @@ export const ProveedorResenas = ({ children }) => {
 
   // Función para aplicar filtros (usa backend cuando es necesario)
   const aplicarFiltros = async (filtros = {}) => {
+    debugger
     try {
-      if (usingBackend && (filtros.genero || filtros.calificacion || filtros.usuario || filtros.pelicula || filtros.tags?.length > 0 || filtros.fechaPublicacion)) {
+      if (usingBackend /* && (filtros.genero || filtros.calificacion || filtros.usuario || filtros.pelicula || filtros.tags?.length > 0 || filtros.fechaPublicacion) */) {
         // Usar backend para filtros complejos
         const filtrosBackend = {};
         
@@ -803,6 +804,7 @@ export const ProveedorResenas = ({ children }) => {
         return resenasFiltradas;
       } else {
         // Usar filtrado local para casos simples o cuando backend no está disponible
+        console.log("Volvi por aca")
         return aplicarFiltrosLocal(resenas, filtros);
       }
     } catch (err) {

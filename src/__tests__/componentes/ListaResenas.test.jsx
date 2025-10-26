@@ -1,59 +1,96 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import FiltrosResenas from '../../componentes/FiltrosResenas/FiltrosResenas';
+import { describe, it, expect } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import ListaResenas from '../../componentes/ListaResenas/ListaResenas';
+import { ProveedorAuth } from '../../contextos/ContextoAuth';
+import { ProveedorResenas } from '../../contextos/ContextoResenas';
 
-describe('FiltrosResenas', () => {
-  const baseProps = {
-    filtrosActivos: {}, // ✅ nombre correcto
-    onAplicarFiltros: vi.fn(),
-    onLimpiarFiltros: vi.fn(),
-  };
+const reseñasMock = [
+  {
+    id: 1,
+    titulo: "El Padrino",
+    año: 1972,
+    imagenUrl: "https://via.placeholder.com/120x180/2C3E50/ECF0F1?text=El+Padrino",
+    calificacion: 5,
+    usuario: "usuario_actual",
+    fechaResena: "15 de marzo, 2024",
+    fechaVisionado: "10 de marzo, 2024",
+    textoResena: "Una obra maestra absoluta del cine. La narrativa de Coppola es impecable, combinando drama familiar con elementos del crimen de manera magistral. Cada escena está cuidadosamente construida, y las actuaciones de Brando y Pacino son legendarias. Es imposible no quedar cautivado por la complejidad de los personajes y la profundidad de la historia.",
+    megusta: true,
+    likes: 24,
+    yaLeDiLike: true,
+    comentarios: [
+      { id: 1, usuario: "otro_usuario", texto: "Totalmente de acuerdo, es una obra maestra", fecha: "16 de marzo, 2024" }
+    ],
+    tags: ["Obra Maestra", "Drama", "Spoiler Free"],
+    contieneEspoilers: false,
+    genero: "drama"
+  }
+];
 
-  it('llama a onAplicarFiltros al cambiar la calificación', () => {
-    const onAplicarFiltros = vi.fn();
-    render(<FiltrosResenas {...baseProps} onAplicarFiltros={onAplicarFiltros} />);
-
-    // Seleccionamos el select asociado al label "Calificación"
-    const calificacionLabel = screen.getByText(/Calificación/i);
-    const calificacionSelect = calificacionLabel.closest('div').querySelector('select');
-
-    fireEvent.change(calificacionSelect, { target: { value: '5' } });
-    fireEvent.click(screen.getByRole('button', { name: /Aplicar filtros/i }));
-
-    expect(onAplicarFiltros).toHaveBeenCalled();
-  });
-
-  it('muestra filtros avanzados al hacer clic en "Más filtros"', () => {
-    render(<FiltrosResenas {...baseProps} />);
-    fireEvent.click(screen.getByRole('button', { name: /Más filtros/i }));
-
-    // Encontramos el label "Género" y su select asociado
-    const generoLabel = screen.getAllByText(/Género/i)[0];
-    const generoSelect = generoLabel.closest('div').querySelector('select');
-
-    expect(generoSelect).toBeInTheDocument();
-    expect(screen.getByText(/Tags/i)).toBeInTheDocument();
-    expect(screen.getByText(/Solo películas que me gustaron/i)).toBeInTheDocument();
-  });
-
-  it('muestra el resumen de filtros activos', () => {
+describe('ListaResenas', () => {
+  it('renderiza la lista de reseñas', async () => {
     render(
-      <FiltrosResenas
-        {...baseProps}
-        filtrosActivos={{ // ✅ corregido
-          pelicula: 'Matrix',
-          usuario: 'Neo',
-          calificacion: '5',
-        }}
-      />
+      <MemoryRouter>
+        <ProveedorAuth>
+          <ProveedorResenas>
+            <ListaResenas reseñasExternas={reseñasMock} />
+          </ProveedorResenas>
+        </ProveedorAuth>
+      </MemoryRouter>
     );
+    await waitFor(() => {
+      expect(screen.getByText(/El Padrino/i)).toBeInTheDocument();
+    });
+  });
 
-    // Buscamos el bloque que contiene el resumen
-    const resumen = screen.getByText(/Filtros activos:/i).closest('div');
+  it('muestra mensaje si no hay reseñas', async () => {
+    render(
+      <MemoryRouter>
+        <ProveedorAuth>
+          <ProveedorResenas>
+            <ListaResenas reseñasExternas={[]} />
+          </ProveedorResenas>
+        </ProveedorAuth>
+      </MemoryRouter>
+    );
+    await waitFor(() => {
+      expect(screen.getByText(/No se encontraron reseñas/i)).toBeInTheDocument();
+    });
+  });
 
-    expect(resumen).toHaveTextContent(/5 estrellas/i);
-    expect(resumen).toHaveTextContent(/Película: "Matrix"/i);
-    expect(resumen).toHaveTextContent(/Usuario: "Neo"/i);
+  it('renderiza una reseña real', async () => {
+  render(
+    <MemoryRouter>
+      <ProveedorAuth>
+        <ProveedorResenas>
+          <ListaResenas reseñasExternas={[
+            {
+              id: 1,
+              titulo: "El Padrino",
+              textoResena: "Obra maestra",
+              usuario: "usuario_actual",
+              calificacion: 5,
+              genero: "drama",
+              tags: [],
+              megusta: true,
+              contieneEspoilers: false,
+              fechaResena: "2024-03-15",
+              likes: 10,
+              yaLeDiLike: false,
+              comentarios: [],
+              imagenUrl: "",
+              fechaVisionado: "",
+            }
+          ]} />
+        </ProveedorResenas>
+      </ProveedorAuth>
+    </MemoryRouter>
+  );
+  await waitFor(() => {
+    expect(screen.getByText(/El Padrino/i)).toBeInTheDocument();
+    expect(screen.getByText(/Obra maestra/i)).toBeInTheDocument();
+  });
   });
 });

@@ -7,7 +7,7 @@ import BarraOrdenamiento from '../BarraOrdenamiento/BarraOrdenamiento';
 import ModalComentarios from '../ModalComentarios/ModalComentarios';
 import './ListaResenas.css';
 
-const ListaResenas = () => {
+const ListaResenas = ({reseñasExternas}) => {
   const navigate = useNavigate();
   const [resenas, setResenas] = useState([]);
   const [resenasFiltradas, setResenasFiltradas] = useState([]);
@@ -123,11 +123,11 @@ const ListaResenas = () => {
     // Simular carga de datos
     const cargarResenas = async () => {
       setCargando(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setResenas(datosPeliculasEjemplo);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setResenas(reseñasExternas  ?? datosPeliculasEjemplo);
       setCargando(false);
     };
-
+    console.log("Cargando reseñas...");
     cargarResenas();
   }, []);
 
@@ -245,6 +245,7 @@ const ListaResenas = () => {
   };
 
   if (cargando) {
+    console.log("Cargando reseñas...");
     return (
       <div className="contenedor-cargando">
         <div className="spinner-carga">

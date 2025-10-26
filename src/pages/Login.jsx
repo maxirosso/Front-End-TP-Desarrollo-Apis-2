@@ -20,6 +20,7 @@ const Login = () => {
     if (estaAutenticado()) {
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
+      console.log('Usuario ya autenticado, redirigiendo a:', from);
     }
   }, [estaAutenticado, navigate, location]);
 
@@ -110,6 +111,7 @@ const Login = () => {
                 autoComplete="current-password"
                 required
                 disabled={isLoading || cargando}
+                data-testid="password-input"
               />
               <button
                 type="button"

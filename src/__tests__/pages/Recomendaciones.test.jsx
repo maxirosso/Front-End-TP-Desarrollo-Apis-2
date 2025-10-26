@@ -30,64 +30,65 @@ const mockResenas = [
   { id: 4, movie_id: 4, rating: 3, textoResena: 'Bonita historia', usuario: 'Sofía', created_at: '2025-08-10' }
 ];
 
+let cargandoMock = false;
+
+
 vi.mock('../../contextos/ContextoResenas', () => ({
   useResenas: () => ({
     usuarioActual: 1,
     resenas: mockResenas,
     moviesAPI: { getAll: vi.fn().mockResolvedValue(mockPeliculas) },
-    cargando: false
+    cargando: cargandoMock
   }),
 }));
 
+vi.mock('../../componentes/TarjetaResena', () => ({
+  default: () => <div>TarjetaResena</div>
+}));
+
 describe('Recomendaciones', () => {
-  // it('muestra el loader cuando cargando es true', () => {
-  //   vi.mocked(require('../../contextos/ContextoResenas').useResenas).mockReturnValue({
-  //     usuarioActual: 1,
-  //     resenas: [],
-  //     moviesAPI: { getAll: vi.fn().mockResolvedValue([]) },
-  //     cargando: true
-  //   });
-  //   render(
-  //     <MemoryRouter>
-  //       <ProveedorAuth>
-  //         <Recomendaciones />
-  //       </ProveedorAuth>
-  //     </MemoryRouter>
-  //   );
-  //   expect(screen.getByText(/Generando recomendaciones/i)).toBeInTheDocument();
-  // });
+  it('muestra el loader cuando cargando es true', () => {
+    cargandoMock = true;
+    render(
+      <MemoryRouter>
+        <ProveedorAuth>
+          <Recomendaciones />
+        </ProveedorAuth>
+      </MemoryRouter>
+    );
+    expect(screen.getByText(/Generando recomendaciones/i)).toBeInTheDocument();
+    cargandoMock = false; // Reset para otros tests
+  });
 
-  // it('renderiza películas populares y reseñas destacadas', async () => {
-  //   render(
-  //     <MemoryRouter>
-  //       <ProveedorAuth>
-  //         <Recomendaciones />
-  //       </ProveedorAuth>
-  //     </MemoryRouter>
-  //   );
+  it('renderiza películas populares y reseñas destacadas', async () => {
+    render(
+      <MemoryRouter>
+        <ProveedorAuth>
+          <Recomendaciones />
+        </ProveedorAuth>
+      </MemoryRouter>
+    );
 
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/Más Populares/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Matrix/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Titanic/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Mad Max/i)).toBeInTheDocument();
-  //   });
+    await waitFor(() => {
+      expect(screen.getByText(/Más Populares/i)).toBeInTheDocument();
+      expect(screen.getByText(/Matrix/i)).toBeInTheDocument();
+      expect(screen.getByText(/Titanic/i)).toBeInTheDocument();
+      expect(screen.getByText(/Mad Max/i)).toBeInTheDocument();
+    });
 
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/Reseñas Destacadas/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Obra maestra/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Muy emotiva/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Acción sin parar/i)).toBeInTheDocument();
-  //   });
+    await waitFor(() => {
+      expect(screen.getByText(/Reseñas Destacadas/i)).toBeInTheDocument();
+      expect(screen.getByText(/TarjetaResena/i)).toBeInTheDocument();
+    });
 
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/Recomendaciones por Género/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Ciencia Ficción/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Drama/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Acción/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Romance/i)).toBeInTheDocument();
-  //   });
-  // });
+    await waitFor(() => {
+      expect(screen.getByText(/Recomendaciones por Género/i)).toBeInTheDocument();
+      expect(screen.getByText(/Ciencia Ficción/i)).toBeInTheDocument();
+      expect(screen.getByText(/Drama/i)).toBeInTheDocument();
+      expect(screen.getByText(/Acción/i)).toBeInTheDocument();
+      expect(screen.getByText(/Romance/i)).toBeInTheDocument();
+    });
+  });
 
   it('muestra los botones de CTA', async () => {
     render(

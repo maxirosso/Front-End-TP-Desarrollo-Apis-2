@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import TarjetaResena from '../../componentes/TarjetaResena/TarjetaResena';
-
+import { ProveedorAuth } from '../../contextos/ContextoAuth';
 describe('TarjetaResena', () => {
     const baseResena = {
         id: 1,
@@ -25,9 +25,12 @@ describe('TarjetaResena', () => {
 
     it('renderiza título, usuario y póster', () => {
         render(
-            <MemoryRouter>
-                <TarjetaResena pelicula={baseResena} />
-            </MemoryRouter>
+            <ProveedorAuth>
+                <MemoryRouter>
+                    <TarjetaResena pelicula={baseResena} />
+                </MemoryRouter>
+            </ProveedorAuth>
+
         );
 
         expect(screen.getByText(/Matrix/i)).toBeInTheDocument();
@@ -37,9 +40,11 @@ describe('TarjetaResena', () => {
 
     it('muestra estrellas de calificación y el botón de like', () => {
         render(
-            <MemoryRouter>
-                <TarjetaResena pelicula={baseResena} />
-            </MemoryRouter>
+            <ProveedorAuth>
+                <MemoryRouter>
+                    <TarjetaResena pelicula={baseResena} />
+                </MemoryRouter>
+            </ProveedorAuth>
         );
 
         const estrellas = screen.getAllByText('★');
@@ -53,9 +58,11 @@ describe('TarjetaResena', () => {
 
     it('renderiza fecha de publicación', () => {
         render(
-            <MemoryRouter>
-                <TarjetaResena pelicula={baseResena} />
-            </MemoryRouter>
+            <ProveedorAuth>
+                <MemoryRouter>
+                    <TarjetaResena pelicula={baseResena} />
+                </MemoryRouter>
+            </ProveedorAuth>
         );
 
         expect(screen.getByText(/Posteado el/i)).toBeInTheDocument();
@@ -63,9 +70,12 @@ describe('TarjetaResena', () => {
 
     it('renderiza tags y advertencia de spoilers si están presentes', () => {
         render(
-            <MemoryRouter>
-                <TarjetaResena pelicula={baseResena} />
-            </MemoryRouter>
+            <ProveedorAuth>
+                <MemoryRouter>
+                    <TarjetaResena pelicula={baseResena} />
+                </MemoryRouter>
+            </ProveedorAuth>
+
         );
 
         const tags = screen.getAllByText(/Acción/i);
@@ -88,14 +98,16 @@ describe('TarjetaResena', () => {
         const onEliminar = vi.fn();
 
         render(
-            <MemoryRouter>
-                <TarjetaResena
-                    pelicula={{ ...baseResena, user_id: 1 }}
-                    usuarioActual={1}
-                    onEditar={onEditar}
-                    onEliminar={onEliminar}
-                />
-            </MemoryRouter>
+            <ProveedorAuth>
+                <MemoryRouter>
+                    <TarjetaResena
+                        pelicula={{ ...baseResena, user_id: 1 }}
+                        usuarioActual={1}
+                        onEditar={onEditar}
+                        onEliminar={onEliminar}
+                    />
+                </MemoryRouter>
+            </ProveedorAuth>
         );
 
         // Abrir menú

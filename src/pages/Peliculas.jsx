@@ -173,7 +173,7 @@ const Peliculas = () => {
               {pelicula.description && (
                 <p className="descripcion-pelicula">{pelicula.description}</p>
               )}
-              <div className="acciones-pelicula">
+              <div className="acciones-pelicula" style={{top : 0, right: 0}}>
                 <Link 
                   to={`/movie/${pelicula.id}/reviews`}
                   className="btn-ver-resenas"

@@ -73,25 +73,6 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
     onAplicarFiltros(nuevosFiltros);
   };
 
-  const aplicarFiltros = () => {
-    onAplicarFiltros(filtrosLocales);
-  };
-
-  const limpiarTodosFiltros = () => {
-    const filtrosVacios = {
-      calificacion: '',
-      fechaPublicacion: '',
-      genero: '',
-      tags: [],
-      usuario: '',
-      pelicula: '',
-      contieneEspoilers: false,
-      soloMeGusta: false
-    };
-    setFiltrosLocales(filtrosVacios);
-    onLimpiarFiltros();
-  };
-
   const hayFiltrosActivos = () => {
     return filtrosLocales.calificacion !== '' ||
            filtrosLocales.fechaPublicacion !== '' ||
@@ -210,48 +191,8 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
               ))}
             </div>
           </div>
-
-          {/* Opciones especiales */}
-          <div className="grupo-opciones-especiales">
-            <div className="opcion-checkbox">
-              <label className="etiqueta-checkbox-filtro">
-                <input
-                  type="checkbox"
-                  checked={filtrosLocales.soloMeGusta}
-                  onChange={(e) => manejarCambioFiltro('soloMeGusta', e.target.checked)}
-                />
-                <span className="checkbox-custom"></span>
-                Solo películas que me gustaron ❤️
-              </label>
-            </div>
-
-            <div className="opcion-checkbox">
-              <label className="etiqueta-checkbox-filtro">
-                <input
-                  type="checkbox"
-                  checked={filtrosLocales.contieneEspoilers}
-                  onChange={(e) => manejarCambioFiltro('contieneEspoilers', e.target.checked)}
-                />
-                <span className="checkbox-custom"></span>
-                Incluir reseñas con spoilers ⚠️
-              </label>
-            </div>
-          </div>
         </div>
       )}
-
-      {/* Botones de acción
-      <div className="botones-filtros">
-        {hayFiltrosActivos() && (
-          <button className="boton-limpiar" onClick={limpiarTodosFiltros}>
-            Limpiar filtros
-          </button>
-        )}
-        <button className="boton-aplicar" onClick={aplicarFiltros}>
-          Aplicar filtros
-          {hayFiltrosActivos() && <span className="indicador-filtros-activos">●</span>}
-        </button>
-      </div> */}
 
       {/* Resumen de filtros activos */}
       {hayFiltrosActivos() && (

@@ -31,44 +31,18 @@ const TarjetaResena = ({
   
   const {
     id,
-    // año = pelicula?.year || pelicula?.año || 2024,
-    // imagenUrl = pelicula?.poster_url || pelicula?.imagenUrl || `https://via.placeholder.com/120x180/34495e/ecf0f1?text=${encodeURIComponent(titulo)}`,
-    calificacion = Number(pelicula?.rating || pelicula?.calificacion || 0),
     usuario = pelicula?.user_name || pelicula?.usuario || 'Usuario desconocido',
     fechaResena = pelicula?.created_at || pelicula?.fechaResena || 'Fecha no disponible',
     textoResena = pelicula?.body || pelicula?.textoResena || '',
-    megusta = pelicula?.megusta || false,
-    fechaVisionado = pelicula?.watch_date || pelicula?.created_at || 'No especificado',
-    likes = Number(pelicula?.likes_count || pelicula?.likes || 0),
-    yaLeDiLike = pelicula?.yaLeDiLike || false,
-    // comentarios = pelicula?.comentarios || [],
     tags = pelicula?.tags || [],
     contieneEspoilers = pelicula?.has_spoilers || pelicula?.contieneEspoilers || false,
     moviePoster = pelicula?.movie_poster  || pelicula?.imagenUrl,
-    // ✅ NUEVO: Detectar si la reseña fue editada
     fechaActualizacion = pelicula?.updated_at || null,
   } = pelicula || {};
 
   // ✅ NUEVO: Determinar si la reseña fue editada
   const fueEditada = fechaActualizacion && fechaActualizacion !== fechaResena && 
                      new Date(fechaActualizacion) > new Date(fechaResena);
-
-  // Validar que los números sean válidos
-  const calificacionSegura = isNaN(calificacion) ? 0 : calificacion;
-
-  // Función para obtener el nombre del usuario por ID
-  // const obtenerNombreUsuario = (userId) => {
-  //   const id = Number(userId);
-  //   switch (id) {
-  //     case 1: return 'Admin';
-  //     case 2: return 'Juan Pérez';
-  //     case 3: return 'María García';
-  //     case 4: return 'Carlos López';
-  //     case 5: return 'Ana Martín';
-  //     case 6: return 'Luis Rodríguez';
-  //     default: return `Usuario ${id}`;
-  //   }
-  // };
 
   // ✅ MEJORADO: Determinar si puede editar/eliminar la reseña
   // El usuario puede editar/eliminar si:
@@ -84,23 +58,6 @@ const TarjetaResena = ({
     if (!texto || typeof texto !== 'string') return '';
     if (texto.length <= limite) return texto;
     return textoCompleto ? texto : texto.substring(0, limite) + '...';
-  };
-
-  // Función para generar estrellas basada en la calificación
-  const generarEstrellas = (puntuacion) => {
-    const estrellas = [];
-    const puntuacionRedondeada = Math.round(puntuacion * 2) / 2; // Redondear a medias estrellas
-    
-    for (let i = 1; i <= 5; i++) {
-      if (i <= puntuacionRedondeada) {
-        estrellas.push(<span key={i} className="estrella completa">★</span>);
-      } else if (i - 0.5 === puntuacionRedondeada) {
-        estrellas.push(<span key={i} className="estrella media">☆</span>);
-      } else {
-        estrellas.push(<span key={i} className="estrella vacia">☆</span>);
-      }
-    }
-    return estrellas;
   };
 
   return (
@@ -190,22 +147,6 @@ const TarjetaResena = ({
             </span>
             
             <div className="acciones-resena">
-              {/* Botón de like */}
-              <button 
-                className={`boton-like `}
-                onClick={(e) => {
-                  // e.preventDefault();
-                  // e.stopPropagation();
-                  // onToggleLike && onToggleLike(id);
-                }}
-                title={yaLeDiLike ? 'Sacar me gusta' : 'Me gusta'}
-              >
-                <span className="icono-like">
-                  {yaLeDiLike ? '❤️' : '🤍'}
-                </span>
-                <span className="contador-likes">{isNaN(likes) ? 0 : likes}</span>
-              </button>
-
               {/* Menú de acciones del propietario o moderador */}
               {(puedeEditar || puedeEliminar) && (
                 <div className="menu-acciones-dueno">

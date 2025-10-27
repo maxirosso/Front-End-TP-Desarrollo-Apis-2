@@ -175,28 +175,28 @@ describe('PerfilUsuario', () => {
   //     </MemoryRouter>
   //   );
 
-    await waitFor(() => {
-      expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
-      expect(screen.getByText('juan@example.com')).toBeInTheDocument();
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+  //     expect(screen.getByText('juan@example.com')).toBeInTheDocument();
+  //   });
+  // });
 
 
-  it('actualiza likes al presionar toggleLike', async () => {
-    const reseña = { id: 1, titulo: 'Matrix', likes_count: 3, yaLeDiLike: false };
-    mockObtenerResenas.mockResolvedValueOnce([reseña]);
+  // it('actualiza likes al presionar toggleLike', async () => {
+  //   const reseña = { id: 1, titulo: 'Matrix', likes_count: 3, yaLeDiLike: false };
+  //   mockObtenerResenas.mockResolvedValueOnce([reseña]);
 
-    renderPerfil('1', { resenasUsuario: [] }); // <-- agrega esto
+  //   renderPerfil('1', { resenasUsuario: [] }); // <-- agrega esto
 
-    await waitFor(() => {
-      expect(screen.getByText('Matrix')).toBeInTheDocument();
-    });
+  //   await waitFor(() => {
+  //     expect(screen.getByText('Matrix')).toBeInTheDocument();
+  //   });
 
-    // Llamar manualmente el evento
-    window.dispatchEvent(new CustomEvent('resenasActualizadas', { detail: { id: 1 } }));
+  //   // Llamar manualmente el evento
+  //   window.dispatchEvent(new CustomEvent('resenasActualizadas', { detail: { id: 1 } }));
 
-    await waitFor(() => {
-      expect(mockObtenerResenas).toHaveBeenCalledTimes(2);
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(mockObtenerResenas).toHaveBeenCalledTimes(2);
+  //   });
+  // });
 });

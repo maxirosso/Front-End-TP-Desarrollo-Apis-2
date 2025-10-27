@@ -111,12 +111,11 @@ export const ProveedorResenas = ({ children }) => {
         const texto = nuevaResena.textoResena || nuevaResena.body || "";
         if (!texto || texto.trim().length < 20)
           throw new Error("La reseña debe tener al menos 20 caracteres");
-        if (
-          !nuevaResena.calificacion ||
-          nuevaResena.calificacion < 1 ||
-          nuevaResena.calificacion > 5
-        )
-          throw new Error("La calificación debe estar entre 1 y 5");
+        
+        // ✅ PERMITIR calificación 0 (sin estrellas)
+        const rating = Number(nuevaResena.calificacion) || 0;
+        if (rating < 0 || rating > 5)
+          throw new Error("La calificación debe estar entre 0 y 5");
 
         // movie_id (requerido). Si no vino, intento matchear por título; si no, fallback 1
         let movieId = 1;
@@ -215,7 +214,17 @@ export const ProveedorResenas = ({ children }) => {
   const actualizarResena = async (id, datosActualizados) => {
     try {
       if (usingBackend) {
-        await reviewsAPI.update(id, datosActualizados);
+        // ✅ Formatear datos para el backend
+        const payload = {
+          title: datosActualizados.tituloResena || datosActualizados.title || '',
+          body: datosActualizados.textoResena || datosActualizados.body || '',
+          rating: Number(datosActualizados.calificacion || datosActualizados.rating || 0),
+          has_spoilers: Boolean(datosActualizados.contieneEspoilers || datosActualizados.has_spoilers),
+          tags: Array.isArray(datosActualizados.tags) ? datosActualizados.tags : []
+        };
+        
+        console.log('📤 Actualizando reseña con payload:', payload);
+        await reviewsAPI.update(id, payload);
         await recargarResenasDesdeBackend();
       } else {
         setResenas((prev) =>
@@ -473,9 +482,12 @@ export const ProveedorResenas = ({ children }) => {
         );
       }
     }
-    if (!filtros.contieneEspoilers) {
-      rows = rows.filter((r) => !r.has_spoilers && !r.contieneEspoilers);
+    // ✅ FIX: Si contieneEspoilers es true, SOLO mostrar reseñas con spoilers
+    // Si es false o undefined, mostrar TODAS (incluyendo las sin spoilers)
+    if (filtros.contieneEspoilers === true) {
+      rows = rows.filter((r) => r.has_spoilers || r.contieneEspoilers);
     }
+    // Si contieneEspoilers es false, no filtramos nada (mostramos todas)
     return rows;
   };
 

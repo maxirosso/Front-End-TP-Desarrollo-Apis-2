@@ -17,8 +17,8 @@ const TarjetaResena = ({
   const [textoCompleto, setTextoCompleto] = useState(false);
   
   // Hooks de autenticación y permisos
-  const { usuario: usuarioAuth } = useAuth();
-  const { puedeEditarComentario, puedeEliminarComentario } = usePermissions();
+  const { usuario: usuarioAuth, isAdminOrModerator } = useAuth();
+  const { puedeEditarRecurso, puedeEliminarRecurso } = usePermissions();
 
   // Verificación de seguridad después de los hooks
   if (!pelicula || !pelicula.id) {
@@ -73,11 +73,23 @@ const TarjetaResena = ({
   // ✅ MEJORADO: Determinar si puede editar/eliminar la reseña
   // El usuario puede editar/eliminar si:
   // 1. Es el propietario de la reseña (user_id coincide con el usuario autenticado)
-  // 2. Tiene permisos de admin/moderador (puedeEditarComentario / puedeEliminarComentario)
+  // 2. Es admin o moderador
   const userId = pelicula?.user_id;
   const esPropioDueño = usuarioAuth?.user_id === userId;
-  const puedeEditar = esPropioDueño || puedeEditarComentario;
-  const puedeEliminar = esPropioDueño || puedeEliminarComentario;
+  const esAdminOModerador = isAdminOrModerator();
+  const puedeEditar = esPropioDueño || esAdminOModerador || puedeEditarRecurso(userId);
+  const puedeEliminar = esPropioDueño || esAdminOModerador || puedeEliminarRecurso(userId);
+
+  console.log('🔐 Permisos TarjetaResena:', {
+    reviewId: id,
+    userId,
+    esPropioDueño,
+    esAdminOModerador,
+    puedeEditar,
+    puedeEliminar,
+    usuarioAuth: usuarioAuth?.user_id,
+    rolUsuario: usuarioAuth?.role
+  });
 
   // Función auxiliar para truncar texto
   const truncarTexto = (texto, limite = 300) => {
@@ -124,15 +136,8 @@ const TarjetaResena = ({
                 Reseña de {usuario}
                 {esPropioDueño && <span className="indicador-propietario">TU RESEÑA</span>}
               </span>
-              <div className="fechas-resena">
-                {fechaVisionado && (
-                  <span className="fecha-visionado">Visto el {fechaVisionado}</span>
-                )}
-              </div>
             </div>
           </header>
-
-         
 
           <div className="titulo-pelicula-contenedor">
             <Link 
@@ -190,22 +195,6 @@ const TarjetaResena = ({
             </span>
             
             <div className="acciones-resena">
-              {/* Botón de like */}
-              <button 
-                className={`boton-like `}
-                onClick={(e) => {
-                  // e.preventDefault();
-                  // e.stopPropagation();
-                  // onToggleLike && onToggleLike(id);
-                }}
-                title={yaLeDiLike ? 'Sacar me gusta' : 'Me gusta'}
-              >
-                <span className="icono-like">
-                  {yaLeDiLike ? '❤️' : '🤍'}
-                </span>
-                <span className="contador-likes">{isNaN(likes) ? 0 : likes}</span>
-              </button>
-
               {/* Menú de acciones del propietario o moderador */}
               {(puedeEditar || puedeEliminar) && (
                 <div className="menu-acciones-dueno">

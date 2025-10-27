@@ -494,33 +494,9 @@ const CrearResena = () => {
                   peliculaSeleccionada={peliculaSeleccionada}
                   onSeleccionarPelicula={manejarSeleccionPelicula}
                   onCrearNueva={manejarCrearNueva}
-                  disabled={enviando}
+                  disabled={enviando || esEdicion}
                 />
                 {errores.titulo && <span className="mensaje-error">{errores.titulo}</span>}
-              </div>
-
-
-              <div className="campo-formulario">
-                <label className="etiqueta-campo">Género</label>
-                <select
-                  value={datosFormulario.genero}
-                  onChange={(e) => manejarCambioEntrada('genero', e.target.value)}
-                  className="entrada-select"
-                  disabled={enviando}
-                >
-                  <option value="">Seleccionar género</option>
-                  <option value="Acción">Acción</option>
-                  <option value="Drama">Drama</option>
-                  <option value="Comedia">Comedia</option>
-                  <option value="Terror">Terror</option>
-                  <option value="Romance">Romance</option>
-                  <option value="Ciencia Ficción">Ciencia Ficción</option>
-                  <option value="Thriller">Thriller</option>
-                  <option value="Animación">Animación</option>
-                  <option value="Fantasía">Fantasía</option>
-                  <option value="Musical">Musical</option>
-                  <option value="Crimen">Crimen</option>
-                </select>
               </div>
             </section>
 

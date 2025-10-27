@@ -12,7 +12,7 @@ const peliculasEjemplo = [
     year: 1972,
     genre: "Drama",
     director: "Francis Ford Coppola",
-    poster_url: "https://via.placeholder.com/300x450/2C3E50/ECF0F1?text=El+Padrino",
+    poster_url: "https://via.placeholder.com/300x450/1a1f2e/818cf8?text=El+Padrino",
     description: "Una saga épica sobre una familia mafiosa italiana en América"
   },
   {
@@ -21,7 +21,7 @@ const peliculasEjemplo = [
     year: 2017,
     genre: "Ciencia Ficción",
     director: "Denis Villeneuve",
-    poster_url: "https://via.placeholder.com/300x450/E74C3C/ECF0F1?text=Blade+Runner",
+    poster_url: "https://via.placeholder.com/300x450/1a1f2e/8b5cf6?text=Blade+Runner",
     description: "Una secuela digna del clásico cyberpunk de Ridley Scott"
   },
   {
@@ -30,7 +30,7 @@ const peliculasEjemplo = [
     year: 2019,
     genre: "Thriller",
     director: "Bong Joon-ho",
-    poster_url: "https://via.placeholder.com/300x450/1ABC9C/ECF0F1?text=Parasite",
+    poster_url: "https://via.placeholder.com/300x450/1a1f2e/6366f1?text=Parasite",
     description: "Una crítica social brillante envuelta en un thriller impredecible"
   },
   {
@@ -39,7 +39,7 @@ const peliculasEjemplo = [
     year: 2015,
     genre: "Acción",
     director: "George Miller",
-    poster_url: "https://via.placeholder.com/300x450/F39C12/ECF0F1?text=Mad+Max",
+    poster_url: "https://via.placeholder.com/300x450/1a1f2e/a78bfa?text=Mad+Max",
     description: "Una obra maestra de la acción cinematográfica"
   },
   {
@@ -48,7 +48,7 @@ const peliculasEjemplo = [
     year: 2013,
     genre: "Romance",
     director: "Spike Jonze",
-    poster_url: "https://via.placeholder.com/300x450/9B59B6/ECF0F1?text=Her",
+    poster_url: "https://via.placeholder.com/300x450/1a1f2e/8b5cf6?text=Her",
     description: "Una historia de amor única sobre la conexión en la era digital"
   },
   {
@@ -57,16 +57,16 @@ const peliculasEjemplo = [
     year: 2008,
     genre: "Acción",
     director: "Christopher Nolan",
-    poster_url: "https://via.placeholder.com/300x450/34495E/ECF0F1?text=Batman",
+    poster_url: "https://via.placeholder.com/300x450/1a1f2e/6366f1?text=Batman",
     description: "La mejor película de superhéroes jamás hecha"
   },
   {
     id: 7,
-    title: "El Señor de los Anillos: La Comunidad del Anillo",
+    title: "El Señor de los Anillos",
     year: 2001,
     genre: "Fantasía",
     director: "Peter Jackson",
-    poster_url: "https://via.placeholder.com/300x450/27AE60/ECF0F1?text=LOTR",
+    poster_url: "https://via.placeholder.com/300x450/1a1f2e/818cf8?text=LOTR",
     description: "El inicio de una épica aventura en la Tierra Media"
   },
   {
@@ -75,7 +75,7 @@ const peliculasEjemplo = [
     year: 1994,
     genre: "Drama",
     director: "Quentin Tarantino",
-    poster_url: "https://via.placeholder.com/300x450/8E44AD/ECF0F1?text=Pulp+Fiction",
+    poster_url: "https://via.placeholder.com/300x450/1a1f2e/a78bfa?text=Pulp+Fiction",
     description: "Una obra maestra del cine postmoderno"
   }
 ];
@@ -122,10 +122,10 @@ const Peliculas = () => {
       <div className="pagina-peliculas">
         <div className="contenido-peliculas">
           <div className="error-peliculas">
-            <h2>⚠️ Error cargando películas</h2>
+            <h2>Error al cargar películas</h2>
             <p>{error}</p>
             <button onClick={() => window.location.reload()}>
-              Intentar de nuevo
+              Reintentar
             </button>
           </div>
         </div>
@@ -137,11 +137,11 @@ const Peliculas = () => {
     <div className="pagina-peliculas">
       <div className="contenido-peliculas">
         <div className="header-peliculas">
-          <h1>🎬 Catálogo de Películas</h1>
-          <p>Explora nuestro catálogo y lee las reseñas de cada película</p>
+          <h1>Películas</h1>
+          <p>Descubre, explora y comparte tu opinión sobre el mejor contenido cinematográfico</p>
           {!usingBackend && (
             <div className="aviso-offline">
-              📱 Modo offline - Mostrando películas de ejemplo
+              Modo demostración - Datos de ejemplo
             </div>
           )}
         </div>
@@ -151,11 +151,11 @@ const Peliculas = () => {
           <div key={pelicula.id} className="tarjeta-pelicula">
             <div className="contenedor-poster">
               <img 
-                src={pelicula.poster_url || `https://via.placeholder.com/300x450/34495e/ecf0f1?text=${encodeURIComponent(pelicula.title)}`}
+                src={pelicula.poster_url || `https://via.placeholder.com/300x450/1a1f2e/6366f1?text=${encodeURIComponent(pelicula.title)}`}
                 alt={`Póster de ${pelicula.title}`}
                 className="poster-pelicula"
                 onError={(e) => {
-                  e.target.src = `https://via.placeholder.com/300x450/34495e/ecf0f1?text=${encodeURIComponent(pelicula.title)}`;
+                  e.target.src = `https://via.placeholder.com/300x450/1a1f2e/6366f1?text=${encodeURIComponent(pelicula.title)}`;
                 }}
               />
             </div>
@@ -167,7 +167,7 @@ const Peliculas = () => {
                   <span className="genero-pelicula">{pelicula.genre}</span>
                 )}
                 {pelicula.director && (
-                  <span className="director-pelicula">Dir: {pelicula.director}</span>
+                  <span className="director-pelicula">{pelicula.director}</span>
                 )}
               </div>
               {pelicula.description && (
@@ -178,13 +178,13 @@ const Peliculas = () => {
                   to={`/movie/${pelicula.id}/reviews`}
                   className="btn-ver-resenas"
                 >
-                  📖 Ver Reseñas
+                  Ver Reseñas
                 </Link>
                 <Link 
                   to={`/crear?movieId=${pelicula.id}&titulo=${encodeURIComponent(pelicula.title)}&year=${pelicula.year}&genre=${encodeURIComponent(pelicula.genre || '')}&director=${encodeURIComponent(pelicula.director || '')}&poster=${encodeURIComponent(pelicula.poster_url || '')}&description=${encodeURIComponent(pelicula.description || '')}`}
                   className="btn-escribir-resena"
                 >
-                  ✏️ Escribir Reseña
+                  Escribir Reseña
                 </Link>
               </div>
             </div>
@@ -194,8 +194,8 @@ const Peliculas = () => {
 
       {peliculas.length === 0 && !cargando && (
         <div className="sin-peliculas">
-          <h3>🎬 No hay películas disponibles</h3>
-          <p>Parece que no hay películas en el catálogo en este momento.</p>
+          <h3>No hay películas disponibles</h3>
+          <p>El catálogo está vacío en este momento. Por favor, inténtalo más tarde.</p>
         </div>
       )}
       </div>

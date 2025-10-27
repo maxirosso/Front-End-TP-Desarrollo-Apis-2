@@ -233,7 +233,7 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
                   onChange={(e) => manejarCambioFiltro('contieneEspoilers', e.target.checked)}
                 />
                 <span className="checkbox-custom"></span>
-                Incluir reseñas con spoilers ⚠️
+                Solo reseñas con spoilers ⚠️
               </label>
             </div>
           </div>
@@ -247,10 +247,6 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
             Limpiar filtros
           </button>
         )}
-        <button className="boton-aplicar" onClick={aplicarFiltros}>
-          Aplicar filtros
-          {hayFiltrosActivos() && <span className="indicador-filtros-activos">●</span>}
-        </button>
       </div>
 
       {/* Resumen de filtros activos */}

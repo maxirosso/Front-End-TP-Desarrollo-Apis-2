@@ -234,12 +234,6 @@ const PerfilUsuario = () => {
             <span className="numero">{resenasUsuario.length}</span>
             <span className="etiqueta">RESEÑAS</span>
           </div>
-          <div className="estadistica">
-            <span className="numero">
-              {resenasUsuario.reduce((total, r) => total + parseInt(r.likes_count || r.likes || 0), 0)}
-            </span>
-            <span className="etiqueta">LIKES RECIBIDOS</span>
-          </div>
         </div>
       </div>
 

@@ -345,46 +345,25 @@
   position: relative;
 }
 
-.boton-like,
-.boton-comentar {
-  background: transparent;
-  border: 1px solid var(--texto-silenciado);
-  color: var(--texto-secundario);
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
+/* Contador de likes sin botón */
+.contador-likes-display {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.boton-like:hover {
-  background-color: #27AE60;
-  border-color: #27AE60;
-  color: white;
-  transform: translateY(-1px);
-}
-
-.boton-like.activo {
-  background-color: #E74C3C;
-  border-color: #E74C3C;
-  color: white;
-}
-
-.boton-like.activo:hover {
-  background-color: #C0392B;
+  padding: 0.4rem 0.8rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .icono-like {
   font-size: 1rem;
 }
 
-.contador-likes,
-.contador-comentarios {
+.numero-likes {
   font-weight: 500;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  color: var(--texto-principal);
 }
 
 .boton-comentar:hover {

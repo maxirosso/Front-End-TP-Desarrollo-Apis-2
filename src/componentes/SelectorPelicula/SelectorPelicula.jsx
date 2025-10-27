@@ -90,32 +90,9 @@ const SelectorPelicula = ({
 
   return (
     <div className="selector-pelicula" ref={sugerenciasRef}>
-      <div className="campo-busqueda">
-        <input
-          ref={inputRef}
-          type="text"
-          value={busqueda}
-          onChange={manejarCambioBusqueda}
-          onFocus={() => busqueda && setMostrarSugerencias(true)}
-          placeholder="Buscá tu película favorita..."
-          className={`entrada-busqueda ${peliculaSeleccionada ? 'seleccionada' : ''}`}
-          disabled={disabled}
-        />
-        
-        {cargando && (
-          <div className="icono-carga">
-            <div className="spinner-pequeno"></div>
-          </div>
-        )}
-        
-        {peliculaSeleccionada && (
-          <div className="icono-seleccionada">✅</div>
-        )}
-      </div>
-
-      {/* Película seleccionada */}
-      {peliculaSeleccionada && !mostrarFormularioNueva && (
-        <div className="pelicula-seleccionada">
+      {/* Modo solo lectura cuando está deshabilitado */}
+      {disabled && peliculaSeleccionada ? (
+        <div className="pelicula-solo-lectura">
           <div className="info-pelicula">
             <img 
               src={peliculaSeleccionada.poster_url || 'https://via.placeholder.com/60x90/34495e/ecf0f1?text=Sin+Poster'} 
@@ -136,21 +113,71 @@ const SelectorPelicula = ({
               )}
             </div>
           </div>
-          <button 
-            type="button"
-            onClick={() => {
-              setBusqueda('');
-              onSeleccionarPelicula(null);
-            }}
-            className="boton-cambiar"
-          >
-            Cambiar
-          </button>
+          <div className="badge-bloqueado">🔒 No editable</div>
         </div>
-      )}
+      ) : (
+        <>
+          <div className="campo-busqueda">
+            <input
+              ref={inputRef}
+              type="text"
+              value={busqueda}
+              onChange={manejarCambioBusqueda}
+              onFocus={() => busqueda && setMostrarSugerencias(true)}
+              placeholder="Buscá tu película favorita..."
+              className={`entrada-busqueda ${peliculaSeleccionada ? 'seleccionada' : ''}`}
+              disabled={disabled}
+            />
+            
+            {cargando && (
+              <div className="icono-carga">
+                <div className="spinner-pequeno"></div>
+              </div>
+            )}
+            
+            {peliculaSeleccionada && (
+              <div className="icono-seleccionada">✅</div>
+            )}
+          </div>
 
-      {/* Sugerencias */}
-      {mostrarSugerencias && !peliculaSeleccionada && (
+          {/* Película seleccionada */}
+          {peliculaSeleccionada && !mostrarFormularioNueva && (
+            <div className="pelicula-seleccionada">
+              <div className="info-pelicula">
+                <img 
+                  src={peliculaSeleccionada.poster_url || 'https://via.placeholder.com/60x90/34495e/ecf0f1?text=Sin+Poster'} 
+                  alt={peliculaSeleccionada.title}
+                  className="poster-pequeno"
+                />
+                <div className="detalles-pelicula">
+                  <h4>{peliculaSeleccionada.title}</h4>
+                  <p className="info-secundaria">
+                    {peliculaSeleccionada.year} • {peliculaSeleccionada.genre || 'Sin género'}
+                    {peliculaSeleccionada.director && ` • ${peliculaSeleccionada.director}`}
+                  </p>
+                  {peliculaSeleccionada.description && (
+                    <p className="descripcion-corta">
+                      {peliculaSeleccionada.description.substring(0, 100)}
+                      {peliculaSeleccionada.description.length > 100 && '...'}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <button 
+                type="button"
+                onClick={() => {
+                  setBusqueda('');
+                  onSeleccionarPelicula(null);
+                }}
+                className="boton-cambiar"
+              >
+                Cambiar
+              </button>
+            </div>
+          )}
+
+          {/* Sugerencias */}
+          {mostrarSugerencias && !peliculaSeleccionada && (
         <div className="sugerencias">
           {peliculasFiltradas.length > 0 ? (
             <>
@@ -201,6 +228,8 @@ const SelectorPelicula = ({
             </div>
           )}
         </div>
+      )}
+        </>
       )}
     </div>
   );

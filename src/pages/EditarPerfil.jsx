@@ -359,8 +359,9 @@ const EditarPerfil = () => {
             <h3 className="subtitulo-seccion">Información Personal</h3>
             
             <div className="campo-formulario">
-              <label className="etiqueta-campo">Nombre *</label>
+              <label htmlFor='nombre' className="etiqueta-campo">Nombre *</label>
               <input
+                id='nombre'
                 type="text"
                 value={datosFormulario.name}
                 onChange={(e) => manejarCambioEntrada('name', e.target.value)}
@@ -372,8 +373,9 @@ const EditarPerfil = () => {
             </div>
 
             <div className="campo-formulario">
-              <label className="etiqueta-campo">Email *</label>
+              <label htmlFor='email' className="etiqueta-campo">Email *</label>
               <input
+                id='email'
                 type="email"
                 value={datosFormulario.email}
                 onChange={(e) => manejarCambioEntrada('email', e.target.value)}
@@ -385,8 +387,9 @@ const EditarPerfil = () => {
             </div>
 
             <div className="campo-formulario">
-              <label className="etiqueta-campo">Biografía</label>
+              <label htmlFor='bio' className="etiqueta-campo">Biografía</label>
               <textarea
+                id='bio'
                 value={datosFormulario.bio}
                 onChange={(e) => manejarCambioEntrada('bio', e.target.value)}
                 className={`entrada-textarea ${errores.bio ? 'error' : ''}`}

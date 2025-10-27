@@ -209,6 +209,22 @@
   letter-spacing: 0.02em;
 }
 
+/* Título de la reseña */
+.titulo-resena-contenedor {
+  margin: 0.75rem 0;
+}
+
+.titulo-resena {
+  color: var(--texto-principal);
+  font-family: var(--fuente-titulos);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  font-style: italic;
+  opacity: 0.9;
+  line-height: 1.3;
+}
+
 .enlace-titulo-pelicula:hover .titulo-pelicula {
   color: var(--color-acento-hover);
 }
@@ -223,29 +239,65 @@
 .calificacion-contenedor {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem 0;
 }
 
 .estrellas-calificacion {
   display: flex;
-  gap: 0.2rem;
-  font-size: 1.2rem;
+  gap: 0.25rem;
+  font-size: 1.4rem;
+  margin: 0.5rem 0;
 }
 
 .estrella {
-  transition: color 0.2s ease;
+  transition: all 0.3s ease;
+  cursor: default;
 }
 
 .estrella.completa {
   color: #F39C12;
+  text-shadow: 
+    0 0 5px rgba(243, 156, 18, 0.8),
+    0 0 10px rgba(243, 156, 18, 0.6),
+    0 0 15px rgba(243, 156, 18, 0.4),
+    0 0 20px rgba(243, 156, 18, 0.2);
+  filter: drop-shadow(0 0 8px rgba(243, 156, 18, 0.6));
+  animation: star-glow 2s ease-in-out infinite alternate;
 }
 
 .estrella.media {
   color: #F39C12;
+  text-shadow: 
+    0 0 5px rgba(243, 156, 18, 0.8),
+    0 0 10px rgba(243, 156, 18, 0.6),
+    0 0 15px rgba(243, 156, 18, 0.4);
+  filter: drop-shadow(0 0 8px rgba(243, 156, 18, 0.6));
+  animation: star-glow 2s ease-in-out infinite alternate;
 }
 
 .estrella.vacia {
   color: var(--texto-silenciado);
+  opacity: 0.3;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes star-glow {
+  0% {
+    text-shadow: 
+      0 0 5px rgba(243, 156, 18, 0.8),
+      0 0 10px rgba(243, 156, 18, 0.6),
+      0 0 15px rgba(243, 156, 18, 0.4),
+      0 0 20px rgba(243, 156, 18, 0.2);
+  }
+  100% {
+    text-shadow: 
+      0 0 8px rgba(243, 156, 18, 1),
+      0 0 15px rgba(243, 156, 18, 0.8),
+      0 0 25px rgba(243, 156, 18, 0.6),
+      0 0 35px rgba(243, 156, 18, 0.4);
+  }
 }
 
 .icono-megusta {

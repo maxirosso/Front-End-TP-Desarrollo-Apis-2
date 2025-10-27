@@ -217,12 +217,7 @@ const PerfilUsuario = () => {
             <h1 className="perfil-nombre">{usuario.name}</h1>
             <p className="perfil-email">{usuario.email}</p>
             {usuario.bio && <p className="perfil-bio">{usuario.bio}</p>}
-            <p className="perfil-fecha">
-              Miembro desde {new Date(usuario.created_at).toLocaleDateString('es-ES', {
-                year: 'numeric',
-                month: 'long'
-              })}
-            </p>
+            
             
          
           </div>

@@ -25,8 +25,18 @@ jobs:
 
     # 3. Instala las dependencias y construye la versión de producción
     - name: Install dependencies and build
+      # Exporta las variables necesarias ANTES del build
+      env:
+        # Exporta la URL base del backend desde el secreto
+        REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+        # CONSTRUYE la URL del proxy para usuarios añadiendo /users-api
+        REACT_APP_USER_URL: ${{ secrets.REACT_APP_API_URL }}/users-api
       run: |
         npm install
+        # El comando 'npm run build' ahora leerá las variables del 'env' de arriba
+        # Imprimimos las variables que se usarán (para depurar)
+        echo "Usando REACT_APP_API_URL=$REACT_APP_API_URL"
+        echo "Usando REACT_APP_USER_URL=$REACT_APP_USER_URL"
         CI=false npm run build
 
     # 4. Configura las credenciales de AWS

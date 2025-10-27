@@ -31,9 +31,11 @@ const TarjetaResena = ({
   
   const {
     id,
+    calificacion = Number(pelicula?.rating || pelicula?.calificacion || 0),
     usuario = pelicula?.user_name || pelicula?.usuario || 'Usuario desconocido',
     fechaResena = pelicula?.created_at || pelicula?.fechaResena || 'Fecha no disponible',
     textoResena = pelicula?.body || pelicula?.textoResena || '',
+    tituloResena = pelicula?.title_review || pelicula?.tituloResena || '',
     tags = pelicula?.tags || [],
     contieneEspoilers = pelicula?.has_spoilers || pelicula?.contieneEspoilers || false,
     moviePoster = pelicula?.movie_poster  || pelicula?.imagenUrl,
@@ -43,6 +45,9 @@ const TarjetaResena = ({
   // ✅ NUEVO: Determinar si la reseña fue editada
   const fueEditada = fechaActualizacion && fechaActualizacion !== fechaResena && 
                      new Date(fechaActualizacion) > new Date(fechaResena);
+
+  // Validar que los números sean válidos
+  const calificacionSegura = isNaN(calificacion) ? 0 : calificacion;
 
   // ✅ MEJORADO: Determinar si puede editar/eliminar la reseña
   // El usuario puede editar/eliminar si:
@@ -58,6 +63,23 @@ const TarjetaResena = ({
     if (!texto || typeof texto !== 'string') return '';
     if (texto.length <= limite) return texto;
     return textoCompleto ? texto : texto.substring(0, limite) + '...';
+  };
+
+  // Función para generar estrellas basada en la calificación
+  const generarEstrellas = (puntuacion) => {
+    const estrellas = [];
+    const puntuacionRedondeada = Math.round(puntuacion * 2) / 2; // Redondear a medias estrellas
+    
+    for (let i = 1; i <= 5; i++) {
+      if (i <= puntuacionRedondeada) {
+        estrellas.push(<span key={i} className="estrella completa">★</span>);
+      } else if (i - 0.5 === puntuacionRedondeada) {
+        estrellas.push(<span key={i} className="estrella media">☆</span>);
+      } else {
+        estrellas.push(<span key={i} className="estrella vacia">☆</span>);
+      }
+    }
+    return estrellas;
   };
 
   return (
@@ -100,13 +122,21 @@ const TarjetaResena = ({
             </Link>
           </div>
 
-          {/* Calificación con estrellas */}
-          {/* <div className="calificacion-contenedor">
-            <div className="estrellas-calificacion">
-              {generarEstrellas(calificacionSegura)}
+          {/* Título de la reseña */}
+          {tituloResena && (
+            <div className="titulo-resena-contenedor">
+              <h4 className="titulo-resena">{tituloResena}</h4>
             </div>
-            {megusta && <span className="icono-megusta">❤️</span>}
-          </div> */}
+          )}
+
+          {/* Calificación con estrellas */}
+          {calificacionSegura > 0 && (
+            <div className="calificacion-contenedor">
+              <div className="estrellas-calificacion">
+                {generarEstrellas(calificacionSegura)}
+              </div>
+            </div>
+          )}
 
           {/* Texto de la reseña */}
           <div className="texto-resena">

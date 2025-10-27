@@ -113,7 +113,7 @@ export const ProveedorResenas = ({ children }) => {
           throw new Error("La reseña debe tener al menos 20 caracteres");
         if (
           !nuevaResena.calificacion ||
-          nuevaResena.calificacion < 1 ||
+          nuevaResena.calificacion < 0||
           nuevaResena.calificacion > 5
         )
           throw new Error("La calificación debe estar entre 1 y 5");

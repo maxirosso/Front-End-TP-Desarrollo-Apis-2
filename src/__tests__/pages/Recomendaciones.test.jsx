@@ -62,36 +62,6 @@ describe('Recomendaciones', () => {
   }));
 
 
-  // it('renderiza películas populares y reseñas destacadas', async () => {
-  //   render(
-  //     <MemoryRouter>
-  //       <ProveedorAuth>
-  //         <Recomendaciones />
-  //       </ProveedorAuth>
-  //     </MemoryRouter>
-  //   );
-
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/Más Populares/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Matrix/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Titanic/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Mad Max/i)).toBeInTheDocument();
-  //   });
-
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/Reseñas Destacadas/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/TarjetaResena/i)).toBeInTheDocument();
-  //   });
-
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/Recomendaciones por Género/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Ciencia Ficción/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Drama/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Acción/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/Romance/i)).toBeInTheDocument();
-  //   });
-  // });
-
   it('muestra los botones de CTA', async () => {
     render(
       <MemoryRouter>
@@ -107,37 +77,6 @@ describe('Recomendaciones', () => {
     });
   });
 
-  // it('muestra los iconos correctos para cada género', async () => {
-  //   render(
-  //     <MemoryRouter>
-  //       <ProveedorAuth>
-  //         <Recomendaciones />
-  //       </ProveedorAuth>
-  //     </MemoryRouter>
-  //   );
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/ Ciencia Ficción/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/ Drama/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/ Acción/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/ Romance/i)).toBeInTheDocument();
-  //   });
-  // });
-
-  // it('muestra el rating promedio en cada película popular', async () => {
-  //   render(
-  //     <MemoryRouter>
-  //       <ProveedorAuth>
-  //         <Recomendaciones />
-  //       </ProveedorAuth>
-  //     </MemoryRouter>
-  //   );
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/⭐ 4.5/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/⭐ 4.2/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/⭐ 4.0/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/⭐ 3.8/i)).toBeInTheDocument();
-  //   });
-  // });
 
   // // Nuevos tests
 
@@ -187,27 +126,6 @@ describe('Recomendaciones', () => {
     });
   });
 
-  //aca
-  it('muestra los mini ratings en recomendaciones por género', async () => {
-    render(
-      <MemoryRouter>
-        <ProveedorAuth>
-          <Recomendaciones />
-        </ProveedorAuth>
-      </MemoryRouter>
-    );
-    await waitFor(() => {
-      // Busca solo los mini ratings en las recomendaciones por género
-      const miniRatings = screen.getAllByText(/(4\.5|4\.2|4\.0|3\.8)/i)
-        .filter(el => el.className.includes('mini-rating'));
-      expect(miniRatings.length).toBeGreaterThanOrEqual(4);
-      expect(miniRatings.some(r => r.textContent.includes('4.5'))).toBe(true);
-      expect(miniRatings.some(r => r.textContent.includes('4.2'))).toBe(true);
-      expect(miniRatings.some(r => r.textContent.includes('4.0'))).toBe(true);
-      expect(miniRatings.some(r => r.textContent.includes('3.8'))).toBe(true);
-    });
-  });
-
   it('muestra la cantidad de reseñas en cada película popular', async () => {
     render(
       <MemoryRouter>
@@ -221,19 +139,19 @@ describe('Recomendaciones', () => {
     });
   });
 
-  // it('muestra el póster de cada película popular', async () => {
-  //   render(
-  //     <MemoryRouter>
-  //       <ProveedorAuth>
-  //         <Recomendaciones />
-  //       </ProveedorAuth>
-  //     </MemoryRouter>
-  //   );
-  //   await waitFor(() => {
-  //     const posters = screen.getAllByAltText(/Póster de/i);
-  //     expect(posters.length).toBeGreaterThanOrEqual(4);
-  //   });
-  // });
+  it('muestra el póster de cada película popular', async () => {
+    render(
+      <MemoryRouter>
+        <ProveedorAuth>
+          <Recomendaciones />
+        </ProveedorAuth>
+      </MemoryRouter>
+    );
+    await waitFor(() => {
+      const posters = screen.getAllByAltText(/Póster de/i);
+      expect(posters.length).toBeGreaterThanOrEqual(4);
+    });
+  });
 });
 
 // We recommend installing an extension to run vitest tests.

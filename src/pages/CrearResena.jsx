@@ -500,7 +500,7 @@ const CrearResena = () => {
               </div>
 
 
-              <div className="campo-formulario">
+              {/* <div className="campo-formulario">
                 <label className="etiqueta-campo">Género</label>
                 <select
                   value={datosFormulario.genero}
@@ -522,7 +522,7 @@ const CrearResena = () => {
                   <option value="Crimen">Crimen</option>
                 </select>
               </div>
-            </section>
+            </section> */}
 
             {/* Calificación */}
             <section className="seccion-calificacion">

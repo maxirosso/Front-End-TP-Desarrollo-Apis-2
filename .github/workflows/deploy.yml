@@ -1,5 +1,7 @@
+# Nombre del pipeline
 name: Deploy Frontend to AWS S3 and CloudFront
 
+# Disparador: Se ejecuta cada vez que hay un push a la rama 'main'
 on:
   push:
     branches: [ "main" ]
@@ -18,7 +20,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '20' # Actualizado a Node 20 por requerimientos de dependencias
         cache: 'npm'
 
     # 3. Instala las dependencias y construye la versión de producción
@@ -26,11 +28,17 @@ jobs:
       run: |
         npm install
         # Imprimo AMBAS variables para depurar
+        # Escribe el VALOR del SECRETO en el archivo (sobrescribe)
         echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" > .env.production
-        echo "REACT_APP_USER_URL=${{ secrets.REACT_APP_USER_URL }}" >> .env.production # Usamos >> para añadir al archivo
+        
+        # Añade el VALOR del otro SECRETO al archivo (añade)
+        echo "REACT_APP_USER_URL=${{ secrets.REACT_APP_USER_URL }}" >> .env.production
+        
         echo "--- Contenido de .env.production ---"
         cat .env.production # Mostramos el contenido del archivo creado
-        echo "------------------------------------"
+        echo "-----------------------------"
+        
+        # Ejecuta el build, ignorando warnings como errores
         CI=false npm run build
 
     # 4. Configura las credenciales de AWS

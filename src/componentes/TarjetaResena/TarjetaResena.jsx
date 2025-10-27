@@ -124,11 +124,11 @@ const TarjetaResena = ({
                 Reseña de {usuario}
                 {esPropioDueño && <span className="indicador-propietario">TU RESEÑA</span>}
               </span>
-              <div className="fechas-resena">
+              {/* <div className="fechas-resena">
                 {fechaVisionado && (
                   <span className="fecha-visionado">Visto el {fechaVisionado}</span>
                 )}
-              </div>
+              </div> */}
             </div>
           </header>
 
@@ -144,12 +144,12 @@ const TarjetaResena = ({
           </div>
 
           {/* Calificación con estrellas */}
-          <div className="calificacion-contenedor">
+          {/* <div className="calificacion-contenedor">
             <div className="estrellas-calificacion">
               {generarEstrellas(calificacionSegura)}
             </div>
             {megusta && <span className="icono-megusta">❤️</span>}
-          </div>
+          </div> */}
 
           {/* Texto de la reseña */}
           <div className="texto-resena">

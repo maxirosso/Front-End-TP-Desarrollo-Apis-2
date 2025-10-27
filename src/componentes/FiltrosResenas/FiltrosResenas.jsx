@@ -240,7 +240,7 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
         </div>
       )}
 
-      {/* Botones de acción */}
+      {/* Botones de acción
       <div className="botones-filtros">
         {hayFiltrosActivos() && (
           <button className="boton-limpiar" onClick={limpiarTodosFiltros}>
@@ -251,7 +251,7 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
           Aplicar filtros
           {hayFiltrosActivos() && <span className="indicador-filtros-activos">●</span>}
         </button>
-      </div>
+      </div> */}
 
       {/* Resumen de filtros activos */}
       {hayFiltrosActivos() && (

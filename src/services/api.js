@@ -88,6 +88,7 @@ const apiRequest = async (endpoint, options = {}) => {
   };
 
   const res = await fetch(url, config);
+  
   if (!res.ok) {
     const errData = await parseMaybeJson(res);
     const err = new Error((errData && errData.error) || `HTTP ${res.status}`);

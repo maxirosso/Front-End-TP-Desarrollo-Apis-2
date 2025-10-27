@@ -521,8 +521,8 @@ const CrearResena = () => {
                   <option value="Musical">Musical</option>
                   <option value="Crimen">Crimen</option>
                 </select>
-              </div>
-            </section> */}
+              </div> */}
+            </section>
 
             {/* Calificación */}
             <section className="seccion-calificacion">

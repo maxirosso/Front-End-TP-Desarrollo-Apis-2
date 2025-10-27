@@ -229,7 +229,7 @@ const PerfilUsuario = () => {
         </div>
 
         {/* Estadísticas */}
-        <div className="perfil-estadisticas">
+        {/* <div className="perfil-estadisticas">
           <div className="estadistica">
             <span className="numero">{resenasUsuario.length}</span>
             <span className="etiqueta">RESEÑAS</span>
@@ -240,7 +240,7 @@ const PerfilUsuario = () => {
             </span>
             <span className="etiqueta">LIKES RECIBIDOS</span>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Controles de reseñas */}

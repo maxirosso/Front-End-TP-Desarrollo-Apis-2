@@ -111,12 +111,12 @@ export const ProveedorResenas = ({ children }) => {
         const texto = nuevaResena.textoResena || nuevaResena.body || "";
         if (!texto || texto.trim().length < 20)
           throw new Error("La reseña debe tener al menos 20 caracteres");
-        if (
-          !nuevaResena.calificacion ||
-          nuevaResena.calificacion < 0||
-          nuevaResena.calificacion > 5
-        )
-          throw new Error("La calificación debe estar entre 1 y 5");
+        // if (
+        //   !nuevaResena.calificacion ||
+        //   nuevaResena.calificacion < 0||
+        //   nuevaResena.calificacion > 5
+        // )
+        //   throw new Error("La calificación debe estar entre 1 y 5");
 
         // movie_id (requerido). Si no vino, intento matchear por título; si no, fallback 1
         let movieId = 1;

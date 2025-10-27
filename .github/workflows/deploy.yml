@@ -25,6 +25,7 @@ jobs:
     - name: Install dependencies and build
       run: |
         npm install
+        echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" > .env.production
         CI=false npm run build
 
     # 4. Configura las credenciales de AWS

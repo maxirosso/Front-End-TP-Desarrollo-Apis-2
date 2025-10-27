@@ -25,7 +25,12 @@ jobs:
     - name: Install dependencies and build
       run: |
         npm install
+        # Imprimo AMBAS variables para depurar
         echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" > .env.production
+        echo "REACT_APP_USER_URL=${{ secrets.REACT_APP_USER_URL }}" >> .env.production # Usamos >> para añadir al archivo
+        echo "--- Contenido de .env.production ---"
+        cat .env.production # Mostramos el contenido del archivo creado
+        echo "------------------------------------"
         CI=false npm run build
 
     # 4. Configura las credenciales de AWS

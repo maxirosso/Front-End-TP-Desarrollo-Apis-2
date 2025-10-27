@@ -7,6 +7,9 @@ import { ROLES } from '../utils/auth';
 export const usePermissions = () => {
   const { usuario, tieneRol, tienePermiso, puedeEditarRecurso, puedeEliminarRecurso } = useAuth();
 
+  // ✅ Permisos específicos para comentarios/reseñas (admin/moderador pueden editar/eliminar cualquier reseña)
+  const esAdminOModerador = tieneRol([ROLES.ADMIN, ROLES.MODERATOR]);
+  
   return {
     // Usuario actual
     usuario,
@@ -15,11 +18,15 @@ export const usePermissions = () => {
     esAdmin: tieneRol(ROLES.ADMIN),
     esModerador: tieneRol(ROLES.MODERATOR),
     esUsuario: tieneRol(ROLES.USER),
-    esAdminOModerador: tieneRol([ROLES.ADMIN, ROLES.MODERATOR]),
+    esAdminOModerador,
 
     // Verificación de permisos sobre recursos específicos
     puedeEditarRecurso,
     puedeEliminarRecurso,
+
+    // ✅ Permisos de comentarios (admin/moderador pueden editar/eliminar todas las reseñas)
+    puedeEditarComentario: esAdminOModerador,
+    puedeEliminarComentario: esAdminOModerador,
 
     // Función genérica para verificar cualquier permiso
     tienePermiso,

@@ -283,11 +283,11 @@ const CrearResena = () => {
       console.log('❌ Error: año inválido', datosFormulario.año);
     }
 
-    // ✅ VALIDACIÓN: La calificación debe ser entre 1 y 5
-    // if (!datosFormulario.calificacion || datosFormulario.calificacion < 1 || datosFormulario.calificacion > 5) {
-    //   nuevosErrores.calificacion = 'Debes dar una calificación entre 1 y 5 estrellas';
-    //   console.log('❌ Error: calificación inválida', datosFormulario.calificacion);
-    // }
+    // ✅ VALIDACIÓN: La calificación debe ser entre 1 y 5 (ahora opcional)
+    if (datosFormulario.calificacion && (datosFormulario.calificacion < 1 || datosFormulario.calificacion > 5)) {
+      nuevosErrores.calificacion = 'La calificación debe estar entre 1 y 5 estrellas';
+      console.log('❌ Error: calificación inválida', datosFormulario.calificacion);
+    }
 
     // ✅ FIX: Hacer la fecha de visionado opcional
     // if (!datosFormulario.fechaVisionado) {
@@ -526,7 +526,7 @@ const CrearResena = () => {
 
             {/* Calificación */}
             <section className="seccion-calificacion">
-              <h3 className="subtitulo-seccion">Tu Calificación *</h3>
+              <h3 className="subtitulo-seccion">Tu Calificación (Opcional)</h3>
               <div className="contenedor-estrellas">
                 {generarEstrellas()}
                 <span className="texto-calificacion">

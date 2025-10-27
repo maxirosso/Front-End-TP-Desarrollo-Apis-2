@@ -111,12 +111,14 @@ export const ProveedorResenas = ({ children }) => {
         const texto = nuevaResena.textoResena || nuevaResena.body || "";
         if (!texto || texto.trim().length < 20)
           throw new Error("La reseña debe tener al menos 20 caracteres");
-        // if (
-        //   !nuevaResena.calificacion ||
-        //   nuevaResena.calificacion < 0||
-        //   nuevaResena.calificacion > 5
-        // )
-        //   throw new Error("La calificación debe estar entre 1 y 5");
+        
+        // ✅ FIX: Validar calificación solo si existe y está fuera de rango
+        if (nuevaResena.calificacion !== undefined && nuevaResena.calificacion !== null) {
+          const rating = Number(nuevaResena.calificacion);
+          if (rating < 0 || rating > 5) {
+            throw new Error("La calificación debe estar entre 0 y 5");
+          }
+        }
 
         // movie_id (requerido). Si no vino, intento matchear por título; si no, fallback 1
         let movieId = 1;
@@ -141,7 +143,7 @@ export const ProveedorResenas = ({ children }) => {
           user_id: Number(usuarioActual),
           title: (nuevaResena.tituloResena || nuevaResena.titulo || "").trim(),
           body: texto.trim(),
-          rating: Number(nuevaResena.calificacion),
+          rating: Number(nuevaResena.calificacion || 0),
           has_spoilers: Boolean(nuevaResena.contieneEspoilers),
           tags: Array.isArray(nuevaResena.tags) ? nuevaResena.tags : [],
         };

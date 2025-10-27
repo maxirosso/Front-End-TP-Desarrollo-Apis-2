@@ -56,18 +56,6 @@ const BarraNavegacion = () => {
               <li><Link to="/peliculas" className="enlace-navegacion">FILMS</Link></li>
             </ul>
 
-            {/* Buscador */}
-            <form className="formulario-busqueda" onSubmit={enviarBusqueda}>
-              <input
-                type="text"
-                placeholder="Buscá tu película favorita..."
-                value={terminoBusqueda}
-                onChange={manejarBusqueda}
-                className="entrada-busqueda"
-              />
-              <button type="submit" className="boton-busqueda">🔍</button>
-            </form>
-
             {/* Botón de crear reseña */}
             <Link to="/crear" className="boton-crear-resena-nav">
               ✏️ ESCRIBIR RESEÑA

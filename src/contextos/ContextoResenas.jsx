@@ -152,6 +152,7 @@ export const ProveedorResenas = ({ children }) => {
         setTimeout(recargarResenasDesdeBackend, 1000);
         return true;
       } else {
+        console.log("Agregando reseña (mock local):", nuevaResena);
         // Modo local
         const fecha = new Date();
         const mock = {
@@ -202,6 +203,7 @@ export const ProveedorResenas = ({ children }) => {
           contieneEspoilers: nuevaResena.contieneEspoilers || false,
           genero: nuevaResena.genero || "",
         };
+        console.log("Reseña mock creada:", mock);
 
         setResenas((prev) => [mock, ...prev]);
         return mock;

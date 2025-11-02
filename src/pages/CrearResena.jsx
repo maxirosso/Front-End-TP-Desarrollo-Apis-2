@@ -91,7 +91,9 @@ const CrearResena = () => {
 
         try {
           const resenaId = parseInt(id, 10);
-          const response = await fetch(`http://localhost:8080/reviews/${resenaId}`);
+          const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+          const response = await fetch(`${apiUrl}/reviews/${resenaId}`);
+          // const response = await fetch(`http://localhost:8080/reviews/${resenaId}`); //Esto estaba harcodeado aca. No sé porqe....
 
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -278,10 +280,10 @@ const CrearResena = () => {
       console.log('❌ Error: título vacío');
     }
 
-    if (!datosFormulario.año || datosFormulario.año < 1900 || datosFormulario.año > new Date().getFullYear() + 5) {
-      nuevosErrores.año = 'Ingresa un año válido';
-      console.log('❌ Error: año inválido', datosFormulario.año);
-    }
+    // if (!datosFormulario.año || datosFormulario.año < 1900 || datosFormulario.año > new Date().getFullYear() + 5) {
+    //   nuevosErrores.año = 'Ingresa un año válido';
+    //   console.log('❌ Error: año inválido', datosFormulario.año);
+    // }
 
     // ✅ VALIDACIÓN: La calificación debe ser entre 1 y 5 (ahora opcional)
     if (datosFormulario.calificacion && (datosFormulario.calificacion < 1 || datosFormulario.calificacion > 5)) {

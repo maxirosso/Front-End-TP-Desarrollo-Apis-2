@@ -107,6 +107,7 @@ export const ProveedorResenas = ({ children }) => {
 
   const agregarResena = async (nuevaResena) => {
     try {
+      ;
       if (usingBackend) {
         const texto = nuevaResena.textoResena || nuevaResena.body || "";
         if (!texto || texto.trim().length < 20)
@@ -215,6 +216,7 @@ export const ProveedorResenas = ({ children }) => {
   };
 
   const actualizarResena = async (id, datosActualizados) => {
+    debugger
     try {
       if (usingBackend) {
         await reviewsAPI.update(id, datosActualizados);
@@ -368,7 +370,7 @@ export const ProveedorResenas = ({ children }) => {
   };
 
   const aplicarFiltros = async (filtros = {}) => {
-    debugger
+    
     try {
       if (usingBackend /* && (filtros.genero || filtros.calificacion || filtros.usuario || filtros.pelicula || filtros.tags?.length > 0 || filtros.fechaPublicacion) */) {
         // Usar backend para filtros complejos

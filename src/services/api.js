@@ -76,7 +76,8 @@ const postFormUser = (path, obj) => {
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
   const token = getToken();
-
+  debugger;
+  
   const config = {
     method: options.method || "GET",
     headers: {

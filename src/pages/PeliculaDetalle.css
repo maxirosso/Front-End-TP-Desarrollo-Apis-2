@@ -245,6 +245,7 @@
 .acciones-pelicula {
   display: flex;
   gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .boton-escribir-resena {

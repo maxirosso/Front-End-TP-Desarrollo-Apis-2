@@ -71,12 +71,7 @@ const EditarPerfil = () => {
         
         // Convertir a base64 con máxima compresión
         const dataURL = canvas.toDataURL('image/jpeg', quality);
-        
-        console.log('🔍 Imagen redimensionada:', {
-          dimensiones: `${maxWidth}x${maxHeight}`,
-          calidad: quality,
-          tamaño: dataURL.length + ' caracteres'
-        });
+      
         
         resolve(dataURL);
       };
@@ -182,14 +177,12 @@ const EditarPerfil = () => {
             return;
           }
           
-          console.log('✅ Imagen ultra comprimida:', imagenUltraComprimida.length, 'caracteres');
           setDatosFormulario(prev => ({
             ...prev,
             profile_image: imagenUltraComprimida,
             profileImageFile: archivo
           }));
         } else {
-          console.log('✅ Imagen comprimida correctamente:', imagenComprimida.length, 'caracteres');
           setDatosFormulario(prev => ({
             ...prev,
             profile_image: imagenComprimida,
@@ -262,7 +255,6 @@ const EditarPerfil = () => {
 
       // Debug: mostrar tamaño de la imagen
       if (datosActualizacion.profile_image && !datosActualizacion.profile_image.startsWith('placeholder:')) {
-        console.log('📏 Tamaño de imagen base64:', datosActualizacion.profile_image.length, 'caracteres');
         
         // Si la imagen es demasiado grande, no enviarla
         if (datosActualizacion.profile_image.length > 400) {

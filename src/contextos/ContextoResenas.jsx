@@ -368,7 +368,6 @@ export const ProveedorResenas = ({ children }) => {
   };
 
   const aplicarFiltros = async (filtros = {}) => {
-    debugger
     try {
       if (usingBackend /* && (filtros.genero || filtros.calificacion || filtros.usuario || filtros.pelicula || filtros.tags?.length > 0 || filtros.fechaPublicacion) */) {
         // Usar backend para filtros complejos

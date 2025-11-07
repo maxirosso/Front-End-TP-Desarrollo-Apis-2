@@ -127,7 +127,6 @@ const ListaResenas = ({reseñasExternas}) => {
       setResenas(reseñasExternas  ?? datosPeliculasEjemplo);
       setCargando(false);
     };
-    console.log("Cargando reseñas...");
     cargarResenas();
   }, []);
 
@@ -245,7 +244,6 @@ const ListaResenas = ({reseñasExternas}) => {
   };
 
   if (cargando) {
-    console.log("Cargando reseñas...");
     return (
       <div className="contenedor-cargando">
         <div className="spinner-carga">

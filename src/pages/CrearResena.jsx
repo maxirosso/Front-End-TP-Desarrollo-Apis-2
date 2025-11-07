@@ -26,11 +26,9 @@ const CrearResena = () => {
   
   // Usar las funciones desde el ref
   const agregarResena = (...args) => {
-    console.log('🚀 agregarResena wrapper llamada con:', args);
     return funcionesRef.current.agregarResena(...args);
   };
   const actualizarResena = (...args) => {
-    console.log('🚀 actualizarResena wrapper llamada con:', args);
     return funcionesRef.current.actualizarResena(...args);
   };
   // const reviewsAPI = funcionesRef.current.reviewsAPI;
@@ -263,7 +261,6 @@ const CrearResena = () => {
   };
 
   const validarFormulario = () => {
-    console.log('🔍 Validando formulario con datos:', datosFormulario);
     const nuevosErrores = {};
 
     if (!datosFormulario.titulo.trim()) {
@@ -310,16 +307,12 @@ const CrearResena = () => {
   };
 
   const manejarEnvio = async (evento) => {
-    console.log('🎯 manejarEnvio - Iniciando...', { evento });
     evento.preventDefault();
 
-    console.log('📝 Validando formulario...');
     if (!validarFormulario()) {
-      console.log('❌ Validación falló');
       return;
     }
 
-    console.log('✅ Validación exitosa, enviando...');
     setEnviando(true);
 
     try {
@@ -350,26 +343,16 @@ const CrearResena = () => {
         contieneEspoilers: datosFormulario.contieneEspoilers,
         likes: 0,
         yaLeDiLike: false,
-        comentarios: [],
         // Agregar ID de película seleccionada para el backend
         movie_id: peliculaSeleccionada ? peliculaSeleccionada.id : null
       };
 
-      console.log('📦 Datos de reseña preparados:', datosResena);
-      console.log('🔍 Verificando funciones:', {
-        agregarResenaExists: !!agregarResena,
-        actualizarResenaExists: !!actualizarResena,
-        esEdicion
-      });
-
       if (esEdicion) {
         // Modo edición
-        console.log('📝 Modo edición, llamando actualizarResena...');
         await actualizarResena(id, datosResena); // ✅ Cambiar de editarResena a actualizarResena
         alert('¡Reseña actualizada exitosamente! 🎉');
       } else {
         // Modo creación
-        console.log('➕ Modo creación, llamando agregarResena...');
         datosResena.id = Date.now();
         datosResena.fechaResena = new Date().toLocaleDateString('es-ES', {
           day: 'numeric',
@@ -380,16 +363,15 @@ const CrearResena = () => {
         alert('¡Reseña creada exitosamente! 🎉');
       }
 
-      console.log('✅ Reseña guardada, redirigiendo...');
       // Redirigir al inicio
       navigate('/');
 
     } catch (error) {
       console.error('💥 Error al crear reseña:', error);
+      console.log('Datos de reseña enviados:', datosFormulario);
       alert('Uh, hubo un problema al crear la reseña. Probá de nuevo.');
     } finally {
       setEnviando(false);
-      console.log('🏁 manejarEnvio - Finalizado');
     }
   };
 

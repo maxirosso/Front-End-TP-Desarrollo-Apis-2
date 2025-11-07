@@ -88,15 +88,25 @@ const apiRequest = async (endpoint, options = {}) => {
   };
 
   const res = await fetch(url, config);
-  
+  const data = await parseMaybeJson(res).catch(() => null);
+
   if (!res.ok) {
-    const errData = await parseMaybeJson(res);
-    const err = new Error((errData && errData.error) || `HTTP ${res.status}`);
-    err.status = res.status;
-    err.data = errData;
-    throw err;
+    const error = new Error(
+      (data && (data.error || data.message)) || `HTTP ${res.status}`
+    );
+    error.status = res.status;
+    error.data = data;
+    console.error(
+      `[apiRequest] Error en ${config.method} ${url}`,
+      "status:",
+      res.status,
+      "respuesta:",
+      data
+    );
+    throw error;
   }
-  return parseMaybeJson(res);
+
+  return data;
 };
 
 //-------- Auth (solo login contra el módulo de usuarios) --------
@@ -157,7 +167,6 @@ export const authAPI = {
   },
 };
 
-
 // -------- Reviews --------
 export const reviewsAPI = {
   create: (reviewData) =>
@@ -185,10 +194,8 @@ export const reviewsAPI = {
     apiRequest(`/users/${userId}/reviews${buildQuery(filters)}`),
 
   filter: (filters = {}) => {
-    debugger
-    console.log('LLegue al endpoint', filters);
     const queryParams = new URLSearchParams(filters).toString();
-    const endpoint = `/reviews/filter${queryParams ? `?${queryParams}` : ''}`;
+    const endpoint = `/reviews/filter${queryParams ? `?${queryParams}` : ""}`;
     return apiRequest(endpoint);
   },
 

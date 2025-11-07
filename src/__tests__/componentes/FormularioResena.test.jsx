@@ -57,19 +57,6 @@ describe('FormularioResena', () => {
     expect(onCerrar).toHaveBeenCalledTimes(2);
   });
 
-//   it('envía el formulario correctamente si los datos son válidos', () => {
-//     render(<FormularioResena onCrearResena={onCrearResena} onCerrar={onCerrar} />);
-//     fireEvent.change(screen.getByLabelText(/Título de la Película/i), { target: { value: 'Matrix' } });
-//     fireEvent.change(screen.getByLabelText(/Año/i), { target: { value: '1999' } });
-//     fireEvent.change(screen.getByLabelText(/Género/i), { target: { value: 'accion' } });
-//     fireEvent.click(screen.getAllByRole('button', { name: '★' })[4]); // 5 estrellas
-//     fireEvent.change(screen.getByLabelText(/¿Cuándo la viste\?/i), { target: { value: '2024-01-01' } });
-//     fireEvent.change(screen.getByPlaceholderText(/Comparte tu opinión/i), { target: { value: 'Película excelente, llena de acción y filosofía.' } });
-//     fireEvent.click(screen.getByRole('button', { name: /Publicar Reseña/i }));
-//     expect(onCrearResena).toHaveBeenCalledTimes(1);
-//     expect(onCerrar).toHaveBeenCalledTimes(1);
-//   });
-
   it('muestra contador de caracteres en textarea', () => {
     render(<FormularioResena onCrearResena={onCrearResena} onCerrar={onCerrar} />);
     const textarea = screen.getByPlaceholderText(/Comparte tu opinión/i);

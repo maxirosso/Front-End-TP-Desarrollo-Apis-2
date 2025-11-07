@@ -50,7 +50,6 @@
 
 .poster-pelicula {
   width: 200px;
-  height: 300px;
   object-fit: cover;
   border-radius: var(--radio-borde-xl);
   box-shadow: var(--sombra-large);
@@ -244,8 +243,8 @@
 /* Acciones */
 .acciones-pelicula {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .boton-escribir-resena {

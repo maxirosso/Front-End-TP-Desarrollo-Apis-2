@@ -3,24 +3,22 @@ export const TAGS_DISPONIBLES = [
   // Tags de contenido
   'Sin Spoilers',
   
-  // Géneros
-  'Acción',
-  'Drama', 
-  'Comedia',
-  'Terror',
-  'Romance',
-  'Ciencia Ficción',
-  'Thriller',
-  'Familiar',
-  'Animación',
-  'Documental',
-  
   // Calificaciones subjetivas
   'Obra Maestra',
   'Una Decepción', 
   'Sobrevalorada',
   'Infravalorada',
-  'Imperdible'
+  'Imperdible',
+  'Entretenida',
+  'Aburrida',
+  'Visualmente Impresionante',
+  'Buena Banda Sonora',
+  'Gran Actuación',
+  'Mala Actuación',
+  'Guion Débil',
+  'Efectos Especiales',
+  'Narrativa No Lineal',
+  'Clásico',
 ];
 
 export default TAGS_DISPONIBLES;

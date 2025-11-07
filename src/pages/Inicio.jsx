@@ -34,7 +34,6 @@ const Inicio = () => {
   useEffect(() => {
     const terminoBusqueda = searchParams.get('busqueda');
     if (terminoBusqueda) {
-      console.log('🔍 Búsqueda detectada:', terminoBusqueda);
       setFiltrosActivos(prev => ({
         ...prev,
         pelicula: terminoBusqueda
@@ -44,13 +43,6 @@ const Inicio = () => {
 
   // Aplicar filtros y ordenamiento
   useEffect(() => {
-    console.log('🏠 Inicio: resenas cambiaron, total:', resenas.length);
-    console.log('📊 Estadísticas calculadas:', {
-      totalResenas: resenas.length,
-      peliculasUnicas: new Set(resenas.map(r => r.movie_title || r.titulo)).size,
-      usuariosUnicos: new Set(resenas.map(r => r.user_name || r.usuario)).size
-    });
-    
     const aplicarFiltrosYOrdenamiento = async () => {
       try {
         // Verificar si algún filtro requiere backend
@@ -62,7 +54,6 @@ const Inicio = () => {
         );
         
         let resenasProcesadas;
-        debugger
         // if (requiereBackend) {
           // Usar función asíncrona del contexto
           resenasProcesadas = await aplicarFiltros(filtrosActivos);
@@ -163,41 +154,41 @@ const Inicio = () => {
   }, [resenas, filtrosActivos, ordenamientoActual, aplicarFiltros, aplicarOrdenamiento, usingBackend]);
 
   // ✅ NUEVO: Escuchar eventos de actualización de reseñas
-  useEffect(() => {
-    const handleResenasUpdate = (event) => {
-      console.log('🔔 Inicio: Recibido evento de reseñas actualizadas:', event.detail);
-      // Los contadores se actualizarán automáticamente porque resenas cambiará
-    };
+  // useEffect(() => {
+  //   const handleResenasUpdate = (event) => {
+  //     console.log('🔔 Inicio: Recibido evento de reseñas actualizadas:', event.detail);
+  //     // Los contadores se actualizarán automáticamente porque resenas cambiará
+  //   };
 
-    const handleForceRerender = (event) => {
-      console.log('🔄 Inicio: Forzando re-render por:', event.detail.reason);
-      // Forzar actualización del estado local si es necesario
-      window.location.reload(); // Como último recurso para asegurar actualización
-    };
+  //   const handleForceRerender = (event) => {
+  //     console.log('🔄 Inicio: Forzando re-render por:', event.detail.reason);
+  //     // Forzar actualización del estado local si es necesario
+  //     window.location.reload(); // Como último recurso para asegurar actualización
+  //   };
 
-    window.addEventListener('resenasActualizadas', handleResenasUpdate);
-    window.addEventListener('forceRerender', handleForceRerender);
+  //   window.addEventListener('resenasActualizadas', handleResenasUpdate);
+  //   window.addEventListener('forceRerender', handleForceRerender);
     
-    return () => {
-      window.removeEventListener('resenasActualizadas', handleResenasUpdate);
-      window.removeEventListener('forceRerender', handleForceRerender);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('resenasActualizadas', handleResenasUpdate);
+  //     window.removeEventListener('forceRerender', handleForceRerender);
+  //   };
+  // }, []);
 
   // ✅ NUEVO: Escuchar evento de reseñas actualizadas para recargar automáticamente  
-  useEffect(() => {
-    const manejarResenasActualizadas = () => {
-      console.log('🔔 Inicio: Reseñas actualizadas detectadas');
-      // No necesitamos hacer nada especial aquí porque el contexto ya actualiza `resenas`
-      // y el useEffect anterior se ejecutará automáticamente
-    };
+  // useEffect(() => {
+  //   const manejarResenasActualizadas = () => {
+  //     console.log('🔔 Inicio: Reseñas actualizadas detectadas');
+  //     // No necesitamos hacer nada especial aquí porque el contexto ya actualiza `resenas`
+  //     // y el useEffect anterior se ejecutará automáticamente
+  //   };
 
-    window.addEventListener('resenasActualizadas', manejarResenasActualizadas);
+  //   window.addEventListener('resenasActualizadas', manejarResenasActualizadas);
     
-    return () => {
-      window.removeEventListener('resenasActualizadas', manejarResenasActualizadas);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('resenasActualizadas', manejarResenasActualizadas);
+  //   };
+  // }, []);
 
   // Funciones de manejo de eventos
   const manejarEliminarResena = (id) => {

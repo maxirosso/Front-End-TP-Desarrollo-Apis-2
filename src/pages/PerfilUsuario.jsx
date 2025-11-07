@@ -32,7 +32,6 @@ const PerfilUsuario = () => {
   // ✅ FIX: Sincronizar usuario actual del contexto con userId de la URL
   useEffect(() => {
     if (userId && parseInt(userId) !== usuarioActual) {
-      console.log('🔄 Sincronizando usuario del contexto con URL:', userId);
       setUsuarioActual(parseInt(userId));
     }
   }, [userId, usuarioActual, setUsuarioActual]);
@@ -123,11 +122,9 @@ const PerfilUsuario = () => {
   // ✅ NUEVO: Escuchar evento de reseñas actualizadas para recargar automáticamente
   useEffect(() => {
     const manejarResenasActualizadas = async (event) => {
-      console.log('🔔 PerfilUsuario: Reseñas actualizadas detectadas, recargando...', event.detail);
       try {
         const resenas = await obtenerResenasPorUsuario(userId, filtros);
         setResenasUsuario(resenas);
-        console.log('✅ PerfilUsuario: Reseñas del usuario recargadas');
       } catch (err) {
         console.error('Error recargando reseñas del usuario:', err);
       }

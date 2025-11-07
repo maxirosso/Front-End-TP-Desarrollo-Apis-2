@@ -22,7 +22,8 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
     { valor: '4', etiqueta: '4+ estrellas' },
     { valor: '3', etiqueta: '3+ estrellas' },
     { valor: '2', etiqueta: '2+ estrellas' },
-    { valor: '1', etiqueta: '1+ estrellas' }
+    { valor: '1', etiqueta: '1+ estrellas' },
+    { valor: '0', etiqueta: 'Sin calificación' }
   ];
 
   const opcionesFecha = [

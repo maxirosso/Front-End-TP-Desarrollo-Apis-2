@@ -26,7 +26,8 @@ const ContextoAuth = createContext();
 
 export const useAuth = () => {
   const ctx = useContext(ContextoAuth);
-  if (!ctx) throw new Error("useAuth debe ser usado dentro de un ProveedorAuth");
+  if (!ctx)
+    throw new Error("useAuth debe ser usado dentro de un ProveedorAuth");
   return ctx;
 };
 
@@ -67,22 +68,20 @@ export const ProveedorAuth = ({ children }) => {
     setError(null);
     setCargando(true);
     try {
-      const res = await authAPI.login(credentials);
-      const nuevoToken = res.access_token || res.token;
-      if (!nuevoToken) throw new Error("No se recibió token del servidor");
+      const { token, raw } = await authAPI.login(credentials);
+      if (!token) throw new Error("No se recibió token del servidor");
 
-      saveToken(nuevoToken);
-      setToken(nuevoToken);
+      saveToken(token);
+      setToken(token);
 
-      const decoded = decodeJWT(nuevoToken) || {};
+      const decoded = decodeJWT(token) || raw?.user || {};
       saveUser(decoded);
       setUsuario(decoded);
 
       return decoded;
     } catch (err) {
       console.error("Error en login:", err);
-      const msg = err.message || "Error al iniciar sesión";
-      setError(msg);
+      setError(err.message || "Error al iniciar sesión");
       throw err;
     } finally {
       setCargando(false);
@@ -101,8 +100,10 @@ export const ProveedorAuth = ({ children }) => {
   const estaAutenticado = () => !!usuario && !!token && !isTokenExpired(token);
   const tieneRol = (rol) => hasRole(usuario, rol);
   const tienePermiso = (perm) => hasPermission(usuario, perm);
-  const puedeEditarRecurso = (resourceUserId) => canEditResource(usuario, resourceUserId);
-  const puedeEliminarRecurso = (resourceUserId) => canDeleteResource(usuario, resourceUserId);
+  const puedeEditarRecurso = (resourceUserId) =>
+    canEditResource(usuario, resourceUserId);
+  const puedeEliminarRecurso = (resourceUserId) =>
+    canDeleteResource(usuario, resourceUserId);
 
   const valor = {
     // estado
@@ -136,7 +137,9 @@ export const ProveedorAuth = ({ children }) => {
     setError,
   };
 
-  return <ContextoAuth.Provider value={valor}>{children}</ContextoAuth.Provider>;
+  return (
+    <ContextoAuth.Provider value={valor}>{children}</ContextoAuth.Provider>
+  );
 };
 
 export default ContextoAuth;

@@ -100,60 +100,74 @@ const apiRequest = async (endpoint, options = {}) => {
 };
 
 // -------- Auth (solo login contra el módulo de usuarios) --------
+// export const authAPI = {
+//   /**
+//    * Intenta varios formatos comunes:
+//    * 1) JSON { email, password }
+//    * 2) JSON { username, password }
+//    * 3) x-www-form-urlencoded (OAuth2 Resource Owner Password) con grant_type=password
+//    *
+//    * Si tu user-service exige client_id/client_secret o scope, setealos en .env y se envían.
+//    */
+//   login: async (credentials) => {
+//     const { username, email, password } = credentials;
+
+//     // Opcionales por si tu user-service los pide (OAuth2)
+//     const CLIENT_ID = process.env.REACT_APP_CLIENT_ID || "";
+//     const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET || "";
+//     const SCOPE = process.env.REACT_APP_OAUTH_SCOPE || "";
+
+//     const attempts = [
+//       // 1) JSON con email
+//       () => postJsonUser("/api/v1/auth/login", { email, password }),
+//       // 2) JSON con username
+//       () => postJsonUser("/api/v1/auth/login", { username, password }),
+//       // 3) FORM oauth2
+//       () =>
+//         postFormUser("/api/v1/auth/login", {
+//           grant_type: "password",
+//           username: email || username || "",
+//           password: password || "",
+//           scope: SCOPE,
+//           client_id: CLIENT_ID,
+//           client_secret: CLIENT_SECRET,
+//         }),
+//     ];
+
+//     let lastErr;
+//     for (const run of attempts) {
+//       try {
+//         const res = await run();
+//         // Normalizamos el nombre del campo token
+//         const token =
+//           res?.access_token || res?.token || res?.jwt || res?.id_token || null;
+//         if (!token) {
+//           // si vino un body que aclara por qué, lo mostramos
+//           console.warn("Login respondió sin token. Body:", res);
+//           throw new Error("No se recibió token del servidor");
+//         }
+//         return { token, raw: res };
+//       } catch (e) {
+//         lastErr = e;
+//         // 422/400 seguimos intentando la siguiente variante
+//         if (e.status !== 400 && e.status !== 422) break;
+//       }
+//     }
+//     throw lastErr || new Error("No se pudo iniciar sesión");
+//   },
+// };
+
 export const authAPI = {
-  /**
-   * Intenta varios formatos comunes:
-   * 1) JSON { email, password }
-   * 2) JSON { username, password }
-   * 3) x-www-form-urlencoded (OAuth2 Resource Owner Password) con grant_type=password
-   *
-   * Si tu user-service exige client_id/client_secret o scope, setealos en .env y se envían.
-   */
-  login: async (credentials) => {
-    const { username, email, password } = credentials;
+  login: async ({ username, password }) => {
+    const res = await postJsonUser("/api/v1/auth/login", { username, password });
 
-    // Opcionales por si tu user-service los pide (OAuth2)
-    const CLIENT_ID = process.env.REACT_APP_CLIENT_ID || "";
-    const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET || "";
-    const SCOPE = process.env.REACT_APP_OAUTH_SCOPE || "";
-
-    const attempts = [
-      // 1) JSON con email
-      () => postJsonUser("/api/v1/auth/login", { email, password }),
-      // 2) JSON con username
-      () => postJsonUser("/api/v1/auth/login", { username, password }),
-      // 3) FORM oauth2
-      () =>
-        postFormUser("/api/v1/auth/login", {
-          grant_type: "password",
-          username: email || username || "",
-          password: password || "",
-          scope: SCOPE,
-          client_id: CLIENT_ID,
-          client_secret: CLIENT_SECRET,
-        }),
-    ];
-
-    let lastErr;
-    for (const run of attempts) {
-      try {
-        const res = await run();
-        // Normalizamos el nombre del campo token
-        const token =
-          res?.access_token || res?.token || res?.jwt || res?.id_token || null;
-        if (!token) {
-          // si vino un body que aclara por qué, lo mostramos
-          console.warn("Login respondió sin token. Body:", res);
-          throw new Error("No se recibió token del servidor");
-        }
-        return { token, raw: res };
-      } catch (e) {
-        lastErr = e;
-        // 422/400 seguimos intentando la siguiente variante
-        if (e.status !== 400 && e.status !== 422) break;
-      }
+    const token =
+      res?.access_token || res?.token || res?.jwt || res?.id_token || null;
+    if (!token) {
+      console.warn("Login respondió sin token. Body:", res);
+      throw new Error("No se recibió token del servidor");
     }
-    throw lastErr || new Error("No se pudo iniciar sesión");
+    return { token, raw: res };
   },
 };
 

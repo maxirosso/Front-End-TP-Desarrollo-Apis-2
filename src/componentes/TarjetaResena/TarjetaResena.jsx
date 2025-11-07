@@ -4,6 +4,31 @@ import { useAuth } from '../../hooks/useAuth';
 import { usePermissions } from '../../hooks/usePermissions';
 import './TarjetaResena.css';
 
+const normalizarTags = (value) => {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+
+    // Si viene como JSON: '["drama","mafia"]'
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (_) {}
+
+    // Si viene como "drama, mafia"
+    return trimmed
+      .split(',')
+      .map(t => t.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+};
+
+
 const TarjetaResena = ({ 
   pelicula, 
   onEliminar = () => {}, 
@@ -36,7 +61,8 @@ const TarjetaResena = ({
     fechaResena = pelicula?.created_at || pelicula?.fechaResena || 'Fecha no disponible',
     textoResena = pelicula?.body || pelicula?.textoResena || '',
     tituloResena = pelicula?.title_review || pelicula?.tituloResena || '',
-    tags = pelicula?.tags || [],
+    rawTags = pelicula?.tags,
+    tags = normalizarTags(rawTags),
     contieneEspoilers = pelicula?.has_spoilers || pelicula?.contieneEspoilers || false,
     moviePoster = pelicula?.movie_poster  || pelicula?.imagenUrl,
     fechaActualizacion = pelicula?.updated_at || null,

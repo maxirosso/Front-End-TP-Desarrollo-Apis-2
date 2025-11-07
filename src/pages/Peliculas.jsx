@@ -11,10 +11,6 @@ const Peliculas = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("Películas desde backend:", peliculas);
-  }, [peliculas]);
-
-  useEffect(() => {
     const cargarPeliculas = async () => {
       setCargando(true);
       setError(null);
@@ -37,6 +33,10 @@ const Peliculas = () => {
 
     cargarPeliculas();
   }, [moviesAPI, usingBackend]);
+
+  useEffect(() => {
+    console.log("Películas desde backend:", peliculas);
+  }, [peliculas]);
 
   if (cargando) {
     return <LoadingSpinner mensaje="Cargando películas..." />;

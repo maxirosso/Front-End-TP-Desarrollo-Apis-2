@@ -180,6 +180,8 @@ const TarjetaResena = ({
           {/* Tags de la reseña */}
           {tags.length > 0 && (
             <div className="tags-resena">
+              {console.log('Tags:', tags)}
+              {console.log("rawTags:", rawTags)}
               {tags.map((tag, index) => (
                 <span key={index} className="tag-resena">
                   {tag}

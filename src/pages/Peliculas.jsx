@@ -19,7 +19,6 @@ const Peliculas = () => {
         if (!usingBackend) {
           throw new Error("Backend no disponible");
         }
-
         const moviesList = await moviesAPI.getAll();
         setPeliculas(moviesList || []);
       } catch (err) {
@@ -33,10 +32,6 @@ const Peliculas = () => {
 
     cargarPeliculas();
   }, [moviesAPI, usingBackend]);
-
-  useEffect(() => {
-    console.log("Películas desde backend:", peliculas);
-  }, [peliculas]);
 
   if (cargando) {
     return <LoadingSpinner mensaje="Cargando películas..." />;

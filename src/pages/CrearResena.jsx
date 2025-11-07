@@ -13,13 +13,6 @@ const CrearResena = () => {
   // ✅ SOLUCION: Extraer TODO el contexto pero guardar funciones en useRef para evitar re-renders
   const contextoCompleto = useContext(ContextoResenas);
   
-  console.log('🔍 CrearResena - Contexto completo:', {
-    contextoCompleto: !!contextoCompleto,
-    agregarResena: !!contextoCompleto?.agregarResena,
-    actualizarResena: !!contextoCompleto?.actualizarResena,
-    usuarioActual: contextoCompleto?.usuarioActual
-  });
-  
   // Guardar funciones en refs (no causan re-renders)
   const funcionesRef = useRef({});
   funcionesRef.current = {

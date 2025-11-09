@@ -221,7 +221,8 @@
 .sin-resenas {
   text-align: center;
   padding: 4rem 2rem;
-  background: #f8f9fa;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: white;
   border-radius: 16px;
   border: 2px dashed #dee2e6;
 }

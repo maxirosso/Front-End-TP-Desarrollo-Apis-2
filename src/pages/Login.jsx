@@ -65,12 +65,6 @@ const Login = () => {
   // Usuarios de prueba para mostrar en la UI (basados en la información proporcionada)
   const usuariosPrueba = [
     { username: 'claqueta_critica', rol: 'Admin - Gestión completa (usuarios, películas, comentarios)' },
-    { username: 'filmfan_madriz', rol: 'Admin - Gestión de usuarios y películas' },
-    { username: 'terror_nocturno', rol: 'Admin - Gestión de usuarios y películas' },
-    { username: 'scifilms_explorer', rol: 'Moderador - Gestión de comentarios' },
-    { username: 'indie_soul', rol: 'Moderador - Gestión de comentarios' },
-    { username: 'noir_detective', rol: 'Moderador - Gestión de comentarios' },
-    { username: 'docu_traveler', rol: 'Usuario estándar' }
   ];
 
   return (
@@ -156,7 +150,7 @@ const Login = () => {
         {/* Información de usuarios de prueba */}
         <div className="usuarios-prueba">
           <h3>📝 Usuarios de prueba disponibles:</h3>
-          <p className="password-info">🔑 <strong>Contraseña para todos:</strong> MiPassword123!</p>
+          <p className="password-info">🔑 <strong>Contraseña para todos:</strong> ContraseñaNueva2025</p>
           <div className="usuarios-lista">
             {usuariosPrueba.map((usuario, index) => (
               <div key={index} className="usuario-prueba-item">
@@ -165,9 +159,6 @@ const Login = () => {
               </div>
             ))}
           </div>
-          <p className="nota-prueba">
-            <strong>Nota:</strong> Hay más de 50 usuarios disponibles. Consulta usuarios.json para la lista completa.
-          </p>
         </div>
       </div>
 

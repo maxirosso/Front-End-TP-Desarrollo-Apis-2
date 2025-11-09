@@ -4,6 +4,7 @@ import { useResenas } from '../contextos/ContextoResenas';
 import TarjetaResena from '../componentes/TarjetaResena/TarjetaResena';
 import LoadingSpinner from '../componentes/LoadingSpinner/LoadingSpinner';
 import './PerfilUsuario.css';
+import defaultUserImg from '../assets/user-not-photo.jpg';
 
 const PerfilUsuario = () => {
   const { userId } = useParams();
@@ -31,6 +32,7 @@ const PerfilUsuario = () => {
 
   // ✅ FIX: Sincronizar usuario actual del contexto con userId de la URL
   useEffect(() => {
+    debugger;
     if (userId && parseInt(userId) !== usuarioActual) {
       setUsuarioActual(parseInt(userId));
     }
@@ -40,36 +42,40 @@ const PerfilUsuario = () => {
     const cargarDatosUsuario = async () => {
       setCargando(true);
       setError(null);
-
+      debugger;
       try {
         // Cargar datos del usuario
+        debugger;
         if (usingBackend) {
           try {
+            debugger;
             const userData = await usersAPI.getById(userId);
             setUsuario(userData);
+
+            console.log('Datos del usuario cargados desde backend:', userData);
           } catch (userError) {
             // Fallback a datos mock si el usuario no existe en backend
             const mockUser = {
               id: parseInt(userId),
-              name: userId === '1' ? 'Admin' : 
-                    userId === '2' ? 'Juan Pérez' :
-                    userId === '3' ? 'María García' :
+              name: userId === '1' ? 'Admin' :
+                userId === '2' ? 'Juan Pérez' :
+                  userId === '3' ? 'María García' :
                     userId === '4' ? 'Carlos López' :
-                    userId === '5' ? 'Ana Martín' :
-                    userId === '6' ? 'Luis Rodríguez' : `Usuario ${userId}`,
+                      userId === '5' ? 'Ana Martín' :
+                        userId === '6' ? 'Luis Rodríguez' : `Usuario ${userId}`,
               email: userId === '1' ? 'admin@moviereviews.com' :
-                     userId === '2' ? 'juan@example.com' :
-                     userId === '3' ? 'maria@example.com' :
-                     userId === '4' ? 'carlos@example.com' :
-                     userId === '5' ? 'ana@example.com' :
-                     userId === '6' ? 'luis@example.com' : `usuario${userId}@example.com`,
+                userId === '2' ? 'juan@example.com' :
+                  userId === '3' ? 'maria@example.com' :
+                    userId === '4' ? 'carlos@example.com' :
+                      userId === '5' ? 'ana@example.com' :
+                        userId === '6' ? 'luis@example.com' : `usuario${userId}@example.com`,
               profile_image: `https://via.placeholder.com/100x100/2C3E50/ECF0F1?text=U${userId}`,
               bio: userId === '1' ? 'Administrador del sistema de reseñas' :
-                   userId === '2' ? 'Amante del cine y crítico ocasional' :
-                   userId === '3' ? 'Especialista en ciencia ficción' :
-                   userId === '4' ? 'Crítico profesional de cine' :
-                   userId === '5' ? 'Fan de películas de acción' :
-                   userId === '6' ? 'Cinéfilo y coleccionista' : 'Amante del cine',
+                userId === '2' ? 'Amante del cine y crítico ocasional' :
+                  userId === '3' ? 'Especialista en ciencia ficción' :
+                    userId === '4' ? 'Crítico profesional de cine' :
+                      userId === '5' ? 'Fan de películas de acción' :
+                        userId === '6' ? 'Cinéfilo y coleccionista' : 'Amante del cine',
               created_at: '2025-09-01T10:00:00Z'
             };
             setUsuario(mockUser);
@@ -78,25 +84,25 @@ const PerfilUsuario = () => {
           // Mock data para usuarios
           const mockUser = {
             id: parseInt(userId),
-            name: userId === '1' ? 'Admin' : 
-                  userId === '2' ? 'Juan Pérez' :
-                  userId === '3' ? 'María García' :
+            name: userId === '1' ? 'Admin' :
+              userId === '2' ? 'Juan Pérez' :
+                userId === '3' ? 'María García' :
                   userId === '4' ? 'Carlos López' :
-                  userId === '5' ? 'Ana Martín' :
-                  userId === '6' ? 'Luis Rodríguez' : `Usuario ${userId}`,
+                    userId === '5' ? 'Ana Martín' :
+                      userId === '6' ? 'Luis Rodríguez' : `Usuario ${userId}`,
             email: userId === '1' ? 'admin@moviereviews.com' :
-                   userId === '2' ? 'juan@example.com' :
-                   userId === '3' ? 'maria@example.com' :
-                   userId === '4' ? 'carlos@example.com' :
-                   userId === '5' ? 'ana@example.com' :
-                   userId === '6' ? 'luis@example.com' : `usuario${userId}@example.com`,
+              userId === '2' ? 'juan@example.com' :
+                userId === '3' ? 'maria@example.com' :
+                  userId === '4' ? 'carlos@example.com' :
+                    userId === '5' ? 'ana@example.com' :
+                      userId === '6' ? 'luis@example.com' : `usuario${userId}@example.com`,
             profile_image: `https://via.placeholder.com/100x100/2C3E50/ECF0F1?text=U${userId}`,
             bio: userId === '1' ? 'Administrador del sistema de reseñas' :
-                 userId === '2' ? 'Amante del cine y crítico ocasional' :
-                 userId === '3' ? 'Especialista en ciencia ficción' :
-                 userId === '4' ? 'Crítico profesional de cine' :
-                 userId === '5' ? 'Fan de películas de acción' :
-                 userId === '6' ? 'Cinéfilo y coleccionista' : 'Amante del cine',
+              userId === '2' ? 'Amante del cine y crítico ocasional' :
+                userId === '3' ? 'Especialista en ciencia ficción' :
+                  userId === '4' ? 'Crítico profesional de cine' :
+                    userId === '5' ? 'Fan de películas de acción' :
+                      userId === '6' ? 'Cinéfilo y coleccionista' : 'Amante del cine',
             created_at: '2025-09-01T10:00:00Z'
           };
           setUsuario(mockUser);
@@ -131,7 +137,7 @@ const PerfilUsuario = () => {
     };
 
     window.addEventListener('resenasActualizadas', manejarResenasActualizadas);
-    
+
     return () => {
       window.removeEventListener('resenasActualizadas', manejarResenasActualizadas);
     };
@@ -155,7 +161,7 @@ const PerfilUsuario = () => {
       if (resena.id === id) {
         const currentLikes = parseInt(resena.likes_count || resena.likes || 0);
         const isCurrentlyLiked = resena.yaLeDiLike;
-        
+
         return {
           ...resena,
           yaLeDiLike: !isCurrentlyLiked,
@@ -165,7 +171,7 @@ const PerfilUsuario = () => {
       }
       return resena;
     }));
-    
+
     // También actualizar en el contexto global
     toggleLikeResena(id);
   };
@@ -203,25 +209,38 @@ const PerfilUsuario = () => {
   return (
     <div className="perfil-usuario">
       {/* Header del perfil */}
-      <div className="perfil-header">
-        <div className="perfil-info">
-          <img 
-            src={usuario.profile_image} 
-            alt={`Perfil de ${usuario.name}`}
-            className="perfil-imagen"
-          />
-          <div className="perfil-detalles">
-            <h1 className="perfil-nombre">{usuario.name}</h1>
-            <p className="perfil-email">{usuario.email}</p>
-            {usuario.bio && <p className="perfil-bio">{usuario.bio}</p>}
-            
-            
-         
+      <div className="perfil-usuario">
+        <div className="perfil-header">
+          <div className="perfil-info">
+            <img
+              className="perfil-imagen"
+              src={usuario.image_url || defaultUserImg}
+              alt={`Foto de ${usuario.full_name || usuario.name || "Usuario"}`}
+              onError={e => {
+                e.target.onerror = null;
+                e.target.src = defaultUserImg;
+              }}
+            />
+            <div className="perfil-detalles">
+              <h1 className="perfil-nombre">
+                {usuario.full_name || `${usuario.name} ${usuario.last_name || ""}`}
+                {usuario.role && (
+                  <span className={`badge-${usuario.role}`}>{usuario.role.charAt(0).toUpperCase() + usuario.role.slice(1)}</span>
+                )}
+                <span className={`badge-estado ${usuario.is_active ? "activo" : "inactivo"}`}>  {usuario.is_active ? "Activo" : "Inactivo"} </span>
+              </h1>
+              <div className="perfil-email">{usuario.email}</div>
+              <div className="perfil-fecha">
+                Última actualización: {usuario.updated_at ? new Date(usuario.updated_at).toLocaleDateString("es-ES") : ""}
+              </div>
+            </div>
           </div>
         </div>
+       
+      </div>
 
-        {/* Estadísticas */}
-        {/* <div className="perfil-estadisticas">
+      {/* Estadísticas */}
+      {/* <div className="perfil-estadisticas">
           <div className="estadistica">
             <span className="numero">{resenasUsuario.length}</span>
             <span className="etiqueta">RESEÑAS</span>
@@ -232,18 +251,18 @@ const PerfilUsuario = () => {
             </span>
             <span className="etiqueta">LIKES RECIBIDOS</span>
           </div>
-        </div> */}
-      </div>
+        </div> 
+    </div>*/}
 
       {/* Controles de reseñas */}
       <div className="resenas-controles">
         <h2>Reseñas de {usuario.name}</h2>
-        
+
         <div className="ordenamiento-perfil">
           <label htmlFor="orden-select">Ordenar por:</label>
-          <select 
+          <select
             id="orden-select"
-            value={filtros.sort} 
+            value={filtros.sort}
             onChange={(e) => manejarCambiarOrdenamiento(e.target.value)}
             className="select-ordenamiento"
           >
@@ -270,13 +289,13 @@ const PerfilUsuario = () => {
         ) : (
           <div className="lista-resenas-usuario">
             {resenasUsuario.map(resena => (
-              <TarjetaResena 
-                key={resena.id} 
+              <TarjetaResena
+                key={resena.id}
                 pelicula={resena}
                 onEliminar={manejarEliminarResena}
                 onEditar={manejarEditarResena}
                 onToggleLike={manejarToggleLike}
-                onAbrirComentarios={() => {}} // Implementar si es necesario
+                onAbrirComentarios={() => { }} // Implementar si es necesario
                 usuarioActual={usuarioActual} // Obtener del contexto de auth
                 mostrarAutor={false} // No mostrar autor en perfil del usuario
               />
@@ -286,12 +305,14 @@ const PerfilUsuario = () => {
       </div>
 
       {/* Indicador de conexión */}
-      {!usingBackend && (
-        <div className="modo-offline">
-          <p>📱 Modo offline - Usando datos locales</p>
-        </div>
-      )}
-    </div>
+      {
+        !usingBackend && (
+          <div className="modo-offline">
+            <p>📱 Modo offline - Usando datos locales</p>
+          </div>
+        )
+      }
+    </div >
   );
 };
 

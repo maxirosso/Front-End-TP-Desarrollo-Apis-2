@@ -522,12 +522,12 @@ const CrearResena = () => {
                   className={`entrada-textarea ${errores.textoResena ? 'error' : ''}`}
                   placeholder="Comparte tu opinión sobre la película..."
                   rows={8}
-                  maxLength={1000}
+                  maxLength={150}
                   disabled={enviando}
                 />
                 <div className="info-textarea">
                   <span className={`contador-caracteres ${datosFormulario.textoResena.length > 900 ? 'cerca-limite' : ''}`}>
-                    {datosFormulario.textoResena.length}/1000 caracteres
+                    {datosFormulario.textoResena.length}/150 caracteres
                   </span>
                 </div>
                 {errores.textoResena && <span className="mensaje-error">{errores.textoResena}</span>}

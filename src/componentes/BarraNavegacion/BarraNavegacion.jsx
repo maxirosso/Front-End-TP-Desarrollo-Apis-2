@@ -4,23 +4,23 @@ import { useAuth } from '../../hooks/useAuth';
 import './BarraNavegacion.css';
 
 const BarraNavegacion = () => {
-  const [terminoBusqueda, setTerminoBusqueda] = useState('');
+  // const [terminoBusqueda, setTerminoBusqueda] = useState('');
   const [mostrarMenuUsuario, setMostrarMenuUsuario] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { usuario, estaAutenticado, logout, getFullName, getUserInitials, formatRole } = useAuth();
 
-  const manejarBusqueda = (evento) => {
-    setTerminoBusqueda(evento.target.value);
-  };
+  // const manejarBusqueda = (evento) => {
+  //   setTerminoBusqueda(evento.target.value);
+  // };
 
-  const enviarBusqueda = (evento) => {
-    evento.preventDefault();
-    if (terminoBusqueda.trim()) {
-      // Navegar a la página de resultados con el término de búsqueda
-      navigate(`/?busqueda=${encodeURIComponent(terminoBusqueda.trim())}`);
-    }
-  };
+  // const enviarBusqueda = (evento) => {
+  //   evento.preventDefault();
+  //   if (terminoBusqueda.trim()) {
+  //     // Navegar a la página de resultados con el término de búsqueda
+  //     navigate(`/?busqueda=${encodeURIComponent(terminoBusqueda.trim())}`);
+  //   }
+  // };
 
   const handleLogout = async () => {
     try {

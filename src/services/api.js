@@ -56,12 +56,12 @@ const apiRequestUser = async (endpoint, options = {}) => {
 };
 
 // --- helpers de envío para login ---
-const postJsonUser = (path, obj) =>
-  apiRequestUser(path, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(obj),
-  });
+// const postJsonUser = (path, obj) =>
+//   apiRequestUser(path, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(obj),
+//   });
 
 const postFormUser = (path, obj) => {
   const form = new URLSearchParams();

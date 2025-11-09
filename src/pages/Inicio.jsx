@@ -46,12 +46,12 @@ const Inicio = () => {
     const aplicarFiltrosYOrdenamiento = async () => {
       try {
         // Verificar si algún filtro requiere backend
-        const requiereBackend = usingBackend && (
-          filtrosActivos.genero || 
-          filtrosActivos.calificacion || 
-          filtrosActivos.tags?.length > 0 ||
-          filtrosActivos.fechaPublicacion
-        );
+        // const requiereBackend = usingBackend && (
+        //   filtrosActivos.genero || 
+        //   filtrosActivos.calificacion || 
+        //   filtrosActivos.tags?.length > 0 ||
+        //   filtrosActivos.fechaPublicacion
+        // );
         
         let resenasProcesadas;
         // if (requiereBackend) {

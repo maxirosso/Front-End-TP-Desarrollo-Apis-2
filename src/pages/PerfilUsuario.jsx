@@ -233,9 +233,9 @@ const PerfilUsuario = () => {
                 <span className={`badge-estado ${usuario.is_active ? "activo" : "inactivo"}`}>  {usuario.is_active ? "Activo" : "Inactivo"} </span>
               </h1>
               <div className="perfil-email">{usuario.email}</div>
-              <div className="perfil-fecha">
+             {/*  <div className="perfil-fecha">
                 Última actualización: {usuario.updated_at ? new Date(usuario.updated_at).toLocaleDateString("es-ES") : ""}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

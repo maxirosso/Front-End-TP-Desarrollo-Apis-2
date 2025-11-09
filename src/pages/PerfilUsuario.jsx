@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useResenas } from '../contextos/ContextoResenas';
 import TarjetaResena from '../componentes/TarjetaResena/TarjetaResena';
-import LoadingSpinner from '../componentes/LoadingSpinner/LoadingSpinner';
+// import LoadingSpinner from '../componentes/LoadingSpinner/LoadingSpinner';
 import './PerfilUsuario.css';
 import defaultUserImg from '../assets/user-not-photo.jpg';
+import { useAuth } from '../contextos/ContextoAuth';
 
 const PerfilUsuario = () => {
   const { userId } = useParams();
@@ -12,18 +13,20 @@ const PerfilUsuario = () => {
   const {
     usuarioActual,
     usingBackend,
-    usersAPI,
+    // usersAPI,
     obtenerResenasPorUsuario,
     eliminarResena,
     toggleLikeResena,
     error,
-    setError,
-    setUsuarioActual  // ✅ Agregar setUsuarioActual del contexto
+    // setError,
+    // setUsuarioActual  // ✅ Agregar setUsuarioActual del contexto
   } = useResenas();
+    const { usuario } = useAuth();
+  
 
-  const [usuario, setUsuario] = useState(null);
+  // const [usuario, setUsuario] = useState(null);
   const [resenasUsuario, setResenasUsuario] = useState([]);
-  const [cargando, setCargando] = useState(true);
+  // const [cargando, setCargando] = useState(true);
   const [filtros, setFiltros] = useState({
     sort: 'recent',
     limit: '20',
@@ -31,99 +34,99 @@ const PerfilUsuario = () => {
   });
 
   // ✅ FIX: Sincronizar usuario actual del contexto con userId de la URL
-  useEffect(() => {
-    debugger;
-    if (userId && parseInt(userId) !== usuarioActual) {
-      setUsuarioActual(parseInt(userId));
-    }
-  }, [userId, usuarioActual, setUsuarioActual]);
+  // useEffect(() => {
+  //   debugger;
+  //   if (userId && parseInt(userId) !== usuarioActual) {
+  //     setUsuarioActual(parseInt(userId));
+  //   }
+  // }, [userId, usuarioActual, setUsuarioActual]);
 
-  useEffect(() => {
-    const cargarDatosUsuario = async () => {
-      setCargando(true);
-      setError(null);
-      debugger;
-      try {
-        // Cargar datos del usuario
-        debugger;
-        if (usingBackend) {
-          try {
-            debugger;
-            const userData = await usersAPI.getById(userId);
-            setUsuario(userData);
+  // useEffect(() => {
+  //   const cargarDatosUsuario = async () => {
+  //     setCargando(true);
+  //     setError(null);
+  //     debugger;
+  //     try {
+  //       // Cargar datos del usuario
+  //       debugger;
+  //       if (usingBackend) {
+  //         try {
+  //           debugger;
+  //           const userData = await usersAPI.getById(userId);
+  //           setUsuario(userData);
 
-            console.log('Datos del usuario cargados desde backend:', userData);
-          } catch (userError) {
-            // Fallback a datos mock si el usuario no existe en backend
-            const mockUser = {
-              id: parseInt(userId),
-              name: userId === '1' ? 'Admin' :
-                userId === '2' ? 'Juan Pérez' :
-                  userId === '3' ? 'María García' :
-                    userId === '4' ? 'Carlos López' :
-                      userId === '5' ? 'Ana Martín' :
-                        userId === '6' ? 'Luis Rodríguez' : `Usuario ${userId}`,
-              email: userId === '1' ? 'admin@moviereviews.com' :
-                userId === '2' ? 'juan@example.com' :
-                  userId === '3' ? 'maria@example.com' :
-                    userId === '4' ? 'carlos@example.com' :
-                      userId === '5' ? 'ana@example.com' :
-                        userId === '6' ? 'luis@example.com' : `usuario${userId}@example.com`,
-              profile_image: `https://via.placeholder.com/100x100/2C3E50/ECF0F1?text=U${userId}`,
-              bio: userId === '1' ? 'Administrador del sistema de reseñas' :
-                userId === '2' ? 'Amante del cine y crítico ocasional' :
-                  userId === '3' ? 'Especialista en ciencia ficción' :
-                    userId === '4' ? 'Crítico profesional de cine' :
-                      userId === '5' ? 'Fan de películas de acción' :
-                        userId === '6' ? 'Cinéfilo y coleccionista' : 'Amante del cine',
-              created_at: '2025-09-01T10:00:00Z'
-            };
-            setUsuario(mockUser);
-          }
-        } else {
-          // Mock data para usuarios
-          const mockUser = {
-            id: parseInt(userId),
-            name: userId === '1' ? 'Admin' :
-              userId === '2' ? 'Juan Pérez' :
-                userId === '3' ? 'María García' :
-                  userId === '4' ? 'Carlos López' :
-                    userId === '5' ? 'Ana Martín' :
-                      userId === '6' ? 'Luis Rodríguez' : `Usuario ${userId}`,
-            email: userId === '1' ? 'admin@moviereviews.com' :
-              userId === '2' ? 'juan@example.com' :
-                userId === '3' ? 'maria@example.com' :
-                  userId === '4' ? 'carlos@example.com' :
-                    userId === '5' ? 'ana@example.com' :
-                      userId === '6' ? 'luis@example.com' : `usuario${userId}@example.com`,
-            profile_image: `https://via.placeholder.com/100x100/2C3E50/ECF0F1?text=U${userId}`,
-            bio: userId === '1' ? 'Administrador del sistema de reseñas' :
-              userId === '2' ? 'Amante del cine y crítico ocasional' :
-                userId === '3' ? 'Especialista en ciencia ficción' :
-                  userId === '4' ? 'Crítico profesional de cine' :
-                    userId === '5' ? 'Fan de películas de acción' :
-                      userId === '6' ? 'Cinéfilo y coleccionista' : 'Amante del cine',
-            created_at: '2025-09-01T10:00:00Z'
-          };
-          setUsuario(mockUser);
-        }
+  //           console.log('Datos del usuario cargados desde backend:', userData);
+  //         } catch (userError) {
+  //           // Fallback a datos mock si el usuario no existe en backend
+  //           const mockUser = {
+  //             id: parseInt(userId),
+  //             name: userId === '1' ? 'Admin' :
+  //               userId === '2' ? 'Juan Pérez' :
+  //                 userId === '3' ? 'María García' :
+  //                   userId === '4' ? 'Carlos López' :
+  //                     userId === '5' ? 'Ana Martín' :
+  //                       userId === '6' ? 'Luis Rodríguez' : `Usuario ${userId}`,
+  //             email: userId === '1' ? 'admin@moviereviews.com' :
+  //               userId === '2' ? 'juan@example.com' :
+  //                 userId === '3' ? 'maria@example.com' :
+  //                   userId === '4' ? 'carlos@example.com' :
+  //                     userId === '5' ? 'ana@example.com' :
+  //                       userId === '6' ? 'luis@example.com' : `usuario${userId}@example.com`,
+  //             profile_image: `https://via.placeholder.com/100x100/2C3E50/ECF0F1?text=U${userId}`,
+  //             bio: userId === '1' ? 'Administrador del sistema de reseñas' :
+  //               userId === '2' ? 'Amante del cine y crítico ocasional' :
+  //                 userId === '3' ? 'Especialista en ciencia ficción' :
+  //                   userId === '4' ? 'Crítico profesional de cine' :
+  //                     userId === '5' ? 'Fan de películas de acción' :
+  //                       userId === '6' ? 'Cinéfilo y coleccionista' : 'Amante del cine',
+  //             created_at: '2025-09-01T10:00:00Z'
+  //           };
+  //           setUsuario(mockUser);
+  //         }
+  //       } else {
+  //         // Mock data para usuarios
+  //         const mockUser = {
+  //           id: parseInt(userId),
+  //           name: userId === '1' ? 'Admin' :
+  //             userId === '2' ? 'Juan Pérez' :
+  //               userId === '3' ? 'María García' :
+  //                 userId === '4' ? 'Carlos López' :
+  //                   userId === '5' ? 'Ana Martín' :
+  //                     userId === '6' ? 'Luis Rodríguez' : `Usuario ${userId}`,
+  //           email: userId === '1' ? 'admin@moviereviews.com' :
+  //             userId === '2' ? 'juan@example.com' :
+  //               userId === '3' ? 'maria@example.com' :
+  //                 userId === '4' ? 'carlos@example.com' :
+  //                   userId === '5' ? 'ana@example.com' :
+  //                     userId === '6' ? 'luis@example.com' : `usuario${userId}@example.com`,
+  //           profile_image: `https://via.placeholder.com/100x100/2C3E50/ECF0F1?text=U${userId}`,
+  //           bio: userId === '1' ? 'Administrador del sistema de reseñas' :
+  //             userId === '2' ? 'Amante del cine y crítico ocasional' :
+  //               userId === '3' ? 'Especialista en ciencia ficción' :
+  //                 userId === '4' ? 'Crítico profesional de cine' :
+  //                   userId === '5' ? 'Fan de películas de acción' :
+  //                     userId === '6' ? 'Cinéfilo y coleccionista' : 'Amante del cine',
+  //           created_at: '2025-09-01T10:00:00Z'
+  //         };
+  //         setUsuario(mockUser);
+  //       }
 
-        // Cargar reseñas del usuario
-        const resenas = await obtenerResenasPorUsuario(userId, filtros);
-        setResenasUsuario(resenas);
+  //       // Cargar reseñas del usuario
+  //       const resenas = await obtenerResenasPorUsuario(userId, filtros);
+  //       setResenasUsuario(resenas);
 
-      } catch (err) {
-        console.error('Error cargando perfil de usuario:', err);
-        setError(`Error cargando perfil: ${err.message}`);
-      } finally {
-        setCargando(false);
-      }
-    };
+  //     } catch (err) {
+  //       console.error('Error cargando perfil de usuario:', err);
+  //       setError(`Error cargando perfil: ${err.message}`);
+  //     } finally {
+  //       setCargando(false);
+  //     }
+  //   };
 
-    if (userId) {
-      cargarDatosUsuario();
-    }
-  }, [userId, usingBackend, usersAPI, obtenerResenasPorUsuario, filtros, setError]);
+  //   if (userId) {
+  //     cargarDatosUsuario();
+  //   }
+  // }, [userId, usingBackend, usersAPI, obtenerResenasPorUsuario, filtros, setError]);
 
   // ✅ NUEVO: Escuchar evento de reseñas actualizadas para recargar automáticamente
   useEffect(() => {
@@ -180,9 +183,9 @@ const PerfilUsuario = () => {
     setFiltros(prev => ({ ...prev, sort: nuevoOrden, offset: '0' }));
   };
 
-  if (cargando) {
-    return <LoadingSpinner mensaje="Cargando perfil de usuario..." />;
-  }
+  // if (cargando) {
+  //   return <LoadingSpinner mensaje="Cargando perfil de usuario..." />;
+  // }
 
   if (error) {
     return (
@@ -214,7 +217,7 @@ const PerfilUsuario = () => {
           <div className="perfil-info">
             <img
               className="perfil-imagen"
-              src={usuario.image_url || defaultUserImg}
+              src={usuario.image_url /* || defaultUserImg */}
               alt={`Foto de ${usuario.full_name || usuario.name || "Usuario"}`}
               onError={e => {
                 e.target.onerror = null;

@@ -569,25 +569,99 @@
 }
 
 /* Responsivo */
+@media (max-width: 1200px) {
+  .contenedor-navegacion {
+    padding: var(--espaciado-md) var(--espaciado-lg);
+  }
+
+  .formulario-busqueda {
+    max-width: 300px;
+  }
+
+  .menu-navegacion {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .contenedor-navegacion {
+    gap: var(--espaciado-lg);
+  }
+
+  .formulario-busqueda {
+    max-width: 250px;
+  }
+
+  .menu-navegacion {
+    gap: 1rem;
+  }
+
+  .enlace-navegacion {
+    font-size: 0.85rem;
+  }
+
+  .usuario-nombre {
+    max-width: 120px;
+  }
+}
+
 @media (max-width: 768px) {
   .contenedor-navegacion {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
+    flex-wrap: wrap;
+    padding: var(--espaciado-sm) var(--espaciado-md);
+    gap: var(--espaciado-md);
   }
-  
+
+  .logo-contenedor {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .nombre-aplicacion {
+    font-size: 1.5rem;
+  }
+
+  .triangulo-rojo,
+  .triangulo-cyan {
+    border-right-width: 16px;
+    border-left-width: 16px;
+    border-top-width: 13px;
+    border-bottom-width: 13px;
+  }
+
   .menu-navegacion {
-    order: 3;
-    gap: 1rem;
+    order: 4;
+    width: 100%;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-top: var(--espaciado-sm);
+    border-top: 1px solid var(--glass-border);
   }
   
   .formulario-busqueda {
     order: 2;
+    flex: 1;
     max-width: 100%;
+    min-width: 200px;
+  }
+
+  .boton-crear-resena-nav,
+  .boton-login-nav {
+    order: 3;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.8rem;
+  }
+
+  .usuario-menu-container {
+    order: 3;
   }
 
   .usuario-info {
     display: none;
+  }
+
+  .usuario-avatar-btn {
+    padding: 0.4rem;
   }
 
   .dropdown-arrow {
@@ -595,7 +669,176 @@
   }
 
   .dropdown-menu-usuario {
-    right: -1rem;
+    right: 0;
+    left: auto;
+    min-width: 280px;
+  }
+}
+
+@media (max-width: 640px) {
+  .contenedor-navegacion {
+    padding: var(--espaciado-sm);
+  }
+
+  .nombre-aplicacion {
+    font-size: 1.3rem;
+  }
+
+  .triangulo-rojo,
+  .triangulo-cyan {
+    border-right-width: 14px;
+    border-left-width: 14px;
+    border-top-width: 11px;
+    border-bottom-width: 11px;
+  }
+
+  .menu-navegacion {
+    gap: 1rem;
+    font-size: 0.8rem;
+  }
+
+  .enlace-navegacion {
+    font-size: 0.8rem;
+  }
+
+  .formulario-busqueda {
+    min-width: 150px;
+  }
+
+  .entrada-busqueda {
+    font-size: 0.85rem;
+  }
+
+  .boton-crear-resena-nav,
+  .boton-login-nav {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+
+  .usuario-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .usuario-iniciales {
+    font-size: 0.85rem;
+  }
+
+  .dropdown-menu-usuario {
+    min-width: 260px;
+  }
+
+  .dropdown-avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .dropdown-iniciales {
+    font-size: 1.1rem;
+  }
+
+  .dropdown-info strong {
+    font-size: 0.95rem;
+  }
+
+  .dropdown-info small {
+    font-size: 0.75rem;
+  }
+
+  .dropdown-item {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.85rem;
+  }
+
+  .dropdown-icon {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contenedor-navegacion {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .logo-contenedor {
+    justify-content: center;
+  }
+
+  .nombre-aplicacion {
+    font-size: 1.2rem;
+  }
+
+  .triangulo-rojo,
+  .triangulo-cyan {
+    border-right-width: 12px;
+    border-left-width: 12px;
+    border-top-width: 10px;
+    border-bottom-width: 10px;
+  }
+
+  .formulario-busqueda {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .menu-navegacion {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .boton-crear-resena-nav,
+  .boton-login-nav {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .usuario-menu-container {
+    width: 100%;
+  }
+
+  .usuario-avatar-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+  }
+
+  .usuario-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .dropdown-menu-usuario {
+    left: 0;
+    right: 0;
     min-width: calc(100vw - 2rem);
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 360px) {
+  .nombre-aplicacion {
+    font-size: 1.1rem;
+  }
+
+  .menu-navegacion {
+    font-size: 0.75rem;
+  }
+
+  .enlace-navegacion {
+    font-size: 0.75rem;
+  }
+
+  .dropdown-menu-usuario {
+    padding: 1rem;
+  }
+
+  .dropdown-header {
+    padding: 0.6rem;
+  }
+
+  .dropdown-avatar {
+    width: 44px;
+    height: 44px;
   }
 }

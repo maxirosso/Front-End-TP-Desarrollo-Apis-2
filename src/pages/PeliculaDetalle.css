@@ -46,16 +46,19 @@
 /* Imagen de la película */
 .imagen-pelicula-grande {
   flex-shrink: 0;
+  max-width: 240px;
 }
 
 .poster-pelicula {
-  width: 200px;
+  width: 180px;
+  height: 270px;
   object-fit: cover;
   border-radius: var(--radio-borde-xl);
   box-shadow: var(--sombra-large);
   border: 2px solid var(--glass-border);
   transition: all var(--transicion-normal);
   position: relative;
+  display: block;
 }
 
 .poster-pelicula:hover {
@@ -429,6 +432,29 @@
 }
 
 /* Responsivo */
+@media (max-width: 1024px) {
+  .pagina-pelicula-detalle {
+    padding: 1.5rem 1rem;
+  }
+  
+  .info-pelicula {
+    gap: 2rem;
+  }
+  
+  .poster-pelicula {
+    width: 160px;
+    height: 240px;
+  }
+  
+  .titulo-pelicula {
+    font-size: 2rem;
+  }
+  
+  .estadisticas-pelicula {
+    flex-wrap: wrap;
+  }
+}
+
 @media (max-width: 768px) {
   .pagina-pelicula-detalle {
     padding: 1rem 0.5rem;
@@ -441,27 +467,60 @@
   
   .info-pelicula {
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
+    align-items: center;
     text-align: center;
   }
   
-  .poster-pelicula {
-    width: 150px;
-    height: 225px;
-    margin: 0 auto;
-  }
-  
-  .titulo-pelicula {
-    font-size: 2.2rem;
-  }
-  
-  .estadisticas-pelicula {
-    gap: 2rem;
+  .imagen-pelicula-grande {
+    max-width: 100%;
+    display: flex;
     justify-content: center;
   }
   
+  .poster-pelicula {
+    width: 140px;
+    height: 210px;
+  }
+  
+  .titulo-pelicula {
+    font-size: 1.8rem;
+  }
+  
+  .metadatos-pelicula {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .estadisticas-pelicula {
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .estadistica {
+    min-width: 80px;
+    padding: 0.75rem;
+  }
+  
   .valor-estadistica {
-    font-size: 2rem;
+    font-size: 1.3rem;
+  }
+  
+  .navegacion-breadcrumb {
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+  }
+  
+  .acciones-pelicula {
+    justify-content: center;
+  }
+  
+  .boton-escribir-resena {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
   }
 }
 
@@ -470,18 +529,34 @@
     padding: 1.5rem 1rem;
   }
   
+  .poster-pelicula {
+    width: 120px;
+    height: 180px;
+  }
+  
   .titulo-pelicula {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
+  }
+  
+  .metadatos-pelicula {
+    font-size: 0.95rem;
+    gap: 0.5rem;
   }
   
   .estadisticas-pelicula {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.75rem;
+    width: 100%;
+  }
+  
+  .estadistica {
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto;
   }
   
   .navegacion-breadcrumb {
-    flex-wrap: wrap;
-    justify-content: center;
+    font-size: 0.75rem;
   }
   
   .estado-sin-resenas {
@@ -490,5 +565,19 @@
   
   .icono-pelicula {
     font-size: 4rem;
+  }
+  
+  .boton-primera-resena,
+  .boton-volver {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    display: block;
+    width: 100%;
+    max-width: 250px;
+    margin: 0.5rem auto;
+  }
+  
+  .titulo-seccion-resenas {
+    font-size: 1.5rem;
   }
 }

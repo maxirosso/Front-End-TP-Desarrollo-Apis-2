@@ -346,6 +346,24 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .perfil-usuario {
+    padding: 1.5rem 1rem;
+  }
+
+  .perfil-header {
+    padding: 1.75rem;
+  }
+
+  .perfil-nombre {
+    font-size: 1.75rem;
+  }
+
+  .resenas-controles h2 {
+    font-size: 1.75rem;
+  }
+}
+
 @media (max-width: 768px) {
   .perfil-usuario {
     padding: 1rem 0.5rem;
@@ -359,6 +377,7 @@
     flex-direction: column;
     text-align: center;
     gap: 1rem;
+    align-items: center;
   }
 
   .perfil-imagen {
@@ -371,35 +390,174 @@
     font-size: 1.5rem;
   }
 
+  .perfil-email {
+    font-size: 1rem;
+  }
+
+  .perfil-bio {
+    font-size: 0.95rem;
+  }
+
   .resenas-controles {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
+    padding: 1.25rem;
+  }
+
+  .resenas-controles h2 {
+    font-size: 1.5rem;
+    text-align: center;
   }
 
   .ordenamiento-perfil {
     justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .select-ordenamiento {
+    width: 100%;
+    max-width: 300px;
   }
 
   .perfil-estadisticas {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 
   .estadistica {
-    padding: 0.75rem 0.5rem;
+    padding: 0.875rem 0.75rem;
   }
 
   .estadistica .numero {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
   }
 
   .estadistica .etiqueta {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .perfil-acciones {
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-editar-perfil {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .perfil-usuario {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .perfil-header {
+    padding: 1.25rem;
+  }
+
+  .perfil-imagen {
+    width: 90px;
+    height: 90px;
+  }
+
+  .perfil-nombre {
+    font-size: 1.3rem;
+  }
+
+  .perfil-email {
+    font-size: 0.95rem;
+  }
+
+  .resenas-controles {
+    padding: 1rem;
+  }
+
+  .resenas-controles h2 {
+    font-size: 1.3rem;
+  }
+
+  .ordenamiento-perfil label {
+    font-size: 0.9rem;
+  }
+
+  .select-ordenamiento {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .sin-resenas {
+    padding: 3rem 1.5rem;
+  }
+
+  .sin-resenas .icono-vacio {
+    font-size: 3.5rem;
+  }
+
+  .sin-resenas h3 {
+    font-size: 1.1rem;
+  }
+
+  .sin-resenas p {
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
+  .perfil-usuario {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .perfil-header {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .perfil-imagen {
+    width: 80px;
+    height: 80px;
+  }
+
+  .perfil-nombre {
+    font-size: 1.2rem;
+  }
+
+  .perfil-email {
+    font-size: 0.9rem;
+  }
+
+  .perfil-bio {
+    font-size: 0.85rem;
+  }
+
+  .perfil-fecha {
+    font-size: 0.8rem;
+  }
+
+  .resenas-controles {
+    padding: 0.875rem;
+  }
+
+  .resenas-controles h2 {
+    font-size: 1.2rem;
+  }
+
+  .ordenamiento-perfil {
+    width: 100%;
+  }
+
+  .ordenamiento-perfil label {
+    font-size: 0.85rem;
+  }
+
+  .select-ordenamiento {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.875rem;
+    width: 100%;
+  }
+
   .perfil-estadisticas {
     grid-template-columns: 1fr;
     gap: 0.5rem;
@@ -410,9 +568,67 @@
     justify-content: space-between;
     align-items: center;
     text-align: left;
+    padding: 0.75rem 1rem;
   }
 
   .estadistica .numero {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+  }
+
+  .estadistica .etiqueta {
+    font-size: 0.8rem;
+  }
+
+  .btn-editar-perfil {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 0.65rem 1.25rem;
+  }
+
+  .sin-resenas {
+    padding: 2.5rem 1rem;
+  }
+
+  .sin-resenas .icono-vacio {
+    font-size: 3rem;
+  }
+
+  .sin-resenas h3 {
+    font-size: 1rem;
+  }
+
+  .sin-resenas p {
+    font-size: 0.85rem;
+  }
+
+  .btn-crear-primera,
+  .btn-volver {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 360px) {
+  .perfil-header {
+    padding: 0.875rem;
+  }
+
+  .perfil-imagen {
+    width: 70px;
+    height: 70px;
+  }
+
+  .perfil-nombre {
+    font-size: 1.1rem;
+  }
+
+  .resenas-controles h2 {
+    font-size: 1.1rem;
+  }
+
+  .badge-admin,
+  .badge-estado {
+    font-size: 0.75rem;
+    padding: 0.15em 0.5em;
   }
 }

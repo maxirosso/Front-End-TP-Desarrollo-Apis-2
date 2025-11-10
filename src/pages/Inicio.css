@@ -362,6 +362,29 @@
 }
 
 /* Responsivo */
+@media (max-width: 1024px) {
+  .pagina-inicio {
+    padding: 0 0.75rem;
+  }
+
+  .seccion-hero {
+    padding: 3.5rem 2rem;
+  }
+
+  .titulo-hero {
+    font-size: 3rem;
+  }
+
+  .subtitulo-hero {
+    font-size: 1.2rem;
+  }
+
+  .seccion-estadisticas {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
 @media (max-width: 768px) {
   .pagina-inicio {
     padding: 0 0.5rem;
@@ -378,22 +401,25 @@
   
   .subtitulo-hero {
     font-size: 1.1rem;
+    margin-bottom: 2rem;
   }
   
   .botones-hero {
     flex-direction: column;
     align-items: center;
+    gap: 1rem;
   }
   
   .boton-principal-hero,
   .boton-secundario-hero {
     width: 100%;
-    max-width: 280px;
+    max-width: 300px;
   }
   
   .seccion-estadisticas {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+    margin: 2rem 0;
   }
   
   .estadistica {
@@ -403,23 +429,98 @@
   .numero-estadistica {
     font-size: 2rem;
   }
+
+  .etiqueta-estadistica {
+    font-size: 0.85rem;
+  }
+
+  .titulo-seccion {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .seccion-hero {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .titulo-hero {
+    font-size: 2rem;
+  }
+
+  .subtitulo-hero {
+    font-size: 1.05rem;
+  }
+
+  .boton-principal-hero,
+  .boton-secundario-hero {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+    min-width: 180px;
+  }
+
+  .seccion-estadisticas {
+    gap: 0.875rem;
+  }
+
+  .estadistica {
+    padding: 1.25rem;
+  }
+
+  .numero-estadistica {
+    font-size: 1.875rem;
+  }
+
+  .titulo-seccion {
+    font-size: 1.5rem;
+  }
 }
 
 @media (max-width: 480px) {
+  .pagina-inicio {
+    padding: 0 0.25rem;
+  }
+
   .seccion-hero {
     padding: 2rem 1rem;
   }
   
   .titulo-hero {
-    font-size: 1.8rem;
+    font-size: 1.75rem;
   }
   
   .subtitulo-hero {
     font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .botones-hero {
+    gap: 0.875rem;
+  }
+
+  .boton-principal-hero,
+  .boton-secundario-hero {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    min-width: 160px;
   }
   
   .seccion-estadisticas {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+  }
+
+  .estadistica {
+    padding: 1rem;
+  }
+
+  .numero-estadistica {
+    font-size: 1.75rem;
+  }
+
+  .etiqueta-estadistica {
+    font-size: 0.8rem;
   }
   
   .estado-vacio {
@@ -428,6 +529,72 @@
   
   .icono-vacio {
     font-size: 3rem;
+  }
+
+  .estado-vacio h3 {
+    font-size: 1.3rem;
+  }
+
+  .estado-vacio p {
+    font-size: 0.95rem;
+  }
+
+  .boton-crear-primera {
+    padding: 0.875rem 1.75rem;
+    font-size: 0.95rem;
+  }
+
+  .titulo-seccion {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .seccion-hero {
+    padding: 1.75rem 0.875rem;
+  }
+
+  .titulo-hero {
+    font-size: 1.5rem;
+  }
+
+  .subtitulo-hero {
+    font-size: 0.95rem;
+  }
+
+  .boton-principal-hero,
+  .boton-secundario-hero {
+    padding: 0.55rem 0.875rem;
+    font-size: 0.85rem;
+    min-width: 140px;
+  }
+
+  .numero-estadistica {
+    font-size: 1.5rem;
+  }
+
+  .etiqueta-estadistica {
+    font-size: 0.75rem;
+  }
+
+  .estado-vacio {
+    padding: 2.5rem 0.875rem;
+  }
+
+  .icono-vacio {
+    font-size: 2.5rem;
+  }
+
+  .estado-vacio h3 {
+    font-size: 1.2rem;
+  }
+
+  .estado-vacio p {
+    font-size: 0.9rem;
+  }
+
+  .titulo-seccion {
+    font-size: 1.2rem;
   }
 }
 

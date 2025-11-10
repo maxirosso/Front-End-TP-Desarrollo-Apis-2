@@ -29,7 +29,11 @@ const PeliculaDetalle = () => {
         // Scroll al top cuando se navega a una nueva película
         window.scrollTo(0, 0);
         try {
-          const resenasPelicula = await obtenerResenasPorPelicula(decodeURIComponent(titulo));
+          const tituloDecodificado = decodeURIComponent(titulo);
+          console.log('Buscando reseñas para película:', tituloDecodificado);
+          
+          const resenasPelicula = await obtenerResenasPorPelicula(tituloDecodificado);
+          console.log('Reseñas encontradas:', resenasPelicula);
           setResenasPelicula(resenasPelicula || []);
         } catch (error) {
           console.error('Error cargando reseñas de la película:', error);
@@ -41,7 +45,7 @@ const PeliculaDetalle = () => {
     };
 
     cargarResenasPelicula();
-  }, [titulo, resenas, obtenerResenasPorPelicula]);
+  }, [titulo, obtenerResenasPorPelicula]);
 
   const manejarEliminarResena = (id) => {
     eliminarResena(id);
@@ -66,12 +70,17 @@ const PeliculaDetalle = () => {
   };
 
   // Calcular estadísticas de la película
+  const primeraResena = resenasPelicula[0];
   const estadisticas = resenasPelicula.length > 0 ? {
-    calificacionPromedio: (resenasPelicula.reduce((sum, r) => sum + r.calificacion, 0) / resenasPelicula.length).toFixed(1),
+    calificacionPromedio: (
+      resenasPelicula.reduce((sum, r) => sum + (parseFloat(r.rating) || 0), 0) / resenasPelicula.length
+    ).toFixed(1),
     totalResenas: resenasPelicula.length,
-    totalLikes: resenasPelicula.reduce((sum, r) => sum + r.likes, 0),
-    año: resenasPelicula[0]?.año,
-    genero: resenasPelicula[0]?.genero
+    totalLikes: resenasPelicula.reduce((sum, r) => sum + (parseInt(r.likes_count || r.likes) || 0), 0),
+    posterUrl: primeraResena?.movie_poster || primeraResena?.poster_url || primeraResena?.imagenUrl,
+    tituloMovie: primeraResena?.movie_title || primeraResena?.titulo || decodeURIComponent(titulo),
+    año: primeraResena?.year || primeraResena?.año,
+    genero: primeraResena?.movie_genre || primeraResena?.genero || primeraResena?.genre
   } : null;
 
   if (cargando) {
@@ -112,9 +121,13 @@ const PeliculaDetalle = () => {
         <div className="info-pelicula">
           <div className="imagen-pelicula-grande">
             <img 
-              src={resenasPelicula[0]?.imagenUrl} 
-              alt={`Póster de ${decodeURIComponent(titulo)}`}
+              src={estadisticas?.posterUrl || 'https://via.placeholder.com/300x450/2C3E50/ECF0F1?text=Sin+Poster'} 
+              alt={`Póster de ${estadisticas?.tituloMovie || decodeURIComponent(titulo)}`}
               className="poster-pelicula"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = 'https://via.placeholder.com/300x450/2C3E50/ECF0F1?text=Sin+Poster';
+              }}
             />
           </div>
           
@@ -124,10 +137,10 @@ const PeliculaDetalle = () => {
               <span className="separador-breadcrumb">›</span>
               <span className="pagina-actual">Películas</span>
               <span className="separador-breadcrumb">›</span>
-              <span className="pagina-actual">{decodeURIComponent(titulo)}</span>
+              <span className="pagina-actual">{estadisticas?.tituloMovie || decodeURIComponent(titulo)}</span>
             </div>
             
-            <h1 className="titulo-pelicula">{decodeURIComponent(titulo)}</h1>
+            <h1 className="titulo-pelicula">{estadisticas?.tituloMovie || decodeURIComponent(titulo)}</h1>
             <div className="metadatos-pelicula">
               {estadisticas?.año && <span className="año-pelicula">{estadisticas.año}</span>}
               {estadisticas?.genero && (
@@ -145,7 +158,7 @@ const PeliculaDetalle = () => {
                   {[...Array(5)].map((_, i) => (
                     <span 
                       key={i} 
-                      className={`estrella-promedio ${i < Math.round(estadisticas?.calificacionPromedio || 0) ? 'activa' : ''}`}
+                      className={`estrella-promedio ${i < Math.round(parseFloat(estadisticas?.calificacionPromedio || 0)) ? 'activa' : ''}`}
                     >
                       ★
                     </span>
@@ -166,7 +179,7 @@ const PeliculaDetalle = () => {
             </div>
 
             <div className="acciones-pelicula">
-              <Link to="/crear" className="boton-escribir-resena">
+              <Link to="/crear-resena" className="boton-escribir-resena">
                 ✏️ Escribir reseña
               </Link>
             </div>

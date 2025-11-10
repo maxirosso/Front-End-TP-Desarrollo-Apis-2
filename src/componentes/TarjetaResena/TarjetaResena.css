@@ -661,14 +661,112 @@
 }
 
 /* Responsivo */
+@media (max-width: 1024px) {
+  .contenido-resena {
+    gap: 1.5rem;
+  }
+
+  .imagen-pelicula {
+    height: 16rem;
+    width: 10rem;
+  }
+}
+
 @media (max-width: 768px) {
   .contenido-resena {
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
+    padding: var(--espaciado-lg);
   }
 
   .contenedor-imagen-pelicula {
     align-self: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .imagen-pelicula {
+    width: 140px;
+    height: 210px;
+  }
+
+  .titulo-pelicula-contenedor {
+    flex-direction: column;
+    gap: 0.25rem;
+    text-align: center;
+  }
+
+  .titulo-pelicula,
+  .titulo-resenia {
+    font-size: 1.2rem;
+  }
+
+  .titulo-resena {
+    font-size: 1rem;
+  }
+
+  .calificacion-contenedor {
+    justify-content: center;
+  }
+
+  .estrellas-calificacion {
+    gap: 0.3rem;
+  }
+
+  .texto-resena p {
+    font-size: 0.9rem;
+  }
+
+  .tags-resena {
+    justify-content: center;
+  }
+
+  .pie-resena {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .info-footer {
+    width: 100%;
+    text-align: center;
+  }
+
+  .acciones-resena {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .contador-likes-texto {
+    font-size: 0.8rem;
+  }
+
+  .boton-like,
+  .boton-comentar {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+  }
+
+  .menu-acciones-dueno {
+    position: static;
+  }
+
+  .opciones-acciones {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 480px) {
+  .tarjeta-resena {
+    margin-bottom: var(--espaciado-lg);
+  }
+
+  .contenido-resena {
+    padding: var(--espaciado-md);
   }
 
   .imagen-pelicula {
@@ -676,22 +774,82 @@
     height: 150px;
   }
 
-  .titulo-pelicula-contenedor {
-    flex-direction: column;
-    gap: 0.25rem;
+  .titulo-pelicula,
+  .titulo-resenia {
+    font-size: 1rem;
   }
 
-  .pie-resena {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
+  .titulo-resena {
+    font-size: 0.9rem;
   }
 
-  .info-footer {
+  .estrellas-calificacion {
+    font-size: 0.9rem;
+  }
+
+  .texto-resena p {
+    font-size: 0.85rem;
+  }
+
+  .tag-resena {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+  }
+
+  .fecha-publicacion {
+    font-size: 0.75rem;
+  }
+
+  .acciones-resena {
+    gap: 0.5rem;
+  }
+
+  .boton-like,
+  .boton-comentar {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .boton-menu-acciones {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+
+  .opciones-acciones {
+    min-width: 120px;
+  }
+
+  .opcion-editar,
+  .opcion-eliminar {
+    font-size: 0.85rem;
+    padding: var(--espaciado-sm) var(--espaciado-md);
+  }
+}
+
+@media (max-width: 360px) {
+  .contenido-resena {
+    padding: var(--espaciado-sm);
+  }
+
+  .imagen-pelicula {
+    width: 90px;
+    height: 135px;
+  }
+
+  .titulo-pelicula,
+  .titulo-resenia {
+    font-size: 0.95rem;
+  }
+
+  .acciones-resena {
+    flex-direction: column;
     width: 100%;
   }
 
-  .contador-likes-texto {
-    font-size: 0.8rem;
+  .boton-like,
+  .boton-comentar {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -325,6 +325,32 @@
   box-shadow: 0 2px 8px rgba(118,75,162,0.15);
 }
 
+.badge-user {
+  display: inline-block;
+  background: #3498db;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.2em 0.7em;
+  border-radius: 12px;
+  margin-left: 0.5em;
+  vertical-align: middle;
+  box-shadow: 0 2px 8px rgba(52,152,219,0.15);
+}
+
+.badge-moderator {
+  display: inline-block;
+  background: #f39c12;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.2em 0.7em;
+  border-radius: 12px;
+  margin-left: 0.5em;
+  vertical-align: middle;
+  box-shadow: 0 2px 8px rgba(230,126,34,0.15);
+}
+
 .badge-estado {
   display: inline-block;
   font-size: 0.85rem;
@@ -627,6 +653,8 @@
   }
 
   .badge-admin,
+  .badge-user,
+  .badge-moderator,
   .badge-estado {
     font-size: 0.75rem;
     padding: 0.15em 0.5em;

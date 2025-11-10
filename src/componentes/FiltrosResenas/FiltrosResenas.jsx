@@ -227,7 +227,7 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
             {filtrosLocales.soloMeGusta && (
               <span className="filtro-activo">Solo me gusta</span>
             )}
-            {filtrosLocales.contieneEspoilers && (
+            {filtrosLocales.contieneEspoilers  && (
               <span className="filtro-activo">Con spoilers</span>
             )}
           </div>

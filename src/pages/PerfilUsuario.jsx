@@ -13,120 +13,86 @@ const PerfilUsuario = () => {
   const {
     usuarioActual,
     usingBackend,
-    // usersAPI,
+    usersAPI,
     obtenerResenasPorUsuario,
     eliminarResena,
     toggleLikeResena,
     error,
-    // setError,
-    // setUsuarioActual  // ✅ Agregar setUsuarioActual del contexto
+    setError,
   } = useResenas();
-    const { usuario } = useAuth();
+  const { usuario } = useAuth();
   
-
-  // const [usuario, setUsuario] = useState(null);
+  const [usuarioViendo, setUsuarioViendo] = useState(null);
   const [resenasUsuario, setResenasUsuario] = useState([]);
-  // const [cargando, setCargando] = useState(true);
+  const [cargando, setCargando] = useState(true);
   const [filtros, setFiltros] = useState({
     sort: 'recent',
     limit: '20',
     offset: '0'
   });
 
-  // ✅ FIX: Sincronizar usuario actual del contexto con userId de la URL
-  // useEffect(() => {
-  //   debugger;
-  //   if (userId && parseInt(userId) !== usuarioActual) {
-  //     setUsuarioActual(parseInt(userId));
-  //   }
-  // }, [userId, usuarioActual, setUsuarioActual]);
+  // Cargar datos del usuario y sus reseñas
+  useEffect(() => {
+    const cargarDatosUsuario = async () => {
+      setCargando(true);
+      setError(null);
+      
+      try {
+        // Cargar datos del usuario
+        if (usingBackend) {
+          try {
+            const userData = await usersAPI.getById(userId);
+            setUsuarioViendo(userData);
+            console.log('Datos del usuario cargados desde backend:', userData);
+          } catch (userError) {
+            console.error('Error cargando usuario:', userError);
+            // Fallback a usuario autenticado si es el mismo
+            if (usuario && (usuario.user_id === parseInt(userId) || usuario.id === parseInt(userId))) {
+              setUsuarioViendo(usuario);
+            } else {
+              // Mock user como fallback
+              const mockUser = {
+                id: parseInt(userId),
+                name: `Usuario ${userId}`,
+                email: `usuario${userId}@example.com`,
+                profile_image: `https://via.placeholder.com/100x100/2C3E50/ECF0F1?text=U${userId}`,
+                bio: 'Amante del cine',
+                created_at: new Date().toISOString()
+              };
+              setUsuarioViendo(mockUser);
+            }
+          }
+        } else {
+          // Mock data
+          const mockUser = {
+            id: parseInt(userId),
+            name: `Usuario ${userId}`,
+            email: `usuario${userId}@example.com`,
+            profile_image: `https://via.placeholder.com/100x100/2C3E50/ECF0F1?text=U${userId}`,
+            bio: 'Amante del cine',
+            created_at: new Date().toISOString()
+          };
+          setUsuarioViendo(mockUser);
+        }
 
-  // useEffect(() => {
-  //   const cargarDatosUsuario = async () => {
-  //     setCargando(true);
-  //     setError(null);
-  //     debugger;
-  //     try {
-  //       // Cargar datos del usuario
-  //       debugger;
-  //       if (usingBackend) {
-  //         try {
-  //           debugger;
-  //           const userData = await usersAPI.getById(userId);
-  //           setUsuario(userData);
+        // Cargar reseñas del usuario
+        console.log('Cargando reseñas para usuario:', userId);
+        const resenas = await obtenerResenasPorUsuario(userId, filtros);
+        console.log('Reseñas obtenidas:', resenas);
+        setResenasUsuario(resenas);
 
-  //           console.log('Datos del usuario cargados desde backend:', userData);
-  //         } catch (userError) {
-  //           // Fallback a datos mock si el usuario no existe en backend
-  //           const mockUser = {
-  //             id: parseInt(userId),
-  //             name: userId === '1' ? 'Admin' :
-  //               userId === '2' ? 'Juan Pérez' :
-  //                 userId === '3' ? 'María García' :
-  //                   userId === '4' ? 'Carlos López' :
-  //                     userId === '5' ? 'Ana Martín' :
-  //                       userId === '6' ? 'Luis Rodríguez' : `Usuario ${userId}`,
-  //             email: userId === '1' ? 'admin@moviereviews.com' :
-  //               userId === '2' ? 'juan@example.com' :
-  //                 userId === '3' ? 'maria@example.com' :
-  //                   userId === '4' ? 'carlos@example.com' :
-  //                     userId === '5' ? 'ana@example.com' :
-  //                       userId === '6' ? 'luis@example.com' : `usuario${userId}@example.com`,
-  //             profile_image: `https://via.placeholder.com/100x100/2C3E50/ECF0F1?text=U${userId}`,
-  //             bio: userId === '1' ? 'Administrador del sistema de reseñas' :
-  //               userId === '2' ? 'Amante del cine y crítico ocasional' :
-  //                 userId === '3' ? 'Especialista en ciencia ficción' :
-  //                   userId === '4' ? 'Crítico profesional de cine' :
-  //                     userId === '5' ? 'Fan de películas de acción' :
-  //                       userId === '6' ? 'Cinéfilo y coleccionista' : 'Amante del cine',
-  //             created_at: '2025-09-01T10:00:00Z'
-  //           };
-  //           setUsuario(mockUser);
-  //         }
-  //       } else {
-  //         // Mock data para usuarios
-  //         const mockUser = {
-  //           id: parseInt(userId),
-  //           name: userId === '1' ? 'Admin' :
-  //             userId === '2' ? 'Juan Pérez' :
-  //               userId === '3' ? 'María García' :
-  //                 userId === '4' ? 'Carlos López' :
-  //                   userId === '5' ? 'Ana Martín' :
-  //                     userId === '6' ? 'Luis Rodríguez' : `Usuario ${userId}`,
-  //           email: userId === '1' ? 'admin@moviereviews.com' :
-  //             userId === '2' ? 'juan@example.com' :
-  //               userId === '3' ? 'maria@example.com' :
-  //                 userId === '4' ? 'carlos@example.com' :
-  //                   userId === '5' ? 'ana@example.com' :
-  //                     userId === '6' ? 'luis@example.com' : `usuario${userId}@example.com`,
-  //           profile_image: `https://via.placeholder.com/100x100/2C3E50/ECF0F1?text=U${userId}`,
-  //           bio: userId === '1' ? 'Administrador del sistema de reseñas' :
-  //             userId === '2' ? 'Amante del cine y crítico ocasional' :
-  //               userId === '3' ? 'Especialista en ciencia ficción' :
-  //                 userId === '4' ? 'Crítico profesional de cine' :
-  //                   userId === '5' ? 'Fan de películas de acción' :
-  //                     userId === '6' ? 'Cinéfilo y coleccionista' : 'Amante del cine',
-  //           created_at: '2025-09-01T10:00:00Z'
-  //         };
-  //         setUsuario(mockUser);
-  //       }
+      } catch (err) {
+        console.error('Error cargando perfil de usuario:', err);
+        setError(`Error cargando perfil: ${err.message}`);
+      } finally {
+        setCargando(false);
+      }
+    };
 
-  //       // Cargar reseñas del usuario
-  //       const resenas = await obtenerResenasPorUsuario(userId, filtros);
-  //       setResenasUsuario(resenas);
-
-  //     } catch (err) {
-  //       console.error('Error cargando perfil de usuario:', err);
-  //       setError(`Error cargando perfil: ${err.message}`);
-  //     } finally {
-  //       setCargando(false);
-  //     }
-  //   };
-
-  //   if (userId) {
-  //     cargarDatosUsuario();
-  //   }
-  // }, [userId, usingBackend, usersAPI, obtenerResenasPorUsuario, filtros, setError]);
+    if (userId) {
+      cargarDatosUsuario();
+    }
+  }, [userId, usingBackend, usersAPI, obtenerResenasPorUsuario, filtros, setError, usuario]);
 
   // ✅ NUEVO: Escuchar evento de reseñas actualizadas para recargar automáticamente
   useEffect(() => {
@@ -183,9 +149,20 @@ const PerfilUsuario = () => {
     setFiltros(prev => ({ ...prev, sort: nuevoOrden, offset: '0' }));
   };
 
-  // if (cargando) {
-  //   return <LoadingSpinner mensaje="Cargando perfil de usuario..." />;
-  // }
+  if (cargando) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '50vh',
+        fontSize: '1.2rem',
+        color: '#666'
+      }}>
+        Cargando perfil de usuario...
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -199,7 +176,7 @@ const PerfilUsuario = () => {
     );
   }
 
-  if (!usuario) {
+  if (!usuarioViendo) {
     return (
       <div className="usuario-no-encontrado">
         <h2>Usuario no encontrado</h2>
@@ -217,8 +194,8 @@ const PerfilUsuario = () => {
           <div className="perfil-info">
             <img
               className="perfil-imagen"
-              src={usuario.image_url /* || defaultUserImg */}
-              alt={`Foto de ${usuario.full_name || usuario.name || "Usuario"}`}
+              src={usuarioViendo.image_url || usuarioViendo.profile_image || defaultUserImg}
+              alt={`Foto de ${usuarioViendo.full_name || usuarioViendo.name || "Usuario"}`}
               onError={e => {
                 e.target.onerror = null;
                 e.target.src = defaultUserImg;
@@ -226,16 +203,15 @@ const PerfilUsuario = () => {
             />
             <div className="perfil-detalles">
               <h1 className="perfil-nombre">
-                {usuario.full_name || `${usuario.name} ${usuario.last_name || ""}`}
-                {usuario.role && (
-                  <span className={`badge-${usuario.role}`}>{usuario.role.charAt(0).toUpperCase() + usuario.role.slice(1)}</span>
+                {usuarioViendo.full_name || usuarioViendo.name || `Usuario ${userId}`}
+                {usuarioViendo.role && (
+                  <span className={`badge-${usuarioViendo.role}`}>{usuarioViendo.role.charAt(0).toUpperCase() + usuarioViendo.role.slice(1)}</span>
                 )}
-                <span className={`badge-estado ${usuario.is_active ? "activo" : "inactivo"}`}>  {usuario.is_active ? "Activo" : "Inactivo"} </span>
+                <span className={`badge-estado ${usuarioViendo.is_active !== false ? "activo" : "inactivo"}`}>
+                  {usuarioViendo.is_active !== false ? "Activo" : "Inactivo"}
+                </span>
               </h1>
-              <div className="perfil-email">{usuario.email}</div>
-             {/*  <div className="perfil-fecha">
-                Última actualización: {usuario.updated_at ? new Date(usuario.updated_at).toLocaleDateString("es-ES") : ""}
-              </div> */}
+              <div className="perfil-email">{usuarioViendo.email}</div>
             </div>
           </div>
         </div>
@@ -259,7 +235,7 @@ const PerfilUsuario = () => {
 
       {/* Controles de reseñas */}
       <div className="resenas-controles">
-        <h2>Reseñas de {usuario.name}</h2>
+        <h2>Reseñas de {usuarioViendo.name || `Usuario ${userId}`}</h2>
 
         <div className="ordenamiento-perfil">
           <label htmlFor="orden-select">Ordenar por:</label>
@@ -282,9 +258,9 @@ const PerfilUsuario = () => {
           <div className="sin-resenas">
             <div className="icono-vacio">📝</div>
             <h3>Sin reseñas aún</h3>
-            <p>{usuario.name} no ha escrito ninguna reseña todavía.</p>
-            {userId === '1' && ( // Solo mostrar botón si es el usuario actual
-              <Link to="/crear" className="btn-crear-primera">
+            <p>{usuarioViendo.name || `Usuario ${userId}`} no ha escrito ninguna reseña todavía.</p>
+            {(usuarioActual === parseInt(userId) || usuario?.user_id === parseInt(userId) || usuario?.id === parseInt(userId)) && (
+              <Link to="/crear-resena" className="btn-crear-primera">
                 Escribir primera reseña
               </Link>
             )}

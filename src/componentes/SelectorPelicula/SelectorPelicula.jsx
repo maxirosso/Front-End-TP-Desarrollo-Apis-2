@@ -212,7 +212,7 @@ const SelectorPelicula = ({
             </div>
           )}
 
-          {!hayCoincidenciaExacta && busqueda.length > 2 && (
+          {/* {!hayCoincidenciaExacta && busqueda.length > 2 && (
             <div className="opcion-crear-nueva" onClick={manejarCrearNueva}>
               <div className="icono-agregar">+</div>
               <div className="texto-crear">
@@ -220,7 +220,7 @@ const SelectorPelicula = ({
                 <div className="subtitulo-crear">Crear nueva película</div>
               </div>
             </div>
-          )}
+          )} */}
         </div>
       )}
     </div>

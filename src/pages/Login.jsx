@@ -121,7 +121,7 @@ const Login = () => {
           {error && (
             <div className="error-message">
               <span className="error-icon">⚠️</span>
-              {error}
+              <h3>Credenciales invalidas</h3>
             </div>
           )}
 

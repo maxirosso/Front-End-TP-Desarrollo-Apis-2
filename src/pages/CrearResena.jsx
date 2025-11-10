@@ -82,7 +82,7 @@ const CrearResena = () => {
 
         try {
           const resenaId = parseInt(id, 10);
-          const response = await fetch(`http://localhost:8080/reviews/${resenaId}`);
+          const response = await fetch(`https://api.fmayordomo.com.ar/reviews/${resenaId}`);
 
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);

@@ -29,8 +29,8 @@ jobs:
       env:
         # Exporta la URL base del backend desde el secreto
         REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
-        # CONSTRUYE la URL del proxy para usuarios añadiendo /users-api
-        REACT_APP_USER_URL: ${{ secrets.REACT_APP_API_URL }}/users-api
+        # CONSTRUYE la URL del proxy para usuarios añadiendo /users-api, deprecado ahora usamos la nueva
+        REACT_APP_USER_URL: https://usuariosbe.cine-track.com.ar
       run: |
         npm install
         # El comando 'npm run build' ahora leerá las variables del 'env' de arriba

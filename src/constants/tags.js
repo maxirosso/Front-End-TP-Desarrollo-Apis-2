@@ -1,8 +1,8 @@
 // Tags disponibles para reseñas - usados tanto en creación como en filtros
 export const TAGS_DISPONIBLES = [
   // Tags de contenido
-  'Sin Spoilers',
-  'Con Spoilers',
+  // 'Sin Spoilers',
+  // 'Con Spoilers',
   // Calificaciones subjetivas
   'Obra Maestra',
   'Una Decepción', 

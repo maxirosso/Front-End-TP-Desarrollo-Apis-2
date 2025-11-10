@@ -49,6 +49,11 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
     { valor: 'Crimen', etiqueta: 'Crimen' }
   ];
 
+  const opcionesSpoiler = [
+    { valor: false, etiqueta: 'Sin spoilers' },
+    { valor: true, etiqueta: 'Con spoilers' }
+  ];
+
   // ✅ Usar tags compartidos en lugar de definir aquí
   const tagsDisponibles = TAGS_DISPONIBLES;
 
@@ -133,6 +138,22 @@ const FiltrosResenas = ({ onAplicarFiltros, filtrosActivos, onLimpiarFiltros }) 
             className="select-filtro"
           >
             {opcionesCalificacion.map(opcion => (
+              <option key={opcion.valor} value={opcion.valor}>
+                {opcion.etiqueta}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Spoilers */}
+        <div className="grupo-filtro">
+          <label className="etiqueta-filtro">Reseñas con spoilers</label>
+          <select
+            value={filtrosLocales.contieneEspoilers}
+            onChange={(e) => manejarCambioFiltro('contieneEspoilers', e.target.value === 'true')}
+            className="select-filtro"
+          >
+            {opcionesSpoiler.map(opcion => (
               <option key={opcion.valor} value={opcion.valor}>
                 {opcion.etiqueta}
               </option>

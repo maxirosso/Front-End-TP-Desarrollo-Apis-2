@@ -111,9 +111,12 @@ export const ProveedorResenas = ({ children }) => {
         const texto = nuevaResena.textoResena || nuevaResena.body || "";
         if (!texto || texto.trim().length < 20)
           throw new Error("La reseña debe tener al menos 20 caracteres");
-        
+
         // ✅ FIX: Validar calificación solo si existe y está fuera de rango
-        if (nuevaResena.calificacion !== undefined && nuevaResena.calificacion !== null) {
+        if (
+          nuevaResena.calificacion !== undefined &&
+          nuevaResena.calificacion !== null
+        ) {
           const rating = Number(nuevaResena.calificacion);
           if (rating < 0 || rating > 5) {
             throw new Error("La calificación debe estar entre 0 y 5");
@@ -217,11 +220,46 @@ export const ProveedorResenas = ({ children }) => {
   const actualizarResena = async (id, datosActualizados) => {
     try {
       if (usingBackend) {
-        await reviewsAPI.update(id, datosActualizados);
+        // Normalizar igual que en agregarResena
+        const texto =
+          datosActualizados.textoResena || datosActualizados.body || "";
+
+        const ratingRaw =
+          datosActualizados.calificacion ?? datosActualizados.rating ?? 0;
+
+        const payload = {
+          movie_id: Number(
+            datosActualizados.movie_id || datosActualizados.movieId
+          ),
+          user_id: Number(datosActualizados.user_id || usuarioActual),
+          title: (
+            datosActualizados.tituloResena ||
+            datosActualizados.titulo ||
+            datosActualizados.title ||
+            ""
+          ).trim(),
+          body: (texto || "").trim(),
+          rating: Number(ratingRaw),
+          has_spoilers: Boolean(
+            datosActualizados.contieneEspoilers ??
+              datosActualizados.has_spoilers
+          ),
+          tags: Array.isArray(datosActualizados.tags)
+            ? datosActualizados.tags
+            : [],
+        };
+
+        // Logs para debug
+        console.log("[actualizarResena] PUT /reviews/" + id, payload);
+
+        await reviewsAPI.update(id, payload);
         await recargarResenasDesdeBackend();
       } else {
+        // Modo local
         setResenas((prev) =>
-          prev.map((r) => (r.id === id ? { ...r, ...datosActualizados } : r))
+          prev.map((r) =>
+            r.id === Number(id) ? { ...r, ...datosActualizados } : r
+          )
         );
       }
     } catch (err) {
@@ -369,7 +407,9 @@ export const ProveedorResenas = ({ children }) => {
 
   const aplicarFiltros = async (filtros = {}) => {
     try {
-      if (usingBackend /* && (filtros.genero || filtros.calificacion || filtros.usuario || filtros.pelicula || filtros.tags?.length > 0 || filtros.fechaPublicacion) */) {
+      if (
+        usingBackend /* && (filtros.genero || filtros.calificacion || filtros.usuario || filtros.pelicula || filtros.tags?.length > 0 || filtros.fechaPublicacion) */
+      ) {
         // Usar backend para filtros complejos
         const filtrosBackend = {};
         if (filtros.genero) filtrosBackend.genre = filtros.genero;

@@ -3,7 +3,7 @@
 .barra-ordenamiento {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   background: linear-gradient(135deg, #34495E 0%, #2C3E50 100%);
   padding: 1rem 1.5rem;
   border-radius: 10px;
@@ -33,6 +33,7 @@
 .controles-ordenamiento {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 1rem;
 }
 
@@ -40,6 +41,8 @@
   color: #BDC3C7;
   font-weight: 500;
   font-size: 0.9rem;
+  display: flex;
+  align-items: center;
 }
 
 /* Selector de ordenamiento */

@@ -82,14 +82,6 @@ const BarraOrdenamiento = ({ onCambiarOrdenamiento, ordenamientoActual, totalRes
 
   return (
     <div className="barra-ordenamiento">
-      <div className="info-resultados">
-        <span className="contador-resultados">
-          {totalResenas === 0 ? 'No hay reseñas' : 
-           totalResenas === 1 ? '1 reseña encontrada' : 
-           `${totalResenas} reseñas encontradas`}
-        </span>
-      </div>
-
       <div className="controles-ordenamiento">
         <span className="etiqueta-ordenar">Ordenar por:</span>
         

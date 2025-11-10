@@ -83,6 +83,8 @@ const TarjetaResena = ({
     updated_at,
     user_id,
     tags: tagsRaw,
+    likes_count,
+    likes,
   } = pelicula;
 
   // 🔹 Título de la película (usa SIEMPRE el campo de movie)
@@ -123,6 +125,9 @@ const TarjetaResena = ({
   )}`;
 
   const fechaActualizacion = updated_at || null;
+
+  // Contador de likes
+  const likesCount = parseInt(likes_count || likes || 0);
 
   const fueEditada =
     fechaActualizacion &&
@@ -270,15 +275,22 @@ const TarjetaResena = ({
 
           {/* Pie */}
           <footer className="pie-resena">
-            <span className="fecha-publicacion">
-              Posteado el {String(fechaResena)}
-              {fueEditada && (
-                <span className="indicador-editada">
-                  {' '}
-                  (editada)
-                </span>
-              )}
-            </span>
+            <div className="info-footer">
+              <span className="fecha-publicacion">
+                Posteado el {String(fechaResena)}
+                {fueEditada && (
+                  <span className="indicador-editada">
+                    {' '}
+                    (editada)
+                  </span>
+                )}
+              </span>
+              
+              {/* Contador de likes */}
+              <span className="contador-likes-texto">
+                ❤️ {likesCount} {likesCount === 1 ? 'like' : 'likes'}
+              </span>
+            </div>
 
             <div className="acciones-resena">
               {(puedeEditar || puedeEliminar) && (

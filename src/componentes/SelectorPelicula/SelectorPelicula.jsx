@@ -7,6 +7,7 @@ const SelectorPelicula = ({
   onSeleccionarPelicula,
   onCrearNueva,
   disabled = false,
+  bloquearSeleccion = false,
 }) => {
   const [busqueda, setBusqueda] = useState("");
   const [peliculas, setPeliculas] = useState([]);
@@ -15,6 +16,7 @@ const SelectorPelicula = ({
   const [mostrarFormularioNueva, setMostrarFormularioNueva] = useState(false);
   const inputRef = useRef(null);
   const sugerenciasRef = useRef(null);
+  const noInteractivo = disabled || bloquearSeleccion;
 
   // Cargar películas cuando el componente se monta
   useEffect(() => {
@@ -52,6 +54,8 @@ const SelectorPelicula = ({
   };
 
   const manejarCambioBusqueda = (e) => {
+    if (noInteractivo) return;
+
     const valor = e.target.value;
     setBusqueda(valor);
     setMostrarSugerencias(valor.length > 0);
@@ -63,6 +67,8 @@ const SelectorPelicula = ({
   };
 
   const manejarSeleccionPelicula = (pelicula) => {
+    if (noInteractivo) return;
+
     setBusqueda(pelicula.title);
     setMostrarSugerencias(false);
     setMostrarFormularioNueva(false);
@@ -70,6 +76,7 @@ const SelectorPelicula = ({
   };
 
   const manejarCrearNueva = () => {
+    if (noInteractivo) return;
     setMostrarFormularioNueva(true);
     setMostrarSugerencias(false);
     onCrearNueva && onCrearNueva();
@@ -98,14 +105,20 @@ const SelectorPelicula = ({
         <input
           ref={inputRef}
           type="text"
-          value={busqueda}
+          value={
+            peliculaSeleccionada && bloquearSeleccion
+              ? peliculaSeleccionada.title
+              : busqueda
+          }
           onChange={manejarCambioBusqueda}
-          onFocus={() => busqueda && setMostrarSugerencias(true)}
+          onFocus={() => {
+            if (!noInteractivo && busqueda) setMostrarSugerencias(true);
+          }}
           placeholder="Buscá tu película favorita..."
           className={`entrada-busqueda ${
             peliculaSeleccionada ? "seleccionada" : ""
           }`}
-          disabled={disabled}
+          disabled={noInteractivo}
         />
 
         {cargando && (
@@ -134,16 +147,18 @@ const SelectorPelicula = ({
           <div className="contenido-derecha">
             <div className="cabecera-pelicula">
               <h3 className="titulo-pelicula">{peliculaSeleccionada.title}</h3>
-              <button
-                type="button"
-                onClick={() => {
-                  setBusqueda("");
-                  onSeleccionarPelicula(null);
-                }}
-                className="boton-cambiar"
-              >
-                Cambiar
-              </button>
+              {!bloquearSeleccion && !disabled && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBusqueda("");
+                    onSeleccionarPelicula(null);
+                  }}
+                  className="boton-cambiar"
+                >
+                  Cambiar
+                </button>
+              )}
             </div>
 
             <p className="info-secundaria">

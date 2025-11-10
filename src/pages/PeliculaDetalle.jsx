@@ -45,7 +45,6 @@ const PeliculaDetalle = () => {
           } else if (titulo) {
             // Si solo tenemos título, buscar por título (fallback)
             const tituloDecodificado = decodeURIComponent(titulo);
-            console.log('Buscando reseñas para película:', tituloDecodificado);
             
             resenas = await obtenerResenasPorPelicula(tituloDecodificado);
             
@@ -64,7 +63,6 @@ const PeliculaDetalle = () => {
             }
           }
           
-          console.log('Reseñas encontradas:', resenas);
           setPelicula(peliculaData);
           setResenasPelicula(resenas || []);
         } catch (error) {

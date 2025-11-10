@@ -115,19 +115,22 @@ const CrearResena = () => {
             });
 
             // Solo establecer película si tenemos los datos completos
-            if (resena.movie_id && resena.movie_title) {
+
+            const movieData = await fetch(`https://api.fmayordomo.com.ar/movies/${resena.movie_id}`);
+            console.log('Datos de película cargados para edición:', movieData);
+            if (movieData.ok) {
+              const movieJson = await movieData.json();
               setPeliculaSeleccionada({
-                id: resena.movie_id,
-                title: resena.movie_title,
-                year: resena.year,
-                genre: resena.movie_genre || resena.genre,
-                director: resena.movie_director,
-                poster_url: resena.movie_poster || resena.poster_url,
-                description: resena.movie_description
+                id: movieJson.id,
+                title: movieJson.title,
+                year: movieJson.year,
+                genre: movieJson.genre,
+                director: movieJson.director,
+                poster_url: movieJson.poster_url,
+                description: movieJson.description
               });
             }
           }
-
         } catch (error) {
           console.error('Error al cargar la reseña:', error);
           alert('Error al cargar la reseña: ' + error.message);

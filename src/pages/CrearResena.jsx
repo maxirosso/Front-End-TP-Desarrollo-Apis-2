@@ -127,6 +127,12 @@ const CrearResena = () => {
                 poster_url: movieJson.poster_url,
                 description: movieJson.description
               });
+
+              setDatosFormulario(prev => ({
+                ...prev,
+                año: movieJson.year || prev.año,
+                genero: movieJson.genre || prev.genero
+              }));
             }
           }
         } catch (error) {
@@ -197,8 +203,6 @@ const CrearResena = () => {
   const validarFormulario = () => {
     const nuevosErrores = {};
 
-    console.log(datosFormulario);
-
     if (!datosFormulario.titulo.trim()) {
       nuevosErrores.titulo = 'El título de la película es obligatorio';
       console.log('❌ Error: título vacío');
@@ -210,8 +214,8 @@ const CrearResena = () => {
     }
 
     // ✅ VALIDACIÓN: La calificación debe ser entre 1 y 5 (ahora opcional)
-    if (datosFormulario.calificacion && (datosFormulario.calificacion < 1 || datosFormulario.calificacion > 5)) {
-      nuevosErrores.calificacion = 'La calificación debe estar entre 1 y 5 estrellas';
+    if (datosFormulario.calificacion && (datosFormulario.calificacion < 0 || datosFormulario.calificacion > 5)) {
+      nuevosErrores.calificacion = 'La calificación debe estar entre 0 y 5 estrellas';
       console.log('❌ Error: calificación inválida', datosFormulario.calificacion);
     }
 
@@ -220,13 +224,13 @@ const CrearResena = () => {
     //   nuevosErrores.fechaVisionado = 'Indica cuándo viste la película';
     // }
 
-    if (!datosFormulario.textoResena.trim() || datosFormulario.textoResena.length < 10) {
-      nuevosErrores.textoResena = 'La reseña debe tener al menos 10 caracteres';
+    if (!datosFormulario.textoResena.trim() || datosFormulario.textoResena.length < 20) {
+      nuevosErrores.textoResena = 'La reseña debe tener al menos 20 caracteres';
       console.log('❌ Error: reseña muy corta', datosFormulario.textoResena.length);
     }
 
-    if (datosFormulario.textoResena.length > 1000) {
-      nuevosErrores.textoResena = 'La reseña no puede exceder 1000 caracteres';
+    if (datosFormulario.textoResena.length > 150) {
+      nuevosErrores.textoResena = 'La reseña no puede exceder 150 caracteres';
       console.log('❌ Error: reseña muy larga', datosFormulario.textoResena.length);
     }
 

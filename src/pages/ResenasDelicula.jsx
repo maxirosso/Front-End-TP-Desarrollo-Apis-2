@@ -225,11 +225,10 @@ const ResenasDelicula = () => {
                   {[1, 2, 3, 4, 5].map((star) => (
                     <span
                       key={star}
-                      className={`estrella ${
-                        star <= Math.round(estadisticas.promedioRating)
+                      className={`estrella ${star <= Math.round(estadisticas.promedioRating)
                           ? "activa"
                           : ""
-                      }`}
+                        }`}
                     >
                       ⭐
                     </span>
@@ -270,7 +269,16 @@ const ResenasDelicula = () => {
         </div>
 
         <div className="acciones-pelicula">
-          <Link to={`/crear?movieId=${movieId}`} className="btn-crear-resena">
+          <Link to={`/crear?movieId=${movieId}&titulo=${encodeURIComponent(pelicula.title)}&year=${pelicula.year
+            }&genre=${encodeURIComponent(
+              pelicula.genre || ""
+            )}&director=${encodeURIComponent(
+              pelicula.director || ""
+            )}&poster=${encodeURIComponent(
+              pelicula.poster_url || ""
+            )}&description=${encodeURIComponent(
+              pelicula.description || ""
+            )}`} className="btn-crear-resena">
             ✏️ Escribir reseña
           </Link>
         </div>
@@ -319,7 +327,7 @@ const ResenasDelicula = () => {
                 onEliminar={manejarEliminarResena}
                 onEditar={manejarEditarResena}
                 onToggleLike={manejarToggleLike}
-                onAbrirComentarios={() => {}} // Implementar si es necesario
+                onAbrirComentarios={() => { }} // Implementar si es necesario
                 usuarioActual={usuarioActual} // Obtener del contexto de auth
                 mostrarPelicula={false} // No mostrar info de película en esta vista
               />

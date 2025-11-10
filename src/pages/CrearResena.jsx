@@ -197,6 +197,8 @@ const CrearResena = () => {
   const validarFormulario = () => {
     const nuevosErrores = {};
 
+    console.log(datosFormulario);
+
     if (!datosFormulario.titulo.trim()) {
       nuevosErrores.titulo = 'El título de la película es obligatorio';
       console.log('❌ Error: título vacío');

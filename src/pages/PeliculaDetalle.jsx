@@ -172,7 +172,10 @@ const PeliculaDetalle = () => {
           <div className="icono-vacio">📝</div>
           <h3>No hay reseñas para esta película</h3>
           <p>Sé el primero en compartir tu opinión sobre "{tituloDisplay}"</p>
-          <Link to="/crear-resena" className="btn-crear-primera">
+          <Link 
+            to={`/crear?movieId=${pelicula?.id || movieId || ''}&titulo=${encodeURIComponent(tituloDisplay)}&year=${añoDisplay || ''}&genre=${encodeURIComponent(generoDisplay || '')}&director=${encodeURIComponent(directorDisplay || '')}&poster=${encodeURIComponent(posterUrl)}&description=${encodeURIComponent(descripcionDisplay || '')}`}
+            className="btn-crear-primera"
+          >
             Escribir primera reseña
           </Link>
         </div>
@@ -250,7 +253,10 @@ const PeliculaDetalle = () => {
         </div>
 
         <div className="acciones-pelicula">
-          <Link to="/crear-resena" className="btn-crear-resena">
+          <Link 
+            to={`/crear?movieId=${pelicula?.id || movieId || ''}&titulo=${encodeURIComponent(tituloDisplay)}&year=${añoDisplay || ''}&genre=${encodeURIComponent(generoDisplay || '')}&director=${encodeURIComponent(directorDisplay || '')}&poster=${encodeURIComponent(posterUrl)}&description=${encodeURIComponent(descripcionDisplay || '')}`}
+            className="btn-crear-resena"
+          >
             ✏️ Escribir reseña
           </Link>
         </div>

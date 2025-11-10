@@ -1,9 +1,41 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import ContextoResenas from '../contextos/ContextoResenas';
-import SelectorPelicula from '../componentes/SelectorPelicula/SelectorPelicula';
-import { TAGS_DISPONIBLES } from '../constants/tags'; // ✅ Importar tags compartidos
-import './CrearResena.css';
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import ContextoResenas from "../contextos/ContextoResenas";
+import SelectorPelicula from "../componentes/SelectorPelicula/SelectorPelicula";
+import { TAGS_DISPONIBLES } from "../constants/tags"; // ✅ Importar tags compartidos
+import "./CrearResena.css";
+
+const normalizeTags = (raw) => {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (!trimmed) return [];
+
+    // 1) Si es JSON válido: '["Imperdible","Entretenida"]'
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) return parsed.map(String);
+    } catch (_) {}
+
+    // 2) Si viene como text[] de Postgres: '{"Imperdible","Entretenida"}'
+    if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+      return trimmed
+        .slice(1, -1) // saco llaves
+        .split(",")
+        .map(
+          (s) => s.trim().replace(/^"+|"+$/g, "") // saco comillas externas
+        )
+        .filter(Boolean);
+    }
+
+    // 3) Cualquier otra cosa: lo trato como un solo tag
+    return [trimmed];
+  }
+
+  return [];
+};
 
 const CrearResena = () => {
   const navigate = useNavigate();
@@ -12,18 +44,18 @@ const CrearResena = () => {
 
   // ✅ SOLUCION: Extraer TODO el contexto pero guardar funciones en useRef para evitar re-renders
   const contextoCompleto = useContext(ContextoResenas);
-  
+
   // Guardar funciones en refs (no causan re-renders)
   const funcionesRef = useRef({});
   funcionesRef.current = {
     agregarResena: contextoCompleto.agregarResena,
     actualizarResena: contextoCompleto.actualizarResena,
-    reviewsAPI: contextoCompleto.reviewsAPI
+    reviewsAPI: contextoCompleto.reviewsAPI,
   };
-  
+
   // Extraer solo valores primitivos (sí causan re-renders pero solo cuando cambian de verdad)
-  const { usuarioActual, /* usingBackend */ } = contextoCompleto;
-  
+  const { usuarioActual /* usingBackend */ } = contextoCompleto;
+
   // Usar las funciones desde el ref
   const agregarResena = (...args) => {
     return funcionesRef.current.agregarResena(...args);
@@ -34,39 +66,43 @@ const CrearResena = () => {
   // const reviewsAPI = funcionesRef.current.reviewsAPI;
 
   const esEdicion = !!id;
-  const movieIdFromUrl = searchParams.get('movieId');
-  const tituloFromUrl = searchParams.get('titulo');
-  const yearFromUrl = searchParams.get('year');
-  const genreFromUrl = searchParams.get('genre');
-  const directorFromUrl = searchParams.get('director');
-  const posterFromUrl = searchParams.get('poster');
-  const descriptionFromUrl = searchParams.get('description');
+  const movieIdFromUrl = searchParams.get("movieId");
+  const tituloFromUrl = searchParams.get("titulo");
+  const yearFromUrl = searchParams.get("year");
+  const genreFromUrl = searchParams.get("genre");
+  const directorFromUrl = searchParams.get("director");
+  const posterFromUrl = searchParams.get("poster");
+  const descriptionFromUrl = searchParams.get("description");
 
   const [datosFormulario, setDatosFormulario] = useState({
-    tituloResenia: '', // ✅ Agregar título de reseña
-    titulo: tituloFromUrl || '',
-    año: yearFromUrl || '',
-    poster: posterFromUrl || '',
+    tituloResenia: "", // ✅ Agregar título de reseña
+    titulo: tituloFromUrl || "",
+    año: yearFromUrl || "",
+    poster: posterFromUrl || "",
     posterFile: null, // Para almacenar el archivo de imagen
     calificacion: 0,
-    fechaVisionado: '',
-    textoResena: '',
+    fechaVisionado: "",
+    textoResena: "",
     megusta: false,
     contieneEspoilers: false,
     esSpoilerFree: true,
-    genero: genreFromUrl || '',
-    tags: []
+    genero: genreFromUrl || "",
+    tags: [],
   });
 
-  const [peliculaSeleccionada, setPeliculaSeleccionada] = useState(movieIdFromUrl ? {
-    id: movieIdFromUrl,
-    title: tituloFromUrl,
-    year: yearFromUrl,
-    genre: genreFromUrl,
-    director: directorFromUrl,
-    poster_url: posterFromUrl,
-    description: descriptionFromUrl
-  } : null);
+  const [peliculaSeleccionada, setPeliculaSeleccionada] = useState(
+    movieIdFromUrl
+      ? {
+          id: movieIdFromUrl,
+          title: tituloFromUrl,
+          year: yearFromUrl,
+          genre: genreFromUrl,
+          director: directorFromUrl,
+          poster_url: posterFromUrl,
+          description: descriptionFromUrl,
+        }
+      : null
+  );
   // const [modoCrearNueva, setModoCrearNueva] = useState(false);
   const [cargandoDatos, setCargandoDatos] = useState(esEdicion);
 
@@ -82,7 +118,9 @@ const CrearResena = () => {
 
         try {
           const resenaId = parseInt(id, 10);
-          const response = await fetch(`https://api.fmayordomo.com.ar/reviews/${resenaId}`);
+          const response = await fetch(
+            `https://api.fmayordomo.com.ar/reviews/${resenaId}`
+          );
 
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -92,30 +130,32 @@ const CrearResena = () => {
 
           if (resena) {
             // Convertir fecha ISO a formato YYYY-MM-DD para el input
-            let fechaFormateada = '';
+            let fechaFormateada = "";
             if (resena.created_at) {
               const fecha = new Date(resena.created_at);
-              fechaFormateada = fecha.toISOString().split('T')[0];
+              fechaFormateada = fecha.toISOString().split("T")[0];
             }
 
             setDatosFormulario({
-              tituloResenia: resena.title || '',
-              titulo: resena.movie_title || '',
-              año: resena.year || '',
-              poster: resena.movie_poster || resena.poster_url || '',
+              tituloResenia: resena.title || "",
+              titulo: resena.movie_title || "",
+              año: resena.year || "",
+              poster: resena.movie_poster || resena.poster_url || "",
               calificacion: resena.rating || 0,
               fechaVisionado: fechaFormateada,
-              textoResena: resena.body || '',
+              textoResena: resena.body || "",
               megusta: false,
               contieneEspoilers: resena.has_spoilers || false,
               esSpoilerFree: !resena.has_spoilers,
-              genero: resena.movie_genre || resena.genre || '',
-              tags: resena.tags || []
+              genero: resena.movie_genre || resena.genre || "",
+              tags: normalizeTags(resena.tags) || [],
             });
 
             // Solo establecer película si tenemos los datos completos
 
-            const movieData = await fetch(`https://api.fmayordomo.com.ar/movies/${resena.movie_id}`);
+            const movieData = await fetch(
+              `https://api.fmayordomo.com.ar/movies/${resena.movie_id}`
+            );
             if (movieData.ok) {
               const movieJson = await movieData.json();
               setPeliculaSeleccionada({
@@ -125,19 +165,19 @@ const CrearResena = () => {
                 genre: movieJson.genre,
                 director: movieJson.director,
                 poster_url: movieJson.poster_url,
-                description: movieJson.description
+                description: movieJson.description,
               });
 
-              setDatosFormulario(prev => ({
+              setDatosFormulario((prev) => ({
                 ...prev,
                 año: movieJson.year || prev.año,
-                genero: movieJson.genre || prev.genero
+                genero: movieJson.genre || prev.genero,
               }));
             }
           }
         } catch (error) {
-          console.error('Error al cargar la reseña:', error);
-          alert('Error al cargar la reseña: ' + error.message);
+          console.error("Error al cargar la reseña:", error);
+          alert("Error al cargar la reseña: " + error.message);
         } finally {
           setCargandoDatos(false);
         }
@@ -151,24 +191,30 @@ const CrearResena = () => {
   const tagsDisponibles = TAGS_DISPONIBLES;
 
   const manejarCambioEntrada = (campo, valor) => {
-    setDatosFormulario(prev => ({
+    setDatosFormulario((prev) => ({
       ...prev,
-      [campo]: valor
+      [campo]: valor,
     }));
 
     // Limpiar error específico cuando el usuario empiece a corregir
     if (errores[campo]) {
-      setErrores(prev => ({ ...prev, [campo]: null }));
+      setErrores((prev) => ({ ...prev, [campo]: null }));
     }
   };
 
   const manejarCambioTag = (tag) => {
-    setDatosFormulario(prev => ({
-      ...prev,
-      tags: prev.tags.includes(tag)
-        ? prev.tags.filter(t => t !== tag)
-        : [...prev.tags, tag]
-    }));
+    setDatosFormulario((prev) => {
+      const current = Array.isArray(prev.tags)
+        ? prev.tags
+        : normalizeTags(prev.tags); // por si quedó algo raro
+
+      const exists = current.includes(tag);
+
+      return {
+        ...prev,
+        tags: exists ? current.filter((t) => t !== tag) : [...current, tag],
+      };
+    });
   };
 
   const manejarSeleccionPelicula = (pelicula) => {
@@ -177,11 +223,11 @@ const CrearResena = () => {
 
     if (pelicula) {
       // Auto-llenar datos del formulario con info de la película
-      setDatosFormulario(prev => ({
+      setDatosFormulario((prev) => ({
         ...prev,
-        titulo: pelicula.title || '',
-        año: pelicula.year || '',
-        genero: pelicula.genre || prev.genero
+        titulo: pelicula.title || "",
+        año: pelicula.year || "",
+        genero: pelicula.genre || prev.genero,
       }));
     }
   };
@@ -190,13 +236,13 @@ const CrearResena = () => {
     // setModoCrearNueva(true);
     setPeliculaSeleccionada(null);
     // Limpiar campos auto-llenados
-    setDatosFormulario(prev => ({
+    setDatosFormulario((prev) => ({
       ...prev,
-      titulo: '',
-      año: '',
-      poster: '',
+      titulo: "",
+      año: "",
+      poster: "",
       posterFile: null,
-      genero: ''
+      genero: "",
     }));
   };
 
@@ -204,19 +250,30 @@ const CrearResena = () => {
     const nuevosErrores = {};
 
     if (!datosFormulario.titulo.trim()) {
-      nuevosErrores.titulo = 'El título de la película es obligatorio';
-      console.log('❌ Error: título vacío');
+      nuevosErrores.titulo = "El título de la película es obligatorio";
+      console.log("❌ Error: título vacío");
     }
 
-    if (!datosFormulario.año || datosFormulario.año < 1900 || datosFormulario.año > new Date().getFullYear() + 5) {
-      nuevosErrores.año = 'Ingresa un año válido';
-      console.log('❌ Error: año inválido', datosFormulario.año);
+    if (
+      !datosFormulario.año ||
+      datosFormulario.año < 1900 ||
+      datosFormulario.año > new Date().getFullYear() + 5
+    ) {
+      nuevosErrores.año = "Ingresa un año válido";
+      console.log("❌ Error: año inválido", datosFormulario.año);
     }
 
     // ✅ VALIDACIÓN: La calificación debe ser entre 1 y 5 (ahora opcional)
-    if (datosFormulario.calificacion && (datosFormulario.calificacion < 0 || datosFormulario.calificacion > 5)) {
-      nuevosErrores.calificacion = 'La calificación debe estar entre 0 y 5 estrellas';
-      console.log('❌ Error: calificación inválida', datosFormulario.calificacion);
+    if (
+      datosFormulario.calificacion &&
+      (datosFormulario.calificacion < 0 || datosFormulario.calificacion > 5)
+    ) {
+      nuevosErrores.calificacion =
+        "La calificación debe estar entre 0 y 5 estrellas";
+      console.log(
+        "❌ Error: calificación inválida",
+        datosFormulario.calificacion
+      );
     }
 
     // ✅ FIX: Hacer la fecha de visionado opcional
@@ -224,25 +281,38 @@ const CrearResena = () => {
     //   nuevosErrores.fechaVisionado = 'Indica cuándo viste la película';
     // }
 
-    if (!datosFormulario.textoResena.trim() || datosFormulario.textoResena.length < 20) {
-      nuevosErrores.textoResena = 'La reseña debe tener al menos 20 caracteres';
-      console.log('❌ Error: reseña muy corta', datosFormulario.textoResena.length);
+    if (
+      !datosFormulario.textoResena.trim() ||
+      datosFormulario.textoResena.length < 20
+    ) {
+      nuevosErrores.textoResena = "La reseña debe tener al menos 20 caracteres";
+      console.log(
+        "❌ Error: reseña muy corta",
+        datosFormulario.textoResena.length
+      );
     }
 
     if (datosFormulario.textoResena.length > 150) {
-      nuevosErrores.textoResena = 'La reseña no puede exceder 150 caracteres';
-      console.log('❌ Error: reseña muy larga', datosFormulario.textoResena.length);
+      nuevosErrores.textoResena = "La reseña no puede exceder 150 caracteres";
+      console.log(
+        "❌ Error: reseña muy larga",
+        datosFormulario.textoResena.length
+      );
     }
 
     // Validar que la imagen no sea demasiado grande para la base de datos
     if (datosFormulario.poster && datosFormulario.poster.length > 50000) {
-      nuevosErrores.poster = 'La imagen es demasiado grande. Intenta con una imagen más pequeña.';
-      console.log('❌ Error: imagen muy grande');
+      nuevosErrores.poster =
+        "La imagen es demasiado grande. Intenta con una imagen más pequeña.";
+      console.log("❌ Error: imagen muy grande");
     }
 
     setErrores(nuevosErrores);
     const esValido = Object.keys(nuevosErrores).length === 0;
-    console.log(esValido ? '✅ Formulario válido' : '❌ Formulario inválido', nuevosErrores);
+    console.log(
+      esValido ? "✅ Formulario válido" : "❌ Formulario inválido",
+      nuevosErrores
+    );
     return esValido;
   };
 
@@ -259,57 +329,70 @@ const CrearResena = () => {
       const datosResena = {
         tituloResena: datosFormulario.tituloResenia,
         // Usar datos de película seleccionada o del formulario
-        titulo: peliculaSeleccionada ? peliculaSeleccionada.title : datosFormulario.titulo,
-        año: peliculaSeleccionada ? peliculaSeleccionada.year : parseInt(datosFormulario.año),
-        imagenUrl: peliculaSeleccionada ?
-          peliculaSeleccionada.poster_url :
-          (datosFormulario.poster || `https://via.placeholder.com/120x180/2C3E50/ECF0F1?text=${encodeURIComponent(datosFormulario.titulo)}`),
+        titulo: peliculaSeleccionada
+          ? peliculaSeleccionada.title
+          : datosFormulario.titulo,
+        año: peliculaSeleccionada
+          ? peliculaSeleccionada.year
+          : parseInt(datosFormulario.año),
+        imagenUrl: peliculaSeleccionada
+          ? peliculaSeleccionada.poster_url
+          : datosFormulario.poster ||
+            `https://via.placeholder.com/120x180/2C3E50/ECF0F1?text=${encodeURIComponent(
+              datosFormulario.titulo
+            )}`,
         calificacion: datosFormulario.calificacion,
         usuario: `usuario_${usuarioActual}`, // Usar usuario actual del contexto
         user_id: usuarioActual, // Para el backend
-        fechaVisionado: datosFormulario.fechaVisionado ? new Date(datosFormulario.fechaVisionado).toLocaleDateString('es-ES', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        }) : new Date().toLocaleDateString('es-ES', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        }),
+        fechaVisionado: datosFormulario.fechaVisionado
+          ? new Date(datosFormulario.fechaVisionado).toLocaleDateString(
+              "es-ES",
+              {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }
+            )
+          : new Date().toLocaleDateString("es-ES", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            }),
         textoResena: datosFormulario.textoResena,
         megusta: datosFormulario.megusta,
-        genero: peliculaSeleccionada ? peliculaSeleccionada.genre : datosFormulario.genero,
+        genero: peliculaSeleccionada
+          ? peliculaSeleccionada.genre
+          : datosFormulario.genero,
         tags: datosFormulario.tags,
         contieneEspoilers: datosFormulario.contieneEspoilers,
         likes: 0,
         yaLeDiLike: false,
         // Agregar ID de película seleccionada para el backend
-        movie_id: peliculaSeleccionada ? peliculaSeleccionada.id : null
+        movie_id: peliculaSeleccionada ? peliculaSeleccionada.id : null,
       };
 
       if (esEdicion) {
         // Modo edición
         await actualizarResena(id, datosResena); // ✅ Cambiar de editarResena a actualizarResena
-        alert('¡Reseña actualizada exitosamente! 🎉');
+        alert("¡Reseña actualizada exitosamente! 🎉");
       } else {
         // Modo creación
         datosResena.id = Date.now();
-        datosResena.fechaResena = new Date().toLocaleDateString('es-ES', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
+        datosResena.fechaResena = new Date().toLocaleDateString("es-ES", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
         });
         await agregarResena(datosResena);
-        alert('¡Reseña creada exitosamente! 🎉');
+        alert("¡Reseña creada exitosamente! 🎉");
       }
 
       // Redirigir al inicio
-      navigate('/');
-
+      navigate("/");
     } catch (error) {
-      console.error('💥 Error al crear reseña:', error);
-      console.log('Datos de reseña enviados:', datosFormulario);
-      alert('Uh, hubo un problema al crear la reseña. Probá de nuevo.');
+      console.error("💥 Error al crear reseña:", error);
+      console.log("Datos de reseña enviados:", datosFormulario);
+      alert("Uh, hubo un problema al crear la reseña. Probá de nuevo.");
     } finally {
       setEnviando(false);
     }
@@ -322,16 +405,18 @@ const CrearResena = () => {
         <button
           key={i}
           type="button"
-          className={`estrella-seleccionable ${i <= (calificacionHover || datosFormulario.calificacion) ? 'activa' : ''
-            }`}
+          className={`estrella-seleccionable ${
+            i <= (calificacionHover || datosFormulario.calificacion)
+              ? "activa"
+              : ""
+          }`}
           onClick={() => {
             if (datosFormulario.calificacion === i) {
-              setCalificacionHover(0)
-              manejarCambioEntrada('calificacion', 0)
+              setCalificacionHover(0);
+              manejarCambioEntrada("calificacion", 0);
             } else {
-              manejarCambioEntrada('calificacion', i)
+              manejarCambioEntrada("calificacion", i);
             }
-
           }}
           onMouseEnter={() => setCalificacionHover(i)}
           onMouseLeave={() => setCalificacionHover(0)}
@@ -340,9 +425,7 @@ const CrearResena = () => {
         </button>
       );
     }
-    return [
-      ...estrellas
-    ];
+    return [...estrellas];
   };
 
   if (cargandoDatos) {
@@ -363,15 +446,18 @@ const CrearResena = () => {
       <div className="contenedor-crear-resena">
         <header className="encabezado-crear-resena">
           <h1 className="titulo-crear-resena">
-            {cargandoDatos ? 'Cargando datos de la reseña...' :
-              esEdicion ? 'Editar mi Reseña' : 'Escribir mi Reseña'}
+            {cargandoDatos
+              ? "Cargando datos de la reseña..."
+              : esEdicion
+              ? "Editar mi Reseña"
+              : "Escribir mi Reseña"}
           </h1>
           <p className="subtitulo-crear-resena">
-            {cargandoDatos ? 'Por favor espera mientras cargamos los datos de tu reseña' :
-              esEdicion
-                ? 'Modificá tu reseña para mejorarla o corregir algún detalle'
-                : 'Compartí tu opinión sobre una peli y ayudá a otros cinéfilos a descubrir nuevas joyitas'
-            }
+            {cargandoDatos
+              ? "Por favor espera mientras cargamos los datos de tu reseña"
+              : esEdicion
+              ? "Modificá tu reseña para mejorarla o corregir algún detalle"
+              : "Compartí tu opinión sobre una peli y ayudá a otros cinéfilos a descubrir nuevas joyitas"}
           </p>
         </header>
 
@@ -391,11 +477,17 @@ const CrearResena = () => {
                 <input
                   type="text"
                   value={datosFormulario.tituloResenia}
-                  onChange={(e) => manejarCambioEntrada('tituloResenia', e.target.value)}
-                  className={`entrada-fecha ${errores.tituloResenia ? 'error' : ''}`}
+                  onChange={(e) =>
+                    manejarCambioEntrada("tituloResenia", e.target.value)
+                  }
+                  className={`entrada-fecha ${
+                    errores.tituloResenia ? "error" : ""
+                  }`}
                   disabled={enviando}
                 />
-                {errores.tituloResenia && <span className="mensaje-error">{errores.tituloResenia}</span>}
+                {errores.tituloResenia && (
+                  <span className="mensaje-error">{errores.tituloResenia}</span>
+                )}
               </div>
             </section>
 
@@ -412,9 +504,10 @@ const CrearResena = () => {
                   disabled={enviando}
                   bloquearSeleccion={esEdicion}
                 />
-                {errores.titulo && <span className="mensaje-error">{errores.titulo}</span>}
+                {errores.titulo && (
+                  <span className="mensaje-error">{errores.titulo}</span>
+                )}
               </div>
-
 
               {/* <div className="campo-formulario">
                 <label className="etiqueta-campo">Género</label>
@@ -446,12 +539,15 @@ const CrearResena = () => {
               <div className="contenedor-estrellas">
                 {generarEstrellas()}
                 <span className="texto-calificacion">
-                  {datosFormulario.calificacion > 0 ? `${datosFormulario.calificacion}/5 estrellas` : 'Sin estrellas'}
+                  {datosFormulario.calificacion > 0
+                    ? `${datosFormulario.calificacion}/5 estrellas`
+                    : "Sin estrellas"}
                 </span>
               </div>
-              {errores.calificacion && <span className="mensaje-error">{errores.calificacion}</span>}
+              {errores.calificacion && (
+                <span className="mensaje-error">{errores.calificacion}</span>
+              )}
             </section>
-
 
             {/* Reseña */}
             <section className="seccion-resena">
@@ -459,19 +555,31 @@ const CrearResena = () => {
               <div className="campo-formulario">
                 <textarea
                   value={datosFormulario.textoResena}
-                  onChange={(e) => manejarCambioEntrada('textoResena', e.target.value)}
-                  className={`entrada-textarea ${errores.textoResena ? 'error' : ''}`}
+                  onChange={(e) =>
+                    manejarCambioEntrada("textoResena", e.target.value)
+                  }
+                  className={`entrada-textarea ${
+                    errores.textoResena ? "error" : ""
+                  }`}
                   placeholder="Comparte tu opinión sobre la película..."
                   rows={8}
                   maxLength={150}
                   disabled={enviando}
                 />
                 <div className="info-textarea">
-                  <span className={`contador-caracteres ${datosFormulario.textoResena.length > 900 ? 'cerca-limite' : ''}`}>
+                  <span
+                    className={`contador-caracteres ${
+                      datosFormulario.textoResena.length > 900
+                        ? "cerca-limite"
+                        : ""
+                    }`}
+                  >
                     {datosFormulario.textoResena.length}/150 caracteres
                   </span>
                 </div>
-                {errores.textoResena && <span className="mensaje-error">{errores.textoResena}</span>}
+                {errores.textoResena && (
+                  <span className="mensaje-error">{errores.textoResena}</span>
+                )}
               </div>
             </section>
 
@@ -479,11 +587,13 @@ const CrearResena = () => {
             <section className="seccion-tags">
               <h3 className="subtitulo-seccion">Tags</h3>
               <div className="contenedor-tags">
-                {tagsDisponibles.map(tag => (
+                {tagsDisponibles.map((tag) => (
                   <button
                     key={tag}
                     type="button"
-                    className={`tag-boton ${datosFormulario.tags.includes(tag) ? 'activo' : ''}`}
+                    className={`tag-boton ${
+                      datosFormulario.tags.includes(tag) ? "activo" : ""
+                    }`}
                     onClick={() => manejarCambioTag(tag)}
                     disabled={enviando}
                   >
@@ -495,16 +605,18 @@ const CrearResena = () => {
 
             {/* Opciones adicionales */}
             <section className="seccion-opciones">
-
               <div className="campo-checkbox">
                 <label className="etiqueta-checkbox">
                   <input
                     type="checkbox"
                     checked={datosFormulario.contieneEspoilers}
                     onChange={(e) => {
-                      manejarCambioEntrada('contieneEspoilers', e.target.checked);
+                      manejarCambioEntrada(
+                        "contieneEspoilers",
+                        e.target.checked
+                      );
                       if (e.target.checked) {
-                        manejarCambioEntrada('esSpoilerFree', false);
+                        manejarCambioEntrada("esSpoilerFree", false);
                       }
                     }}
                     disabled={enviando}
@@ -520,7 +632,7 @@ const CrearResena = () => {
               <button
                 type="button"
                 className="boton-cancelar"
-                onClick={() => navigate('/')}
+                onClick={() => navigate("/")}
                 disabled={enviando}
               >
                 Cancelar
@@ -531,9 +643,12 @@ const CrearResena = () => {
                 disabled={enviando}
               >
                 {enviando
-                  ? (esEdicion ? 'Actualizando...' : 'Publicando...')
-                  : (esEdicion ? 'Actualizar Reseña' : 'Publicar Reseña')
-                }
+                  ? esEdicion
+                    ? "Actualizando..."
+                    : "Publicando..."
+                  : esEdicion
+                  ? "Actualizar Reseña"
+                  : "Publicar Reseña"}
               </button>
             </div>
           </form>

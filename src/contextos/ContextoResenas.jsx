@@ -60,6 +60,38 @@ export const ProveedorResenas = ({ children }) => {
     }
   }, [usuarioAutenticado?.user_id, usuarioAutenticado?.id]);
 
+  const normalizeTags = (raw) => {
+    if (!raw) return [];
+    if (Array.isArray(raw)) return raw;
+
+    if (typeof raw === "string") {
+      const trimmed = raw.trim();
+      if (!trimmed) return [];
+
+      // 1) Si es JSON válido: '["Imperdible","Entretenida"]'
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) return parsed.map(String);
+      } catch (_) {}
+
+      // 2) Si viene como text[] de Postgres: '{"Imperdible","Entretenida"}'
+      if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+        return trimmed
+          .slice(1, -1) // saco llaves
+          .split(",")
+          .map(
+            (s) => s.trim().replace(/^"+|"+$/g, "") // saco comillas externas
+          )
+          .filter(Boolean);
+      }
+
+      // 3) Cualquier otra cosa: lo trato como un solo tag
+      return [trimmed];
+    }
+
+    return [];
+  };
+
   // cargar reseñas (si el back responde, usar back; si no, mock)
   useEffect(() => {
     const cargar = async () => {
@@ -244,9 +276,7 @@ export const ProveedorResenas = ({ children }) => {
             datosActualizados.contieneEspoilers ??
               datosActualizados.has_spoilers
           ),
-          tags: Array.isArray(datosActualizados.tags)
-            ? datosActualizados.tags
-            : [],
+          tags: normalizeTags(datosActualizados.tags),
         };
 
         // Logs para debug

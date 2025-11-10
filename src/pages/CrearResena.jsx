@@ -91,6 +91,7 @@ const CrearResena = () => {
           const resena = await response.json();
 
           if (resena) {
+            console.log('Reseña cargada para edición:', resena);
             // Convertir fecha ISO a formato YYYY-MM-DD para el input
             let fechaFormateada = '';
             if (resena.created_at) {

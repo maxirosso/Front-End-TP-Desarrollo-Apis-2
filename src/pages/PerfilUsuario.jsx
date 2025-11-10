@@ -43,7 +43,6 @@ const PerfilUsuario = () => {
           try {
             const userData = await usersAPI.getById(userId);
             setUsuarioViendo(userData);
-            console.log('Datos del usuario cargados desde backend:', userData);
           } catch (userError) {
             console.error('Error cargando usuario:', userError);
             // Fallback a usuario autenticado si es el mismo
@@ -76,9 +75,7 @@ const PerfilUsuario = () => {
         }
 
         // Cargar reseñas del usuario
-        console.log('Cargando reseñas para usuario:', userId);
         const resenas = await obtenerResenasPorUsuario(userId, filtros);
-        console.log('Reseñas obtenidas:', resenas);
         setResenasUsuario(resenas);
 
       } catch (err) {

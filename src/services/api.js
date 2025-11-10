@@ -68,8 +68,8 @@ const postFormUser = (path, obj) => {
   Object.entries(obj).forEach(([k, v]) => form.append(k, v ?? ""));
   return apiRequestUser(path, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(obj),
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: form.toString(),
   });
 };
 

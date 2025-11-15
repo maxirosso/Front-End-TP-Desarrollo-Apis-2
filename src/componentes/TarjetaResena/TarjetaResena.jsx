@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { usePermissions } from '../../hooks/usePermissions';
-import './TarjetaResena.css';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { usePermissions } from "../../hooks/usePermissions";
+import "./TarjetaResena.css";
 
 // Normaliza tags:
 // null/undefined → []
@@ -14,24 +14,22 @@ const normalizarTags = (value) => {
   if (!value) return [];
   if (Array.isArray(value)) return value;
 
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     const trimmed = value.trim();
     if (!trimmed) return [];
 
-    if (trimmed.startsWith('[')) {
+    if (trimmed.startsWith("[")) {
       try {
         const parsed = JSON.parse(trimmed);
         if (Array.isArray(parsed)) return parsed;
       } catch (_) {}
     }
 
-    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+    if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
       const inner = trimmed.slice(1, -1);
       return inner
-        .split(',')
-        .map((raw) =>
-          raw.trim().replace(/^"+|"+$/g, '')
-        )
+        .split(",")
+        .map((raw) => raw.trim().replace(/^"+|"+$/g, ""))
         .filter(Boolean);
     }
 
@@ -50,10 +48,12 @@ const TarjetaResena = ({
   onEditar = () => {},
   onToggleLike = () => {},
   onAbrirComentarios = () => {},
-  usuarioActual = 'usuario_actual',
+  usuarioActual = "usuario_actual",
 }) => {
   const [mostrarAcciones, setMostrarAcciones] = useState(false);
   const [textoCompleto, setTextoCompleto] = useState(false);
+  const [mostrarConfirmarEliminar, setMostrarConfirmarEliminar] =
+    useState(false);
 
   const { usuario: usuarioAuth } = useAuth();
   const { puedeEditarComentario, puedeEliminarComentario } = usePermissions();
@@ -71,7 +71,7 @@ const TarjetaResena = ({
     fechaResena: fechaResenaAlt,
     body,
     textoResena: textoResenaAlt,
-    title,                // título de la reseña
+    title, // título de la reseña
     title_review,
     tituloResena: tituloResenaAlt,
     has_spoilers,
@@ -92,36 +92,29 @@ const TarjetaResena = ({
     movie_title ||
     pelicula.movieTitle ||
     pelicula.titulo_pelicula ||
-    'Título no disponible';
+    "Título no disponible";
 
   // 🔹 Título de la reseña (usa el título de la review)
-  const reviewTitle =
-    title_review || tituloResenaAlt || title || '';
+  const reviewTitle = title_review || tituloResenaAlt || title || "";
 
   // Resto de normalizaciones
-  const calificacion = Number(
-    rating ?? calificacionAlt ?? 0
-  );
+  const calificacion = Number(rating ?? calificacionAlt ?? 0);
   const calificacionSegura = isNaN(calificacion) ? 0 : calificacion;
 
-  const usuarioMostrar =
-    user_name || usuarioAlt || 'Usuario desconocido';
+  const usuarioMostrar = user_name || usuarioAlt || "Usuario desconocido";
 
-  const fechaResena =
-    created_at || fechaResenaAlt || 'Fecha no disponible';
+  const fechaResena = created_at || fechaResenaAlt || "Fecha no disponible";
 
-  const textoResena =
-    body || textoResenaAlt || '';
+  const textoResena = body || textoResenaAlt || "";
 
   const tags = normalizarTags(tagsRaw);
 
-  const contieneEspoilers =
-    has_spoilers ?? contieneEspoilersAlt ?? false;
+  const contieneEspoilers = has_spoilers ?? contieneEspoilersAlt ?? false;
 
-  const moviePoster = (movie_poster || poster_url || imagenUrl || '').trim();
+  const moviePoster = (movie_poster || poster_url || imagenUrl || "").trim();
 
   const posterFallback = `https://via.placeholder.com/160x240/1a1f2e/6366f1?text=${encodeURIComponent(
-    movieTitle || 'Sin+imagen'
+    movieTitle || "Sin+imagen"
   )}`;
 
   const fechaActualizacion = updated_at || null;
@@ -139,17 +132,14 @@ const TarjetaResena = ({
   const puedeEliminar = esPropioDueño || puedeEliminarComentario;
 
   const truncarTexto = (texto, limite = 150) => {
-    if (!texto || typeof texto !== 'string') return '';
+    if (!texto || typeof texto !== "string") return "";
     if (texto.length <= limite) return texto;
-    return textoCompleto
-      ? texto
-      : texto.substring(0, limite) + '...';
+    return textoCompleto ? texto : texto.substring(0, limite) + "...";
   };
 
   const generarEstrellas = (puntuacion) => {
     const estrellas = [];
-    const puntuacionRedondeada =
-      Math.round(puntuacion * 2) / 2;
+    const puntuacionRedondeada = Math.round(puntuacion * 2) / 2;
 
     for (let i = 1; i <= 5; i++) {
       if (i <= puntuacionRedondeada) {
@@ -176,6 +166,10 @@ const TarjetaResena = ({
     return estrellas;
   };
 
+  const mensajeEliminar = esPropioDueño
+    ? "¿Estás seguro de que quieres eliminar esta reseña?"
+    : "¿Estás seguro de que quieres eliminar esta reseña? (Acción de moderador)";
+
   return (
     <article className="tarjeta-resena">
       <div className="contenido-resena">
@@ -199,9 +193,7 @@ const TarjetaResena = ({
               <span className="nombre-usuario">
                 Reseña de {usuarioMostrar}
                 {esPropioDueño && (
-                  <span className="indicador-propietario">
-                    TU RESEÑA
-                  </span>
+                  <span className="indicador-propietario">TU RESEÑA</span>
                 )}
               </span>
             </div>
@@ -213,18 +205,14 @@ const TarjetaResena = ({
               to={`/pelicula/${encodeURIComponent(movieTitle)}`}
               className="enlace-titulo-pelicula"
             >
-              <h3 className="titulo-resenia">
-                {movieTitle}
-              </h3>
+              <h3 className="titulo-resenia">{movieTitle}</h3>
             </Link>
           </div>
 
           {/* Título de la reseña */}
           {reviewTitle && (
             <div className="titulo-resena-contenedor">
-              <h4 className="titulo-resena">
-                {reviewTitle}
-              </h4>
+              <h4 className="titulo-resena">{reviewTitle}</h4>
             </div>
           )}
 
@@ -264,22 +252,20 @@ const TarjetaResena = ({
           <footer className="pie-resena">
             <div className="info-footer">
               <span className="fecha-publicacion">
-                Posteado el {new Date(fechaResena).toLocaleTimeString([], {
-                  year: 'numeric',
-                  month: '2-digit',
-                  day: '2-digit',
+                Posteado el{" "}
+                {new Date(fechaResena).toLocaleTimeString([], {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
                 })}
                 {fueEditada && (
-                  <span className="indicador-editada">
-                    {' '}
-                    (editada)
-                  </span>
+                  <span className="indicador-editada"> (editada)</span>
                 )}
               </span>
-              
+
               {/* Contador de likes */}
               <span className="contador-likes-texto">
-                ❤️ {likesCount} {likesCount === 1 ? 'like' : 'likes'}
+                ❤️ {likesCount} {likesCount === 1 ? "like" : "likes"}
               </span>
             </div>
 
@@ -293,9 +279,7 @@ const TarjetaResena = ({
                       setMostrarAcciones(!mostrarAcciones);
                     }}
                     title={
-                      esPropioDueño
-                        ? 'Acciones'
-                        : 'Acciones de moderación'
+                      esPropioDueño ? "Acciones" : "Acciones de moderación"
                     }
                   >
                     ⋮
@@ -322,8 +306,7 @@ const TarjetaResena = ({
                             }}
                           >
                             ✏️ Editar
-                            {!esPropioDueño &&
-                              ' (Moderador)'}
+                            {!esPropioDueño && " (Moderador)"}
                           </button>
                         )}
                         {puedeEliminar && (
@@ -332,19 +315,12 @@ const TarjetaResena = ({
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              const mensaje =
-                                esPropioDueño
-                                  ? '¿Estás seguro de que quieres eliminar esta reseña?'
-                                  : '¿Estás seguro de que quieres eliminar esta reseña? (Acción de moderador)';
-                              if (window.confirm(mensaje)) {
-                                onEliminar(id);
-                              }
                               setMostrarAcciones(false);
+                              setMostrarConfirmarEliminar(true);
                             }}
                           >
                             🗑️ Eliminar
-                            {!esPropioDueño &&
-                              ' (Moderador)'}
+                            {!esPropioDueño && " (Moderador)"}
                           </button>
                         )}
                       </div>
@@ -356,6 +332,36 @@ const TarjetaResena = ({
           </footer>
         </div>
       </div>
+      {/* MODAL CONFIRMACIÓN ELIMINAR */}
+      {mostrarConfirmarEliminar && (
+        <>
+          <div
+            className="overlay-confirmacion"
+            onClick={() => setMostrarConfirmarEliminar(false)}
+          />
+          <div className="modal-confirmacion">
+            <h4>Eliminar reseña</h4>
+            <p>{mensajeEliminar}</p>
+            <div className="modal-confirmacion-acciones">
+              <button
+                className="btn-confirmar-eliminar"
+                onClick={() => {
+                  onEliminar(id);
+                  setMostrarConfirmarEliminar(false);
+                }}
+              >
+                Sí, eliminar
+              </button>
+              <button
+                className="btn-cancelar-eliminar"
+                onClick={() => setMostrarConfirmarEliminar(false)}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </article>
   );
 };

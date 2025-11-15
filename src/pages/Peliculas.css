@@ -336,6 +336,14 @@
   transition: all 0.3s ease;
 }
 
+.genero-pelicula,
+.ano-pelicula,
+.director-pelicula {
+  white-space: normal;     
+  word-break: break-word;   
+  max-width: 100%;          
+}
+
 .tarjeta-pelicula:hover .director-pelicula {
   background: linear-gradient(135deg, rgba(0, 212, 170, 0.35) 0%, rgba(0, 212, 170, 0.25) 100%);
   box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);

@@ -186,6 +186,7 @@
   box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: inline-block;
+  margin-bottom: 1em;
 }
 
 .btn-crear-resena:hover {

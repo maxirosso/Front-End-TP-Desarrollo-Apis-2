@@ -308,15 +308,6 @@ const ResenasDelicula = () => {
           <div className="sin-resenas">
             <div className="icono-vacio">📝</div>
             <h3>No hay reseñas para esta película</h3>
-            <p>
-              Sé el primero en compartir tu opinión sobre "{pelicula.title}"
-            </p>
-            <Link
-              to={`/crear?movieId=${movieId}`}
-              className="btn-crear-primera"
-            >
-              Escribir primera reseña
-            </Link>
           </div>
         ) : (
           <div className="resenas-grid">

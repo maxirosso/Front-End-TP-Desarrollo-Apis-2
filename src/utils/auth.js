@@ -4,14 +4,15 @@
 
 // Roles disponibles en el sistema
 export const ROLES = {
-  ADMIN: 'admin',
-  MODERATOR: 'moderator',
-  USER: 'user'
+  ADMIN: "admin",
+  MODERATOR: "moderator",
+  USER: "user",
 };
 
 // Claves de localStorage
-const TOKEN_KEY = 'auth_token';
-const USER_KEY = 'auth_user';
+const TOKEN_KEY = "auth_token";
+const REFRESH_TOKEN_KEY = "auth_refresh_token";
+const USER_KEY = "auth_user";
 
 /**
  * Guarda el token JWT en localStorage
@@ -37,6 +38,37 @@ export const removeToken = () => {
 };
 
 /**
+ * Guarda el refresh token en localStorage
+ */
+export const saveRefreshToken = (refreshToken) => {
+  if (refreshToken) {
+    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+  }
+};
+
+/**
+ * Obtiene el refresh token de localStorage
+ */
+export const getRefreshToken = () => {
+  return localStorage.getItem(REFRESH_TOKEN_KEY);
+};
+
+/**
+ * Elimina el refresh token de localStorage
+ */
+export const removeRefreshToken = () => {
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
+};
+
+/**
+ * Guarda ambos tokens de autenticación en localStorage
+ */
+export const saveAuthTokens = (accessToken, refreshToken) => {
+  if (accessToken) saveToken(accessToken);
+  if (refreshToken) saveRefreshToken(refreshToken);
+};
+
+/**
  * Guarda los datos del usuario en localStorage
  */
 export const saveUser = (userData) => {
@@ -53,7 +85,7 @@ export const getUser = () => {
     const userData = localStorage.getItem(USER_KEY);
     return userData ? JSON.parse(userData) : null;
   } catch (error) {
-    console.error('Error parsing user data:', error);
+    console.error("Error parsing user data:", error);
     return null;
   }
 };
@@ -70,6 +102,7 @@ export const removeUser = () => {
  */
 export const clearAuth = () => {
   removeToken();
+  removeRefreshToken();
   removeUser();
 };
 
@@ -81,16 +114,16 @@ export const clearAuth = () => {
 export const decodeJWT = (token) => {
   try {
     if (!token) return null;
-    
-    const parts = token.split('.');
+
+    const parts = token.split(".");
     if (parts.length !== 3) return null;
-    
+
     const payload = parts[1];
     const decoded = JSON.parse(atob(payload));
-    
+
     return decoded;
   } catch (error) {
-    console.error('Error decoding JWT:', error);
+    console.error("Error decoding JWT:", error);
     return null;
   }
 };
@@ -101,7 +134,7 @@ export const decodeJWT = (token) => {
 export const isTokenExpired = (token) => {
   const decoded = decodeJWT(token);
   if (!decoded || !decoded.exp) return true;
-  
+
   const currentTime = Math.floor(Date.now() / 1000);
   return decoded.exp < currentTime;
 };
@@ -110,10 +143,18 @@ export const isTokenExpired = (token) => {
  * Verifica si el usuario está autenticado
  */
 export const isAuthenticated = () => {
-  const token = getToken();
-  if (!token) return false;
-  
-  return !isTokenExpired(token);
+  const accessToken = getToken();
+  const refreshToken = getRefreshToken();
+
+  if (!accessToken && !refreshToken) return false;
+
+  if (!accessToken && refreshToken) return true;
+
+  if (accessToken && !isTokenExpired(accessToken)) return true;
+
+  if (refreshToken) return true;
+
+  return false;
 };
 
 /**
@@ -121,11 +162,11 @@ export const isAuthenticated = () => {
  */
 export const hasRole = (user, role) => {
   if (!user || !user.role) return false;
-  
+
   if (Array.isArray(role)) {
     return role.includes(user.role);
   }
-  
+
   return user.role === role;
 };
 
@@ -156,17 +197,17 @@ export const isAdminOrModerator = (user) => {
  */
 export const hasPermission = (user, permission) => {
   if (!user) return false;
-  
+
   // Los usuarios estándar no tienen permisos administrativos
   if (user.role === ROLES.USER) return false;
-  
+
   // Admin y moderadores tienen array de permisos
   if (!user.permissions || !Array.isArray(user.permissions)) return false;
-  
+
   if (Array.isArray(permission)) {
-    return permission.some(p => user.permissions.includes(p));
+    return permission.some((p) => user.permissions.includes(p));
   }
-  
+
   return user.permissions.includes(permission);
 };
 
@@ -176,10 +217,10 @@ export const hasPermission = (user, permission) => {
  */
 export const canEditResource = (user, resourceUserId) => {
   if (!user) return false;
-  
+
   // El usuario es el propietario del recurso
   if (user.user_id === resourceUserId) return true;
-  
+
   // El usuario tiene permisos administrativos
   return isAdminOrModerator(user);
 };
@@ -195,28 +236,28 @@ export const canDeleteResource = (user, resourceUserId) => {
  * Obtiene el nombre completo del usuario
  */
 export const getFullName = (user) => {
-  if (!user) return '';
-  
+  if (!user) return "";
+
   if (user.full_name) return user.full_name;
   if (user.name && user.last_name) return `${user.name} ${user.last_name}`;
   if (user.name) return user.name;
-  
-  return user.email || user.sub || 'Usuario';
+
+  return user.email || user.sub || "Usuario";
 };
 
 /**
  * Obtiene los iniciales del usuario para avatar
  */
 export const getUserInitials = (user) => {
-  if (!user) return '?';
-  
+  if (!user) return "?";
+
   const fullName = getFullName(user);
-  const parts = fullName.split(' ');
-  
+  const parts = fullName.split(" ");
+
   if (parts.length >= 2) {
     return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
   }
-  
+
   return fullName.substring(0, 2).toUpperCase();
 };
 
@@ -225,11 +266,11 @@ export const getUserInitials = (user) => {
  */
 export const formatRole = (role) => {
   const roleNames = {
-    [ROLES.ADMIN]: 'Administrador',
-    [ROLES.MODERATOR]: 'Moderador',
-    [ROLES.USER]: 'Usuario'
+    [ROLES.ADMIN]: "Administrador",
+    [ROLES.MODERATOR]: "Moderador",
+    [ROLES.USER]: "Usuario",
   };
-  
+
   return roleNames[role] || role;
 };
 
@@ -238,12 +279,12 @@ export const formatRole = (role) => {
  */
 export const getRoleBadgeClass = (role) => {
   const badgeClasses = {
-    [ROLES.ADMIN]: 'badge-admin',
-    [ROLES.MODERATOR]: 'badge-moderator',
-    [ROLES.USER]: 'badge-user'
+    [ROLES.ADMIN]: "badge-admin",
+    [ROLES.MODERATOR]: "badge-moderator",
+    [ROLES.USER]: "badge-user",
   };
-  
-  return badgeClasses[role] || 'badge-default';
+
+  return badgeClasses[role] || "badge-default";
 };
 
 const authUtils = {
@@ -251,6 +292,10 @@ const authUtils = {
   saveToken,
   getToken,
   removeToken,
+  saveRefreshToken,
+  getRefreshToken,
+  removeRefreshToken,
+  saveAuthTokens,
   saveUser,
   getUser,
   removeUser,
@@ -268,7 +313,7 @@ const authUtils = {
   getFullName,
   getUserInitials,
   formatRole,
-  getRoleBadgeClass
+  getRoleBadgeClass,
 };
 
 export default authUtils;

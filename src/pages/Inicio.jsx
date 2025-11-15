@@ -56,7 +56,6 @@ const Inicio = () => {
         let resenasProcesadas;
         // if (requiereBackend) {
           // Usar función asíncrona del contexto
-          debugger
           resenasProcesadas = await aplicarFiltros(filtrosActivos);
         // } else {
         //   // Usar datos locales

@@ -2,12 +2,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { authAPI } from "../services/api";
 import {
-  saveToken,
+  // 👇 nuevo helper que guarda access + refresh
+  saveAuthTokens,
   getToken,
   saveUser,
   getUser,
   clearAuth,
-  isTokenExpired,
   decodeJWT,
   hasRole,
   hasPermission,
@@ -37,14 +37,14 @@ export const ProveedorAuth = ({ children }) => {
   const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
 
-  // Inicializar auth leyendo token guardado y decodificando (el back valida en cada request)
+  // ✅ Inicializar auth leyendo token guardado (NO chequeamos exp)
   useEffect(() => {
     try {
       const tokenGuardado = getToken();
       const usuarioGuardado = getUser();
 
-      if (!tokenGuardado || isTokenExpired(tokenGuardado)) {
-        clearAuth();
+      if (!tokenGuardado) {
+        // no hay sesión previa
         setCargando(false);
         return;
       }
@@ -63,18 +63,22 @@ export const ProveedorAuth = ({ children }) => {
     }
   }, []);
 
-  // Login: llama al módulo de usuarios, guarda token y decodifica payload para la UI
+  // ✅ Login: guarda access + refresh y decodifica el payload para la UI
   const login = async (credentials) => {
     setError(null);
     setCargando(true);
     try {
-      const { token, raw } = await authAPI.login(credentials);
-      if (!token) throw new Error("No se recibió token del servidor");
+      const { token: accessToken, refreshToken, raw } =
+        await authAPI.login(credentials);
 
-      saveToken(token);
-      setToken(token);
+      if (!accessToken) throw new Error("No se recibió token del servidor");
 
-      const decoded = decodeJWT(token) || raw?.user || {};
+      // Guarda access + refresh en localStorage
+      saveAuthTokens(accessToken, refreshToken);
+      setToken(accessToken);
+
+      // Datos del usuario (del JWT o del body)
+      const decoded = decodeJWT(accessToken) || raw?.user || {};
       saveUser(decoded);
       setUsuario(decoded);
 
@@ -88,16 +92,17 @@ export const ProveedorAuth = ({ children }) => {
     }
   };
 
-  // Logout local: el back valida JWT en cada request, no hace falta endpoint si no existe
+  // Logout local
   const logout = () => {
-    clearAuth();
+    clearAuth();          // borra access, refresh y user
     setUsuario(null);
     setToken(null);
     setError(null);
   };
 
-  // Helpers de estado/permiso
-  const estaAutenticado = () => !!usuario && !!token && !isTokenExpired(token);
+  // ✅ Ahora NO miramos exp, solo que haya usuario + token
+  const estaAutenticado = () => !!usuario && !!token;
+
   const tieneRol = (rol) => hasRole(usuario, rol);
   const tienePermiso = (perm) => hasPermission(usuario, perm);
   const puedeEditarRecurso = (resourceUserId) =>

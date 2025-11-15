@@ -1,5 +1,5 @@
 // services/api.js
-import { getToken } from "../utils/auth";
+import { getToken, getRefreshToken, saveAuthTokens } from "../utils/auth";
 
 const USER_API_URL = process.env.REACT_APP_USER_URL; // módulo de usuarios (login)
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080"; // back (movies/reviews)
@@ -73,11 +73,47 @@ const postFormUser = (path, obj) => {
   });
 };
 
+const refreshAccessToken = async () => {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) {
+    console.warn("[auth] No hay refresh_token guardado");
+    throw new Error("No hay refresh_token");
+  }
+
+  const CLIENT_ID = process.env.REACT_APP_CLIENT_ID || "";
+  const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET || "";
+  const SCOPE = process.env.REACT_APP_OAUTH_SCOPE || "";
+
+  // ⚠️ Usamos el mismo endpoint que login, pero con grant_type=refresh_token
+  // Ajustar path si tu user-service tiene un endpoint distinto para refresh.
+  const res = await postFormUser("/api/v1/auth/login", {
+    grant_type: "refresh_token",
+    refresh_token: refreshToken,
+    scope: SCOPE,
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET,
+  });
+
+  const newAccessToken =
+    res?.access_token || res?.token || res?.jwt || res?.id_token || null;
+
+  if (!newAccessToken) {
+    console.error("[auth] Refresh respondió sin access_token. Body:", res);
+    throw new Error("No se recibió nuevo access_token");
+  }
+
+  const newRefreshToken = res?.refresh_token || refreshToken; // pueden rotar o no
+
+  saveAuthTokens(newAccessToken, newRefreshToken);
+  console.log("[auth] Access token refrescado correctamente");
+  return newAccessToken;
+};
+
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
   const token = getToken();
 
-  const config = {
+  const baseConfig = {
     method: options.method || "GET",
     headers: {
       "Content-Type": "application/json",
@@ -87,26 +123,57 @@ const apiRequest = async (endpoint, options = {}) => {
     body: options.body,
   };
 
-  const res = await fetch(url, config);
-  const data = await parseMaybeJson(res).catch(() => null);
+  const doFetch = async (config) => {
+    const res = await fetch(url, config);
+    const data = await parseMaybeJson(res).catch(() => null);
+    return { res, data };
+  };
 
-  if (!res.ok) {
-    const error = new Error(
-      (data && (data.error || data.message)) || `HTTP ${res.status}`
-    );
-    error.status = res.status;
-    error.data = data;
-    console.error(
-      `[apiRequest] Error en ${config.method} ${url}`,
-      "status:",
-      res.status,
-      "respuesta:",
-      data
-    );
-    throw error;
+  // 1) Primer intento con el access token actual
+  let { res, data } = await doFetch(baseConfig);
+
+  // 2) Si todo bien, devolvemos
+  if (res.ok) return data;
+
+  // 3) Si es 401 por token expirado, intentamos refresh y reintentar UNA vez
+  if (res.status === 401 && data && data.error === "Token expired") {
+    try {
+      console.warn("[apiRequest] Token expirado, intentando refresh...");
+      const newAccessToken = await refreshAccessToken();
+
+      const retryConfig = {
+        ...baseConfig,
+        headers: {
+          ...baseConfig.headers,
+          Authorization: `Bearer ${newAccessToken}`,
+        },
+      };
+
+      const retry = await doFetch(retryConfig);
+      res = retry.res;
+      data = retry.data;
+
+      if (res.ok) return data;
+    } catch (e) {
+      console.error("[apiRequest] Error al refrescar token:", e);
+      // dejamos que siga abajo y lance el error
+    }
   }
 
-  return data;
+  // 4) Si seguimos acá, falló (no fue 401 o refresh no solucionó)
+  const error = new Error(
+    (data && (data.error || data.message)) || `HTTP ${res.status}`
+  );
+  error.status = res.status;
+  error.data = data;
+  console.error(
+    `[apiRequest] Error en ${baseConfig.method} ${url}`,
+    "status:",
+    res.status,
+    "respuesta:",
+    data
+  );
+  throw error;
 };
 
 //-------- Auth (solo login contra el módulo de usuarios) --------
@@ -149,6 +216,7 @@ export const authAPI = {
       try {
         const res = await run();
         // Normalizamos el nombre del campo token
+        console.log("[login] respuesta user-service:", res);
         const token =
           res?.access_token || res?.token || res?.jwt || res?.id_token || null;
         if (!token) {
@@ -156,7 +224,8 @@ export const authAPI = {
           console.warn("Login respondió sin token. Body:", res);
           throw new Error("No se recibió token del servidor");
         }
-        return { token, raw: res };
+        const refreshToken = res?.refresh_token || null;
+        return { token, refreshToken, raw: res };
       } catch (e) {
         lastErr = e;
         // 422/400 seguimos intentando la siguiente variante

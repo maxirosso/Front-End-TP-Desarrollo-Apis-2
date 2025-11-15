@@ -319,7 +319,10 @@
 
 /* Texto de la reseña */
 .texto-resena {
-  flex: 1;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .texto-resena p {

@@ -41,6 +41,11 @@ const CrearResena = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Para edición
   const [searchParams] = useSearchParams(); // Para crear nueva con datos de película
+  const [modal, setModal] = useState(null);
+  const mostrarModal = (tipo, mensaje) => {
+    setModal({ tipo, mensaje });
+    setTimeout(() => setModal(null), 2500);
+  };
 
   // ✅ SOLUCION: Extraer TODO el contexto pero guardar funciones en useRef para evitar re-renders
   const contextoCompleto = useContext(ContextoResenas);
@@ -177,7 +182,10 @@ const CrearResena = () => {
           }
         } catch (error) {
           console.error("Error al cargar la reseña:", error);
-          alert("Error al cargar la reseña: " + error.message);
+          mostrarModal(
+            "error",
+            "Error al cargar los datos de la reseña: " + error.message
+          );
         } finally {
           setCargandoDatos(false);
         }
@@ -309,10 +317,12 @@ const CrearResena = () => {
 
     setErrores(nuevosErrores);
     const esValido = Object.keys(nuevosErrores).length === 0;
-    console.log(
-      esValido ? "✅ Formulario válido" : "❌ Formulario inválido",
-      nuevosErrores
-    );
+    if (!esValido) {
+      mostrarModal(
+        "error",
+        "Revisá los campos marcados antes de publicar."
+      );
+    }
     return esValido;
   };
 
@@ -374,7 +384,7 @@ const CrearResena = () => {
       if (esEdicion) {
         // Modo edición
         await actualizarResena(id, datosResena); // ✅ Cambiar de editarResena a actualizarResena
-        alert("¡Reseña actualizada exitosamente! 🎉");
+        mostrarModal("exito", "¡Reseña actualizada exitosamente! 🎉");
       } else {
         // Modo creación
         datosResena.id = Date.now();
@@ -384,15 +394,15 @@ const CrearResena = () => {
           year: "numeric",
         });
         await agregarResena(datosResena);
-        alert("¡Reseña creada exitosamente! 🎉");
+        mostrarModal("exito", "¡Reseña creada exitosamente! 🎉");
       }
-
-      // Redirigir al inicio
-      navigate("/");
+      setTimeout(() => {
+        navigate("/");
+      }, 2500);
     } catch (error) {
       console.error("💥 Error al crear reseña:", error);
       console.log("Datos de reseña enviados:", datosFormulario);
-      alert("Uh, hubo un problema al crear la reseña. Probá de nuevo.");
+      mostrarModal("error", "Error al enviar la reseña: " + error.message);
     } finally {
       setEnviando(false);
     }
@@ -483,8 +493,22 @@ const CrearResena = () => {
                   className={`entrada-fecha ${
                     errores.tituloResenia ? "error" : ""
                   }`}
+                  placeholder="Ej: Una obra maestra inolvidable"
+                  rows={8}
+                  maxLength={50}
                   disabled={enviando}
                 />
+                <div className="info-textarea">
+                  <span
+                    className={`contador-caracteres ${
+                      datosFormulario.tituloResenia.length > 40
+                        ? "cerca-limite"
+                        : ""
+                    }`}
+                  >
+                    {datosFormulario.tituloResenia.length}/50 caracteres
+                  </span>
+                </div>
                 {errores.tituloResenia && (
                   <span className="mensaje-error">{errores.tituloResenia}</span>
                 )}
@@ -569,7 +593,7 @@ const CrearResena = () => {
                 <div className="info-textarea">
                   <span
                     className={`contador-caracteres ${
-                      datosFormulario.textoResena.length > 900
+                      datosFormulario.textoResena.length > 140
                         ? "cerca-limite"
                         : ""
                     }`}
@@ -595,7 +619,11 @@ const CrearResena = () => {
                       datosFormulario.tags.includes(tag) ? "activo" : ""
                     }`}
                     onClick={() => manejarCambioTag(tag)}
-                    disabled={enviando}
+                    disabled={
+                      enviando ||
+                      (datosFormulario.tags.length >= 10 &&
+                        !datosFormulario.tags.includes(tag))
+                    }
                   >
                     {tag}
                   </button>
@@ -652,6 +680,22 @@ const CrearResena = () => {
               </button>
             </div>
           </form>
+        )}
+      </div>
+      <div>
+        {modal && (
+          <div className={`modal-notificacion modal-${modal.tipo}`}>
+            <div className="modal-contenido">
+              <span>{modal.mensaje}</span>
+              <button
+                className="modal-cerrar"
+                type="button"
+                onClick={() => setModal(null)}
+              >
+                ✕
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

@@ -138,7 +138,7 @@ const TarjetaResena = ({
   const puedeEditar = esPropioDueño || puedeEditarComentario;
   const puedeEliminar = esPropioDueño || puedeEliminarComentario;
 
-  const truncarTexto = (texto, limite = 300) => {
+  const truncarTexto = (texto, limite = 150) => {
     if (!texto || typeof texto !== 'string') return '';
     if (texto.length <= limite) return texto;
     return textoCompleto
@@ -240,19 +240,6 @@ const TarjetaResena = ({
           {/* Texto */}
           <div className="texto-resena">
             <p>{truncarTexto(textoResena)}</p>
-            {textoResena &&
-              textoResena.length > 300 && (
-                <button
-                  className="boton-ver-mas"
-                  onClick={() =>
-                    setTextoCompleto(!textoCompleto)
-                  }
-                >
-                  {textoCompleto
-                    ? 'Ver menos'
-                    : 'Ver más'}
-                </button>
-              )}
           </div>
 
           {/* Tags */}
@@ -277,7 +264,11 @@ const TarjetaResena = ({
           <footer className="pie-resena">
             <div className="info-footer">
               <span className="fecha-publicacion">
-                Posteado el {String(fechaResena)}
+                Posteado el {new Date(fechaResena).toLocaleTimeString([], {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                })}
                 {fueEditada && (
                   <span className="indicador-editada">
                     {' '}

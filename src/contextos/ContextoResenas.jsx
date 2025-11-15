@@ -141,9 +141,19 @@ export const ProveedorResenas = ({ children }) => {
     try {
       if (usingBackend) {
         const texto = nuevaResena.textoResena || nuevaResena.body || "";
+        const titulo = nuevaResena.tituloResena || nuevaResena.titulo || "";
+        const tags = normalizeTags(nuevaResena.tags);
+        console.log(tags);
+
+        // ✅ FIX: Validar título
+        if (!titulo || titulo.trim().length < 1)
+          throw new Error("El título de la reseña es obligatorio");
+        // ✅ FIX: Validar longitud título
+        if (titulo.trim().length > 50)
+          throw new Error("El título de la reseña no puede exceder los 50 caracteres");
+        // ✅ FIX: Validar texto
         if (!texto || texto.trim().length < 20)
           throw new Error("La reseña debe tener al menos 20 caracteres");
-
         // ✅ FIX: Validar calificación solo si existe y está fuera de rango
         if (
           nuevaResena.calificacion !== undefined &&
@@ -153,6 +163,9 @@ export const ProveedorResenas = ({ children }) => {
           if (rating < 0 || rating > 5) {
             throw new Error("La calificación debe estar entre 0 y 5");
           }
+        }
+        if (tags.length > 10) {
+          throw new Error("No se pueden agregar más de 10 etiquetas");
         }
 
         // movie_id (requerido). Si no vino, intento matchear por título; si no, fallback 1

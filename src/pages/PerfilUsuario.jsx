@@ -257,7 +257,7 @@ const PerfilUsuario = () => {
             <h3>Sin reseñas aún</h3>
             <p>{usuarioViendo.name || `Usuario ${userId}`} no ha escrito ninguna reseña todavía.</p>
             {(usuarioActual === parseInt(userId) || usuario?.user_id === parseInt(userId) || usuario?.id === parseInt(userId)) && (
-              <Link to="/crear-resena" className="btn-crear-primera">
+              <Link to="/crear" className="btn-crear-primera">
                 Escribir primera reseña
               </Link>
             )}

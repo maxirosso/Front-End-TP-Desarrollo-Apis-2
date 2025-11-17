@@ -54,6 +54,7 @@ const TarjetaResena = ({
   const [textoCompleto, setTextoCompleto] = useState(false);
   const [mostrarConfirmarEliminar, setMostrarConfirmarEliminar] =
     useState(false);
+  const [esImagenHorizontal, setEsImagenHorizontal] = useState(false);
 
   const { usuario: usuarioAuth } = useAuth();
   const { puedeEditarComentario, puedeEliminarComentario } = usePermissions();
@@ -170,6 +171,12 @@ const TarjetaResena = ({
     ? "¿Estás seguro de que quieres eliminar esta reseña?"
     : "¿Estás seguro de que quieres eliminar esta reseña? (Acción de moderador)";
 
+  // Función para detectar si la imagen es horizontal
+  const handleImageLoad = (e) => {
+    const img = e.target;
+    setEsImagenHorizontal(img.naturalWidth > img.naturalHeight);
+  };
+
   return (
     <article className="tarjeta-resena">
       <div className="contenido-resena">
@@ -178,7 +185,8 @@ const TarjetaResena = ({
           <img
             src={moviePoster || posterFallback}
             alt={`Póster de ${movieTitle}`}
-            className="imagen-pelicula"
+            className={`imagen-pelicula ${esImagenHorizontal ? 'imagen-horizontal' : ''}`}
+            onLoad={handleImageLoad}
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = posterFallback;

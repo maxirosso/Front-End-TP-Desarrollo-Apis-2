@@ -86,6 +86,14 @@
   transition: all var(--transicion-normal);
 }
 
+/* Solo imágenes horizontales se ven más pequeñas */
+.imagen-pelicula.imagen-horizontal {
+  max-height: 12rem;
+  max-width: 22rem;
+  height: auto;
+  width: auto;
+}
+
 .tarjeta-resena:hover .imagen-pelicula {
   transform: scale(1.02);
   box-shadow: var(--sombra-large);
@@ -322,14 +330,17 @@
   max-width: 100%;
   overflow-wrap: break-word;
   word-wrap: break-word;
-  word-break: break-all;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .texto-resena p {
   color: #ecf0f1;
-  line-height: 1.6;
+  line-height: 1.7;
   margin: 0 0 0.5rem 0;
   font-size: 0.95rem;
+  white-space: pre-wrap;
+  max-width: 55ch;
 }
 
 .boton-ver-mas {

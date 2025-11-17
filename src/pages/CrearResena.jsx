@@ -262,6 +262,11 @@ const CrearResena = () => {
       console.log("❌ Error: título vacío");
     }
 
+    if (!datosFormulario.tituloResenia.trim() || datosFormulario.tituloResenia.trim().length < 5) {
+      nuevosErrores.tituloResenia = "El título de la reseña debe tener al menos 5 caracteres";
+      console.log("❌ Error: título de reseña inválido", datosFormulario.tituloResenia);
+    }
+
     if (
       !datosFormulario.año ||
       datosFormulario.año < 1900 ||
@@ -318,10 +323,7 @@ const CrearResena = () => {
     setErrores(nuevosErrores);
     const esValido = Object.keys(nuevosErrores).length === 0;
     if (!esValido) {
-      mostrarModal(
-        "error",
-        "Revisá los campos marcados antes de publicar."
-      );
+      mostrarModal("error", "Revisá los campos marcados antes de publicar.");
     }
     return esValido;
   };

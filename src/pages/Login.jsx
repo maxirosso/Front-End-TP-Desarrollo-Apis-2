@@ -64,7 +64,7 @@ const Login = () => {
 
   // Usuarios de prueba para mostrar en la UI (basados en la información proporcionada)
   const usuariosPrueba = [
-    { username: 'claqueta_critica', rol: 'Admin - Gestión completa (usuarios, películas, comentarios)' },
+    { username: 'agustorres_admin', rol: 'Admin - Gestión completa (usuarios, películas, comentarios)' },
   ];
 
   return (
@@ -150,7 +150,7 @@ const Login = () => {
         {/* Información de usuarios de prueba */}
         <div className="usuarios-prueba">
           <h3>📝 Usuarios de prueba disponibles:</h3>
-          <p className="password-info">🔑 <strong>Contraseña para todos:</strong> ContraseñaNueva2025</p>
+          <p className="password-info">🔑 <strong>Contraseña:</strong> MiPassword123!</p>
           <div className="usuarios-lista">
             {usuariosPrueba.map((usuario, index) => (
               <div key={index} className="usuario-prueba-item">

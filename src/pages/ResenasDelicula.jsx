@@ -287,19 +287,6 @@ const ResenasDelicula = () => {
       {/* Controles de filtros y ordenamiento */}
       <div className="controles-resenas">
         <h2>Reseñas de {pelicula.title}</h2>
-
-        <FiltrosResenas
-          onAplicarFiltros={manejarAplicarFiltros}
-          filtrosActivos={filtrosActivos}
-          onLimpiarFiltros={manejarLimpiarFiltros}
-          ocultarFiltroPelicula={true} // Ocultar filtro de película ya que estamos en una película específica
-        />
-
-        <BarraOrdenamiento
-          onCambiarOrdenamiento={manejarCambiarOrdenamiento}
-          ordenamientoActual={ordenamientoActual}
-          totalResenas={resenasPelicula.length}
-        />
       </div>
 
       {/* Lista de reseñas */}
